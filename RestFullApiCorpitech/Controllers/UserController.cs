@@ -12,8 +12,6 @@ namespace RestFullApiCorpitech
     [Route("/user")]
     public class UserController : Controller
     {
-        BookContext db = new BookContext();
-
         [HttpGet]
         public ActionResult Get()
         {

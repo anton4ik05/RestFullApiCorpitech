@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using RestFullApiCorpitech.Models;
 
 namespace RestFullApiCorpitech
 {
@@ -31,6 +33,12 @@ namespace RestFullApiCorpitech
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "RestFullApiCorpitech", Version = "v1" });
             });
+
+            string connection = Configuration.GetConnectionString("DefaultConnection");
+            services.AddMvc();
+            services.AddDbContext<ApplicationContext>(options =>
+                options.UseSqlServer(connection));
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
