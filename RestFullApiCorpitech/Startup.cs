@@ -48,7 +48,6 @@ namespace RestFullApiCorpitech
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseSqlServer(connection));
 
-            // Make sure a JS engine is registered, or you will get an error!
             services.AddJsEngineSwitcher(options => options.DefaultEngineName = V8JsEngine.EngineName)
               .AddV8();
             services.AddMemoryCache();
