@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RestFullApiCorpitech.Models;
+using RestFullApiCorpitech.Repos;
 
 namespace RestFullApiCorpitech
 {
@@ -33,6 +34,8 @@ namespace RestFullApiCorpitech
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "RestFullApiCorpitech", Version = "v1" });
             });
+
+            services.AddTransient<UserRepository>();
 
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddMvc();

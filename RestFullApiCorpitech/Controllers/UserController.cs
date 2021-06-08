@@ -5,21 +5,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections;
+using RestFullApiCorpitech.Repos;
+using RestFullApiCorpitech.Models;
 
 namespace RestFullApiCorpitech
 {
+   
     [ApiController]
     [Route("/user")]
+    
     public class UserController : Controller
     {
+        private readonly UserRepository userRepository;
+
+        public UserController(UserRepository userRepository)
+        {
+            this.userRepository = userRepository;
+        }
+
         [HttpGet]
         public ActionResult Get()
         {
-            var rng = new Random();
-            ArrayList list = new ArrayList();
-            list.Add(1);
-            list.Add(55);
-            return new ObjectResult(list);
+            return new ObjectResult(userRepository.GetUsers());
         }
 
     }

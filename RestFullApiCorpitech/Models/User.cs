@@ -12,8 +12,18 @@ namespace RestFullApiCorpitech.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
+        [Required(ErrorMessage = "Заполните Фамилию")]
+        [Display(Name = "Фамилия")]
+        public String surname { get; set; }
+
+        [Required(ErrorMessage = "Заполните Имя")]
+        [Display(Name = "Имя")]
         public String name { get; set; }
+
+        [Required(ErrorMessage = "Заполните Отчество")]
+        [Display(Name = "Отчество")]
+        public String middlename { get; set; }
     }
 }
