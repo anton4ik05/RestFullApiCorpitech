@@ -14,6 +14,10 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RestFullApiCorpitech.Models;
 using RestFullApiCorpitech.Repos;
+using Microsoft.AspNetCore.Http;
+using React.AspNet;
+using JavaScriptEngineSwitcher.ChakraCore;
+using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
 
 namespace RestFullApiCorpitech
 {
@@ -28,7 +32,7 @@ namespace RestFullApiCorpitech
 
         public void ConfigureServices(IServiceCollection services)
         {
-
+            
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -42,17 +46,25 @@ namespace RestFullApiCorpitech
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseSqlServer(connection));
 
+            services.AddMemoryCache();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddReact();
+            services.AddJsEngineSwitcher(options => options.DefaultEngineName = ChakraCoreJsEngine.EngineName).AddChakraCore();
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
+                
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "RestFullApiCorpitech v1"));
             }
-
+            app.UseReact(config => { });
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
             app.UseHttpsRedirection();
 
             app.UseRouting();
