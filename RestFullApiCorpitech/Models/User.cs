@@ -25,5 +25,17 @@ namespace RestFullApiCorpitech.Models
         [Required(ErrorMessage = "Заполните Отчество")]
         [Display(Name = "Отчество")]
         public String middlename { get; set; }
+
+        [Required(ErrorMessage = "Выберите дату найма")]
+        [Display(Name = "Дата найма")]
+        public DateTime dateOfEmployment { get; set; }
+
+        [Required(ErrorMessage = "Выберите дату начала отпуска")]
+        [Display(Name = "Дата начала отпуска")]
+        public DateTime dateOfStartVacation { get; set; }
+
+        [Required(ErrorMessage = "Выберите дату конца отпуска")]
+        [Display(Name = "Дата конца отпуска")]
+        public DateTime dateOfEndVacation { get; set; }
     }
 }

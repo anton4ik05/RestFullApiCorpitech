@@ -10,6 +10,7 @@ namespace RestFullApiCorpitech.Repos
     public class UserRepository
     {
         //класс-репозиторий напрямую обращается к контексту базы данных
+
         private readonly ApplicationContext context;
         public UserRepository(ApplicationContext context)
         {
