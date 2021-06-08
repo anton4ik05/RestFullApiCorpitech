@@ -1,9 +1,37 @@
-﻿class Hello extends React.Component {
+﻿class CommentBox extends React.Component {
+    constructor(props) {
+        super(props);
+        this.onClick = this.onClick.bind(this);
+        this.state = {
+            show: false,
+        };
+    }
+
+    onClick() {
+        fetch("./user")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log(result)
+                },
+                // Note: it's important to handle errors here
+                // instead of a catch() block so that we don't swallow
+                // exceptions from actual bugs in components.
+                (error) => {
+                    console.log(error)
+                }
+            )
+    }
     render() {
-        return <h1>Привет, React.JS</h1>;
+        return React.createElement(
+            'div',
+            { onClick: this.onClick,className: 'commentBox' },
+            'Hello, world! I am a CommentBox.',
+        );
     }
 }
+
 ReactDOM.render(
-    <Hello />,
-    document.getElementById("content")
+    React.createElement(CommentBox, null),
+    document.getElementById('content'),
 );
