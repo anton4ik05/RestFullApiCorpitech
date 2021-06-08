@@ -3,25 +3,8 @@ class User extends React.Component {
     constructor(props) {
         super(props);
         this.state = { data: props.user };
-        this.onClick = this.onClick.bind(this);
     }
 
-
-    onClick() {
-        fetch("./user")
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    console.log(result)
-                },
-                // Note: it's important to handle errors here
-                // instead of a catch() block so that we don't swallow
-                // exceptions from actual bugs in components.
-                (error) => {
-                    console.log(error)
-                }
-            )
-    }
     render() {
         return React.createElement(
             'div', null,
@@ -41,7 +24,7 @@ class UserList extends React.Component {
     }
     // загрузка данных
     loadData() {
-        fetch("../user")
+        fetch("../users")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -52,6 +35,7 @@ class UserList extends React.Component {
                     console.log(error)
                 }
             )
+
     }
     componentDidMount() {
         this.loadData();
@@ -62,7 +46,7 @@ class UserList extends React.Component {
         return React.createElement(
             'div', null, 'Работники', 
             this.state.users.map(function (user) {
-                return React.createElement(User, { key: user.id, user: user })
+                return React.createElement(User, { key: Math.random(), user: user })
             })
         );
     }
