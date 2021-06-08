@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
+using RestFullApiCorpitech.Models;
 using RestFullApiCorpitech.Repos;
 
 namespace RestFullApiCorpitech
