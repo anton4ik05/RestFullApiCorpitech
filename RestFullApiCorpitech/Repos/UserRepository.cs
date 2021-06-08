@@ -20,7 +20,7 @@ namespace RestFullApiCorpitech.Repos
         //выбрать все записи из таблицы Users
         public IQueryable<User> GetUsers()
         {
-            return context.Users.OrderBy(x => x.surname);
+            return context.Users.OrderBy(x => x.Surname);
         }
 
         //найти определенную запись по id
@@ -38,11 +38,12 @@ namespace RestFullApiCorpitech.Repos
                 context.Entry(entity).State = EntityState.Modified;
             context.SaveChanges();
 
+
             return entity.Id;
         }
 
         //удалить существующую запись
-        public void DeleteArticle(User entity)
+        public void DeleteUser(User entity)
         {
             context.Users.Remove(entity);
             context.SaveChanges();
