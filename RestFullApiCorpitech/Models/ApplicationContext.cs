@@ -25,9 +25,12 @@ namespace RestFullApiCorpitech.Models
             modelBuilder.Entity<User>().HasData(new User
             {
                 Id = new Guid("716C2E99-6F6C-4472-81A5-43C56E11637C"),
+<<<<<<< Updated upstream
                 dateOfEmployment = DateTime.Parse("11.11.2015" ),
                 dateOfStartVacation = DateTime.Parse("04.04.2016"),
                 dateOfEndVacation = DateTime.Parse("04.14.2016")
+=======
+>>>>>>> Stashed changes
                 Surname = "Иванов",
                 Name = "Иван",
                 Middlename = "Иванович"
