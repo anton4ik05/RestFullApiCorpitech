@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,9 +31,6 @@ namespace RestFullApiCorpitech.Models
                 Surname = "Иванов",
                 Name = "Иван",
                 Middlename = "Иванович"
-                dateOfEmployment = DateTime.Parse("11.11.2015" ),
-                dateOfStartVacation = DateTime.Parse("04.04.2016"),
-                dateOfEndVacation = DateTime.Parse("04.14.2016")
             });
         }
 
