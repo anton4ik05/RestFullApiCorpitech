@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -28,7 +29,7 @@ namespace RestFullApiCorpitech.Models
                 surname = "Иванов",
                 name = "Иван",
                 middlename = "Иванович",
-                dateOfEmployment = DateTime.Parse("11.11.2015" ),
+                dateOfEmployment = DateTime.Parse("11.11.2015"),
                 dateOfStartVacation = DateTime.Parse("04.04.2016"),
                 dateOfEndVacation = DateTime.Parse("04.14.2016")
             });
