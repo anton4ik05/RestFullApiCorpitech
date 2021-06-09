@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RestFullMvc.Models;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace RestFullMvc.Controllers
@@ -18,8 +17,17 @@ namespace RestFullMvc.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
+            string bodystring="";
+            var body = new StringContent(bodystring, Encoding.UTF8, "application/json");
+
+            using (var client = new HttpClient())
+            {
+                var response = await client.GetAsync("https://localhost:5001/users");
+                var content = await response.Content.ReadAsStringAsync();
+            }
+
             return View();
         }
 

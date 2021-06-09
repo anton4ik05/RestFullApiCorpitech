@@ -30,13 +30,13 @@ namespace RestFullApiCorpitech.Models
 
         [Required(ErrorMessage = "Введите дату найма")]
         [Display(Name = "Дата найма")]
-        public DateTime dateOfEmployment { get; set; }
+        public string dateOfEmployment { get; set; }
 
         [Display(Name = "Дата начала отпуска")]
-        public DateTime dateOfStartVacation { get; set; }
+        public string dateOfStartVacation { get; set; }
 
         [Display(Name = "Дата конца отпуска")]
-        public DateTime dateOfEndVacation { get; set; }
+        public string dateOfEndVacation { get; set; }
 
 
     }
