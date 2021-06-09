@@ -23,7 +23,10 @@ namespace RestFullApiCorpitech.Models
                 Id = new Guid("716C2E99-6F6C-4472-81A5-43C56E11637C"),
                 Surname = "Иванов",
                 Name = "Иван",
-                Middlename = "Иванович"
+                Middlename = "Иванович",
+                dateOfEmployment = new DateTime(2015,11,11),
+                dateOfStartVacation = new DateTime(2016, 11, 11),
+                dateOfEndVacation = new DateTime(2016, 11, 21),
             });
         }
 
