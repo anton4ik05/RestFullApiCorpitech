@@ -46,16 +46,16 @@ namespace RestFullApiCorpitech.Models
 
         public Double value { get; set; } = 0;
 
-    public Double eval(DateTime startDate)
+    public Double eval(DateTime endDate)
         {
-            DateTime endDate = new DateTime();
+            DateTime startDate = new DateTime();
             if(dateOfEndVacation != DateTime.MinValue)
             {
-                endDate = dateOfEndVacation;
+                startDate = dateOfEndVacation;
             }
             else
             {
-                endDate = dateOfEmployment;
+                startDate = dateOfEmployment;
             }
 
             Double days = (endDate - startDate).Days;
