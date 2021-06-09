@@ -44,13 +44,6 @@ namespace RestFullApiCorpitech.Models
         [DataType(DataType.Date)]
         public DateTime dateOfEndVacation { get; set; } = DateTime.MinValue;
 
-        [Display(Name = "Дата начала отпуска")]
-        public string dateOfStartVacation { get; set; }
-
-        [Display(Name = "Дата конца отпуска")]
-        public string dateOfEndVacation { get; set; }
->>>>>>>>> Temporary merge branch 2
-
         public Double value { get; set; } = 0;
 
     public Double eval(DateTime endDate)
