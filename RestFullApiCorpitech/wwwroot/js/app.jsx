@@ -7,9 +7,12 @@ class User extends React.Component {
 
     render() {
         return React.createElement(
-            'div', null,
-            React.createElement('p', {}, "Имя: ",this.state.data.name),
-            React.createElement('p', {}, "Фамилия: ",this.state.data.surname),
+            'tr', null,    
+            React.createElement('td', {}, this.state.data.surname + " " + this.state.data.name + " "+this.state.data.middlename),
+            React.createElement('td', {}, this.state.data.dateOfEmployment),
+            React.createElement('td', {}, 25),
+            React.createElement('td', {}, 123),
+            React.createElement('td', {}, this.state.data.dateOfEndVacation),
         );
     }
 }
@@ -44,7 +47,13 @@ class UserList extends React.Component {
     render() {
 
         return React.createElement(
-            'div', null, 'Работники', 
+            'table', { className: 'usersTable' }, React.createElement('caption', {},'Работники'),
+            React.createElement('tr', {className: 'users'},
+                React.createElement('th', {}, "ФИО"),
+                React.createElement('th', {}, "Дата трудоустройства"),
+                React.createElement('th', {}, "Дней Отпуска"),
+                React.createElement('th', {}, "СУММА при увольнении"),
+                React.createElement('th', {}, "На дату")),
             this.state.users.map(function (user) {
                 return React.createElement(User, { key: Math.random(), user: user })
             })
