@@ -46,6 +46,8 @@ namespace RestFullApiCorpitech.Models
 
         public Double value { get; set; } = 0;
 
+        public Double days { get; set; } = 0;
+
     public Double eval(DateTime endDate)
         {
             DateTime startDate = new DateTime();
@@ -59,6 +61,7 @@ namespace RestFullApiCorpitech.Models
             }
 
             Double days = (endDate - startDate).Days;
+            this.days = days;
             this.value = Math.Round(days / 29.7) * 2.33;
             return this.value;
         }
