@@ -11,6 +11,5 @@ namespace RestFullApiCorpitech.Models
         public DateTime endVacation { get; set; }
 
 
-        
     }
 }
