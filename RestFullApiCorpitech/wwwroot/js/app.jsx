@@ -1,4 +1,18 @@
 ﻿
+function formatDate(date) {
+
+    var dd = date.getDate();
+    if (dd < 10) dd = '0' + dd;
+
+    var mm = date.getMonth() + 1;
+    if (mm < 10) mm = '0' + mm;
+
+    var yy = date.getFullYear();
+    if (yy < 10) yy = '0' + yy;
+
+    return dd + '.' + mm + '.' + yy;
+}
+
 class User extends React.Component {
     constructor(props) {
         super(props);
@@ -9,10 +23,10 @@ class User extends React.Component {
         return React.createElement(
             'tr', null,    
             React.createElement('td', {}, this.state.data.surname + " " + this.state.data.name + " "+this.state.data.middlename),
-            React.createElement('td', {}, this.state.data.dateOfEmployment),
-            React.createElement('td', {}, 25),
-            React.createElement('td', {}, 123),
-            React.createElement('td', {}, this.state.data.dateOfEndVacation),
+            React.createElement('td', {}, formatDate(new Date(this.state.data.dateOfEmployment))),
+            React.createElement('td', {}, Math.round(this.state.data.value)),
+            React.createElement('td', {}, this.state.data.value.toFixed(2)),
+            React.createElement('td', {}, formatDate(new Date(this.state.data.dateOfEndVacation))),
         );
     }
 }
@@ -37,7 +51,7 @@ class UserList extends React.Component {
                 (error) => {
                     console.log(error)
                 }
-            )
+        )
 
     }
     componentDidMount() {
