@@ -1,0 +1,10 @@
+﻿body {
+}
+.usersTable {
+    width: 100%;
+    margin: auto;
+    text-align:center;
+}
+.usersTable span{
+    width:100%;
+}
