@@ -12,19 +12,18 @@ namespace RestFullApiCorpitech
     
     public class UserController : Controller
     {
-        private UserRepository userRepository;
         private UserService userService;
 
-        public UserController(UserRepository userRepository)
+        public UserController(UserService userService)
         {
-            this.userRepository = userRepository;
+            this.userService = userService;
         }
 
         [HttpGet]
         public IActionResult Get()
         {
             userService.EvalUsers();
-            return new ObjectResult(userRepository.GetUsers());
+            return new ObjectResult(userService.GetUsers());
         }
 
 
