@@ -10,7 +10,7 @@ namespace RestFullApiCorpitech.Models
 
         public DateTime endVacation { get; set; }
 
+        public User user { get; set; }
 
-        
     }
 }

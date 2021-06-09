@@ -28,6 +28,8 @@ namespace RestFullApiCorpitech.Models
                 dateOfStartVacation = new DateTime(2016, 11, 11),
                 dateOfEndVacation = new DateTime(2016, 11, 21)
             });
+
+            modelBuilder.Entity<User>().HasMany(c => c.Vacations).WithOne(e => e.user);
         }
 
     }
