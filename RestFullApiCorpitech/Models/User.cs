@@ -28,6 +28,8 @@ namespace RestFullApiCorpitech.Models
         [Display(Name = "Отчество")]
         public String Middlename { get; set; }
 
+        [Required(ErrorMessage = "Введите дату найма")]
+        [Display(Name = "Дата найма")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
         [DataType(DataType.Date)]
         public DateTime dateOfEmployment { get; set; } = DateTime.MinValue;
@@ -42,8 +44,9 @@ namespace RestFullApiCorpitech.Models
         [DataType(DataType.Date)]
         public DateTime dateOfEndVacation { get; set; } = DateTime.MinValue;
 
-
         public Double value { get; set; } = 0;
+
+        public Double days { get; set; } = 0;
 
     public Double eval(DateTime endDate)
         {
@@ -58,6 +61,7 @@ namespace RestFullApiCorpitech.Models
             }
 
             Double days = (endDate - startDate).Days;
+            this.days = days;
             this.value = Math.Round(days / 29.7) * 2.33;
             return this.value;
         }
