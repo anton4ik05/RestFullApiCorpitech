@@ -28,17 +28,6 @@ namespace RestFullApiCorpitech.Models
         [Display(Name = "Отчество")]
         public String Middlename { get; set; }
 
-        [Required(ErrorMessage = "Введите дату найма")]
-        [Display(Name = "Дата найма")]
-<<<<<<< HEAD
-        public string dateOfEmployment { get; set; }
-
-        [Display(Name = "Дата начала отпуска")]
-        public string dateOfStartVacation { get; set; }
-
-        [Display(Name = "Дата конца отпуска")]
-        public string dateOfEndVacation { get; set; }
-=======
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
         [DataType(DataType.Date)]
         public DateTime dateOfEmployment { get; set; } = DateTime.MinValue;
@@ -52,7 +41,7 @@ namespace RestFullApiCorpitech.Models
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
         [DataType(DataType.Date)]
         public DateTime dateOfEndVacation { get; set; } = DateTime.MinValue;
->>>>>>> xrect
+
 
         public Double value { get; set; } = 0;
 
