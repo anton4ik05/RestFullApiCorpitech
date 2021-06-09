@@ -48,15 +48,19 @@ class UserList extends React.Component {
 
         return React.createElement(
             'table', { className: 'usersTable' }, React.createElement('caption', {},'Работники'),
-            React.createElement('tr', {className: 'users'},
+            React.createElement('thead', {},
+                React.createElement('tr', {},
                 React.createElement('th', {}, "ФИО"),
                 React.createElement('th', {}, "Дата трудоустройства"),
                 React.createElement('th', {}, "Дней Отпуска"),
                 React.createElement('th', {}, "СУММА при увольнении"),
-                React.createElement('th', {}, "На дату")),
-            this.state.users.map(function (user) {
-                return React.createElement(User, { key: Math.random(), user: user })
-            })
+                React.createElement('th', {}, "На дату"))),
+            React.createElement('tbody', {},
+                this.state.users.map(function (user) {
+                    return React.createElement(User, { key: Math.random(), user: user })
+                })
+            )
+            
         );
     }
 }
