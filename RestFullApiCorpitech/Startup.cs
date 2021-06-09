@@ -12,7 +12,7 @@ using React.AspNet;
 using JavaScriptEngineSwitcher.ChakraCore;
 using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
 using JavaScriptEngineSwitcher.V8;
-
+using RestFullApiCorpitech.Service;
 
 namespace RestFullApiCorpitech
 {
@@ -35,6 +35,7 @@ namespace RestFullApiCorpitech
             });
 
             services.AddTransient<UserRepository>();
+            services.AddTransient<UserService>();
 
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddMvc();

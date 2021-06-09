@@ -12,6 +12,11 @@ namespace RestFullApiCorpitech.Service
     {
         private readonly UserRepository userRepository;
 
+        public UserService(UserRepository userRepository)
+        {
+            this.userRepository = userRepository;
+        }
+
         public void EvalUsers()
         {
             foreach (User user in userRepository.GetUsers())
@@ -28,6 +33,11 @@ namespace RestFullApiCorpitech.Service
         public void DeleteUser(Guid id)
         {
             userRepository.DeleteUser(new User() { Id = id });
+        }
+
+        public IQueryable<User> GetUsers()
+        {
+            return userRepository.GetUsers();
         }
     }
 }
