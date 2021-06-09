@@ -24,9 +24,9 @@ namespace RestFullApiCorpitech.Models
                 Surname = "Иванов",
                 Name = "Иван",
                 Middlename = "Иванович",
-                dateOfEmployment = Convert.ToString(DateTimeOffset.Parse("11/06/2014").ToUnixTimeSeconds()),
-                dateOfStartVacation = Convert.ToString(DateTimeOffset.Parse("05/01/2016").ToUnixTimeSeconds()),
-                dateOfEndVacation = Convert.ToString(DateTimeOffset.Parse("05/11/2016").ToUnixTimeSeconds())
+                dateOfEmployment = new DateTime(2015,11,11),
+                dateOfStartVacation = new DateTime(2016, 11, 11),
+                dateOfEndVacation = new DateTime(2016, 11, 21),
             });
         }
 
