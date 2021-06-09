@@ -1,10 +1,20 @@
 ﻿body {
 }
 .usersTable {
-    width: 100%;
+    border-collapse: collapse;
+    width: 90%;
     margin: auto;
-    text-align:center;
+    text-align: center;
 }
-.usersTable span{
-    width:100%;
+caption {
+    border: 1px solid #000;
+}
+thead{
+    background:#fff0b6
+}
+th {
+    border: 1px solid #000;
+}
+td{
+    border:1px solid #000;
 }
