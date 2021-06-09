@@ -24,7 +24,7 @@ class User extends React.Component {
             'tr', null,    
             React.createElement('td', {}, this.state.data.surname + " " + this.state.data.name + " "+this.state.data.middlename),
             React.createElement('td', {}, formatDate(new Date(this.state.data.dateOfEmployment))),
-            React.createElement('td', {}, Math.round(this.state.data.value)),
+            React.createElement('td', {}, Math.round(this.state.data.days)),
             React.createElement('td', {}, this.state.data.value.toFixed(2)),
             React.createElement('td', {}, formatDate(new Date(this.state.data.dateOfEndVacation))),
         );
