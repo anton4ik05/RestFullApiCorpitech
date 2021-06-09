@@ -30,6 +30,8 @@ namespace RestFullApiCorpitech.Models
 
         [Required(ErrorMessage = "Введите дату найма")]
         [Display(Name = "Дата найма")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
+        [DataType(DataType.Date)]
         public DateTime dateOfEmployment { get; set; }
 
         [Display(Name = "Дата начала отпуска")]
