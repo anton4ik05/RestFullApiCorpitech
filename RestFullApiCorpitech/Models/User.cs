@@ -48,7 +48,8 @@ namespace RestFullApiCorpitech.Models
 
         public Double days { get; set; } = 0;
 
-    public Double eval(DateTime endDate)
+        public ICollection<Vacation> Vacations { get; set; }
+        public Double eval(DateTime endDate)
         {
             DateTime startDate = new DateTime();
             if(dateOfEndVacation != DateTime.MinValue)

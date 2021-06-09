@@ -26,7 +26,7 @@ namespace RestFullApiCorpitech.Models
                 Middlename = "Иванович",
                 dateOfEmployment = new DateTime(2015,11,11),
                 dateOfStartVacation = new DateTime(2016, 11, 11),
-                dateOfEndVacation = new DateTime(2016, 11, 21),
+                dateOfEndVacation = new DateTime(2016, 11, 21)
             });
         }
 

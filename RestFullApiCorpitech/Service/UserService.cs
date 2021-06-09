@@ -39,5 +39,7 @@ namespace RestFullApiCorpitech.Service
         {
             return userRepository.GetUsers();
         }
+
+       
     }
 }
