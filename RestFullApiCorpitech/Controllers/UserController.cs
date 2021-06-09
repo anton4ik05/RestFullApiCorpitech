@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RestFullApiCorpitech.Models;
 using RestFullApiCorpitech.Repos;
+using RestFullApiCorpitech.Service;
 
 namespace RestFullApiCorpitech
 {
@@ -11,36 +12,40 @@ namespace RestFullApiCorpitech
     
     public class UserController : Controller
     {
-        private readonly UserRepository userRepository;
+        private UserService userService;
 
-        public UserController(UserRepository userRepository)
+        public UserController(UserService userService)
         {
-            this.userRepository = userRepository;
+            this.userService = userService;
         }
 
         [HttpGet]
         public IActionResult Get()
         {
-            return new ObjectResult(userRepository.GetUsers());
+            userService.EvalUsers();
+            return new ObjectResult(userService.GetUsers());
         }
+
 
         [HttpPost]
         public IActionResult UserEdit(User model)
         {
             if (ModelState.IsValid)
             {
-                userRepository.SaveUser(model);
+                userService.SaveUser(model);
             }
 
             return new ObjectResult(model);
         }
 
+
         [HttpDelete]
         public IActionResult UserDelete(Guid id)
         {
-            userRepository.DeleteUser(new User() { Id = id });
+            userService.DeleteUser(id);
             return new ObjectResult("success");
         }
 
+        
     }
 }

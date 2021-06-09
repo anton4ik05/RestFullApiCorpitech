@@ -30,6 +30,7 @@ namespace RestFullApiCorpitech.Models
 
         [Required(ErrorMessage = "Введите дату найма")]
         [Display(Name = "Дата найма")]
+<<<<<<< HEAD
         public string dateOfEmployment { get; set; }
 
         [Display(Name = "Дата начала отпуска")]
@@ -37,7 +38,39 @@ namespace RestFullApiCorpitech.Models
 
         [Display(Name = "Дата конца отпуска")]
         public string dateOfEndVacation { get; set; }
+=======
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
+        [DataType(DataType.Date)]
+        public DateTime dateOfEmployment { get; set; } = DateTime.MinValue;
 
+        [Display(Name = "Дата начала отпуска")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
+        [DataType(DataType.Date)]
+        public DateTime dateOfStartVacation { get; set; } = DateTime.MinValue;
 
+        [Display(Name = "Дата конца отпуска")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
+        [DataType(DataType.Date)]
+        public DateTime dateOfEndVacation { get; set; } = DateTime.MinValue;
+>>>>>>> xrect
+
+        public Double value { get; set; } = 0;
+
+    public Double eval(DateTime endDate)
+        {
+            DateTime startDate = new DateTime();
+            if(dateOfEndVacation != DateTime.MinValue)
+            {
+                startDate = dateOfEndVacation;
+            }
+            else
+            {
+                startDate = dateOfEmployment;
+            }
+
+            Double days = (endDate - startDate).Days;
+            this.value = Math.Round(days / 29.7) * 2.33;
+            return this.value;
+        }
     }
 }
