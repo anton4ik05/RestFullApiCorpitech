@@ -21,7 +21,9 @@ namespace RestFullApiCorpitech.Service
         {
             foreach (User user in userRepository.GetUsers())
             {
-                user.eval(DateTime.Now.AddDays(-10), DateTime.Now);
+
+                //user.eval(new DateTime(2016, 5, 5), new DateTime(2016, 5, 20));
+                user.eval(new DateTime(2021, 06, 07), new DateTime(2021, 10, 12));
             }
         }
 
