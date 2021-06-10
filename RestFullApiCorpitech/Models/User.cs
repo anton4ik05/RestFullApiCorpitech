@@ -34,16 +34,6 @@ namespace RestFullApiCorpitech.Models
         [DataType(DataType.Date)]
         public DateTime dateOfEmployment { get; set; } = DateTime.MinValue;
 
-        [Display(Name = "Дата начала отпуска")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
-        [DataType(DataType.Date)]
-        public DateTime dateOfStartVacation { get; set; } = DateTime.MinValue;
-
-        [Display(Name = "Дата конца отпуска")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
-        [DataType(DataType.Date)]
-        public DateTime dateOfEndVacation { get; set; } = DateTime.MinValue;
-
         public Double value { get; set; } = 0;
 
         public Double days { get; set; } = 0;
@@ -51,18 +41,10 @@ namespace RestFullApiCorpitech.Models
         public ICollection<Vacation> Vacations { get; set; } = new List<Vacation>();
 
 
-        public Double eval(DateTime endDate)
+        public Double eval(DateTime startDate, DateTime endDate)
 
         {
-            DateTime startDate = new DateTime();
-            if(dateOfEndVacation != DateTime.MinValue)
-            {
-                startDate = dateOfEndVacation;
-            }
-            else
-            {
-                startDate = dateOfEmployment;
-            }
+            Vacation vacation = Vacations.Last();
 
             Double days = (endDate - startDate).Days;
             this.days = days;
