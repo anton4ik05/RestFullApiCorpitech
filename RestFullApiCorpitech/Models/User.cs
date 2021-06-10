@@ -44,12 +44,7 @@ namespace RestFullApiCorpitech.Models
         public Double eval(DateTime startDate, DateTime endDate)
 
         {
-            Vacations.Add(new Vacation
-            {
-                startVacation = new DateTime(2016, 5, 5),
-                endVacation = new DateTime(2016, 5, 20)
-            });
-
+            
             ICollection<DateTime> allVacationDates = new List<DateTime>();
             var vacations = Vacations.ToArray();
 

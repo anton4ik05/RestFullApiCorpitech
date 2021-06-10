@@ -17,13 +17,11 @@ namespace RestFullApiCorpitech.Service
             this.userRepository = userRepository;
         }
 
-        public void EvalUsers()
+        public void EvalUsers(DateTime startDate, DateTime endDate)
         {
             foreach (User user in userRepository.GetUsers())
             {
-
-                //user.eval(new DateTime(2016, 5, 5), new DateTime(2016, 5, 20));
-                user.eval(new DateTime(2021, 06, 07), new DateTime(2021, 10, 12));
+                user.eval(startDate, endDate);
             }
         }
 
