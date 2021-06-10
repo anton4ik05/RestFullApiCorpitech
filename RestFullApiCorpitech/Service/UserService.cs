@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace RestFullApiCorpitech.Service
 {
@@ -47,7 +48,8 @@ namespace RestFullApiCorpitech.Service
 
         public IEnumerable<User> GetUsers()
         {
-            return userRepository.Get();
+            var users = context.Users.Include(x => x.Vacations).ToList();
+            return users;
         }
     }
 }

@@ -19,6 +19,7 @@ namespace RestFullApiCorpitech.Repos
 
         public IEnumerable<TEntity> Get()
         {
+
             return _dbSet.AsNoTracking().ToList();
         }
 
