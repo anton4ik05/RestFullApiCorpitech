@@ -1435,7 +1435,7 @@
                 if (item.disabled) {
                     classes.push(options.disabledClass);
                 }
-
+                
                 return "<".concat(itemTag, " class=\"").concat(classes.join(' '), "\" data-view=\"").concat(item.view, "\">").concat(item.text, "</").concat(itemTag, ">");
             }
         }, {

@@ -65,13 +65,14 @@ class UserForm extends React.Component {
         this.setState({ middlename: e.target.value });
     }
     onDateOfEmploymentChange(e) {
-        this.setState({ dateOfEmployment: e.target.value   } );
+        console.log(e.target.textContent);
+        this.setState({ dateOfEmployment: e.target.textContent   } );
     }
-    componentDidMount() {
+    dateLoad(e) {
         $('[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
-                console.log(this);
-                $('#dateOfEmlp').val(formatDateForInput(date.date));
+                this.setState({ dateOfEmployment: formatDateForInput(date.date) });
+                $(this).change();
             },
             autoPick: true,
             format: 'YYYY-mm-dd',
@@ -82,6 +83,22 @@ class UserForm extends React.Component {
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
     }
+
+    componentDidMount() {
+        $('[data-toggle="datepicker"]').datepicker({
+            pick: function (date, view) {
+                $(this).text(formatDateForInput(date.date));
+            },
+            autoPick: true,
+            format: 'YYYY-mm-dd',
+            days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+            daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+            monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+        });
+    }
+
     onSubmit(e) {
         e.preventDefault();
         var name = this.state.name.trim();
@@ -102,7 +119,7 @@ class UserForm extends React.Component {
             React.createElement('input', { placeholder: 'Name', type: 'text', onChange: this.onNameChange, value: this.state.name }),
             React.createElement('input', { placeholder: 'Surname', type: 'text', onChange: this.onSurnameChange, value: this.state.surname }),
             React.createElement('input', { placeholder: 'Middlename', type: 'text', onChange: this.onMiddlenameChange, value: this.state.middlename }),
-            React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text',  value: this.state.dateOfEmployment }),
+            React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text',  onChange: this.onDateOfEmploymentChange,value: this.state.dateOfEmployment }),
             React.createElement('button', { type: 'submit', className: 'postfix' }, 'Submit')
         )
     }
