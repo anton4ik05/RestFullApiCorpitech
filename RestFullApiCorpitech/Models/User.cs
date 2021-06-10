@@ -50,16 +50,6 @@ namespace RestFullApiCorpitech.Models
 
         public ICollection<Vacation> Vacations { get; set; } = new List<Vacation>();
 
-        public void AddVacation(DateTime x, DateTime y)
-        {
-            Vacation vacation = new Vacation
-            {
-                startVacation = x,
-                endVacation = y
-            };
-            Vacations.Add(vacation);
-        }
-
 
         public Double eval(DateTime endDate)
 
@@ -77,8 +67,6 @@ namespace RestFullApiCorpitech.Models
             Double days = (endDate - startDate).Days;
             this.days = days;
             this.value = Math.Round(days / 29.7) * 2.33;
-            AddVacation(dateOfStartVacation, dateOfEndVacation);
-            AddVacation(dateOfEndVacation,dateOfStartVacation);
 
             return this.value;
         }
