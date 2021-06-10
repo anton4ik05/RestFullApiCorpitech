@@ -22,6 +22,7 @@ namespace RestFullApiCorpitech.Models
         [DataType(DataType.Date)]
         public DateTime endVacation { get; set; }
 
+        [JsonIgnore]
         public User user { get; set; }
 
     }
