@@ -1,5 +1,4 @@
-﻿
-function formatDate(date) {
+﻿function formatDate(date) {
 
     var dd = date.getDate();
     if (dd < 10) dd = '0' + dd;
@@ -25,7 +24,6 @@ class User extends React.Component {
             React.createElement('td', {}, this.state.data.surname + " " + this.state.data.name + " " + this.state.data.middlename),
             React.createElement('td', {}, formatDate(new Date(this.state.data.dateOfEmployment))),
             React.createElement('td', {}, Math.round(this.state.data.days)),
-            React.createElement('td', {}, this.state.data.value.toFixed(2)),
             React.createElement('td', {}, formatDate(new Date(this.state.data.dateOfEndVacation))),
         );
     }
@@ -148,7 +146,6 @@ class UserList extends React.Component {
                         React.createElement('th', {}, "ФИО"),
                         React.createElement('th', {}, "Дата трудоустройства"),
                         React.createElement('th', {}, "Дней Отпуска"),
-                        React.createElement('th', {}, "СУММА при увольнении"),
                         React.createElement('th', {}, "На дату"))),
                 React.createElement('tbody', {},
                     this.state.users.map(function (user) {

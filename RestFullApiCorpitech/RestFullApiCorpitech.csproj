@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="npm\" />
     <Folder Include="wwwroot\sass\" />
   </ItemGroup>
 
