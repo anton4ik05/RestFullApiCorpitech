@@ -31,6 +31,51 @@ class User extends React.Component {
     }
 }
 
+class UserForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { name: "", surname: "", middlename: "", };
+
+        this.onSubmit = this.onSubmit.bind(this);
+        this.onNameChange = this.onNameChange.bind(this);
+        this.onSurnameChange = this.onSurnameChange.bind(this);
+        this.onMiddlenameChange = this.onMiddlenameChange.bind(this);
+    }
+    onNameChange(e) {
+        this.setState({ name: e.target.value });
+    }
+    onSurnameChange(e) {
+        this.setState({ surname: e.target.value });
+    }
+    onMiddlenameChange(e) {
+        this.setState({ middlename: e.target.value });
+    }
+
+    onSubmit(e) {
+        e.preventDefault();
+        console.log("Asd");
+        var name = this.state.name.trim();
+        var surname = this.state.name.trim();
+        var middlename = this.state.name.trim();
+
+        console.log(name + " " + surname + " " + middlename);
+        if (!phoneName || phonePrice <= 0) {
+            return;
+        }
+        this.props.onUserSubmit({ name: name, surname: surname, middlename: middlename });
+        this.setState({ name: "", surname: "", middlename: "" });
+    }
+
+    render() {
+        return React.createElement('form', { onSubmit: this.onSubmit },
+            React.createElement('input', { placeholder: 'Name', type: 'text', onChange: this.onNameChange, value: this.state.name }),
+            React.createElement('input', { placeholder: 'Surname', type: 'text', onChange: this.onSurnameChange, value: this.state.surname }),
+            React.createElement('input', { placeholder: 'Middlename', type: 'text', onChange: this.onMiddlenameChange, value: this.state.middlename }),
+            React.createElement('button', { type: 'submit', className: 'postfix' }, 'Submit')
+
+        )
+    }
+}
 
 
 class UserList extends React.Component {
@@ -80,6 +125,6 @@ class UserList extends React.Component {
 
 
 ReactDOM.render(
-    React.createElement(UserList, null),
+    React.createElement(UserForm, null),
     document.getElementById('content'),
 );
