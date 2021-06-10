@@ -23,7 +23,6 @@ namespace RestFullApiCorpitech
         public IActionResult Get(DateTime startDate, DateTime endDate)
         {
             userService.EvalUsers(startDate, endDate);
-            //userService.EvalUsers(new DateTime(2021, 06, 07), new DateTime(2021, 10, 12));
             return new ObjectResult(userService.GetUsers());
         }
 

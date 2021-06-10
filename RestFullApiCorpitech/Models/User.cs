@@ -44,6 +44,9 @@ namespace RestFullApiCorpitech.Models
         public Double eval(DateTime startDate, DateTime endDate)
 
         {
+            if(startDate < dateOfEmployment || endDate <= dateOfEmployment || startDate >= endDate) {
+                return 0;            
+            }
             
             ICollection<DateTime> allVacationDates = new List<DateTime>();
             var vacations = Vacations.ToArray();
