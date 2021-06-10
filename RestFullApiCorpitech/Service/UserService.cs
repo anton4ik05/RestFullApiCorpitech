@@ -10,16 +10,20 @@ namespace RestFullApiCorpitech.Service
 {
     public class UserService
     {
-        private readonly UserRepository userRepository;
 
-        public UserService(UserRepository userRepository)
+        private readonly ApplicationContext context;
+
+        private EFGenericRepository<User> userRepository;
+
+        public UserService(ApplicationContext context)
         {
-            this.userRepository = userRepository;
+            this.context = context;
+            this.userRepository = new EFGenericRepository<User>(context);
         }
 
         public void EvalUsers(DateTime startDate, DateTime endDate)
         {
-            foreach (User user in userRepository.GetUsers())
+            foreach (User user in userRepository.Get())
             {
                 user.eval(startDate, endDate);
             }
@@ -27,17 +31,23 @@ namespace RestFullApiCorpitech.Service
 
         public void SaveUser(User model)
         {
-            userRepository.SaveUser(model);
+            userRepository.Create(model);
         }
+
+        public void UpdateUser(User model)
+        {
+            userRepository.Update(model);
+        }
+
 
         public void DeleteUser(Guid id)
         {
-            userRepository.DeleteUser(new User() { Id = id });
+            userRepository.Remove(new User() { Id = id });
         }
 
-        public IQueryable<User> GetUsers()
+        public IEnumerable<User> GetUsers()
         {
-            return userRepository.GetUsers();
+            return userRepository.Get();
         }
     }
 }

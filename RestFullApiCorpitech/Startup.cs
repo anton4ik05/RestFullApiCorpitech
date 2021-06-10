@@ -34,7 +34,6 @@ namespace RestFullApiCorpitech
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "RestFullApiCorpitech", Version = "v1" });
             });
 
-            services.AddTransient<UserRepository>();
             services.AddTransient<UserService>();
 
             string connection = Configuration.GetConnectionString("DefaultConnection");

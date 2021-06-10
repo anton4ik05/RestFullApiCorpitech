@@ -15,6 +15,8 @@ namespace RestFullApiCorpitech.Models
 
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Vacation> Vacations { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -94,7 +96,7 @@ namespace RestFullApiCorpitech.Models
 
                 });
 
-            modelBuilder.Entity<User>().HasMany(c => c.Vacations).WithOne(e => e.user);
+            //modelBuilder.Entity<User>().HasMany(c => c.Vacations).WithOne();
         }
 
     }

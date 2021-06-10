@@ -38,7 +38,7 @@ namespace RestFullApiCorpitech.Models
 
         public Double days { get; set; } = 0;
 
-        public ICollection<Vacation> Vacations { get; set; } = new List<Vacation>();
+        public ICollection<Vacation> Vacations { get; set; }// = new List<Vacation>();
 
 
         public Double eval(DateTime startDate, DateTime endDate)

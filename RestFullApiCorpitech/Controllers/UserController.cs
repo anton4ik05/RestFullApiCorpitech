@@ -28,11 +28,22 @@ namespace RestFullApiCorpitech
 
 
         [HttpPost]
-        public IActionResult UserEdit(User model)
+        public IActionResult UserCreate(User model)
         {
             if (ModelState.IsValid)
             {
                 userService.SaveUser(model);
+            }
+
+            return new ObjectResult(model);
+        }
+
+        [HttpPut]
+        public IActionResult UserEdit(User model)
+        {
+            if (ModelState.IsValid)
+            {
+                userService.UpdateUser(model);
             }
 
             return new ObjectResult(model);
