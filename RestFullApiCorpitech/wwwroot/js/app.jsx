@@ -39,7 +39,6 @@ class UserList extends React.Component {
         super(props);
         this.state = { users: [] };
     }
-    // загрузка данных
     loadData() {
         fetch("../users")
             .then(res => res.json())

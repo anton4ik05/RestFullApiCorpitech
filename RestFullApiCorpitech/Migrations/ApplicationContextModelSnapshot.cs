@@ -221,32 +221,17 @@ namespace RestFullApiCorpitech.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Middlename")
+                    b.Property<string>("middlename")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Surname")
+                    b.Property<string>("surname")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("dateOfEmployment")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("dateOfEndVacation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("dateOfStartVacation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("days")
-                        .HasColumnType("float");
-
-                    b.Property<double>("value")
-                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -256,37 +241,10 @@ namespace RestFullApiCorpitech.Migrations
                         new
                         {
                             Id = new Guid("716c2e99-6f6c-4472-81a5-43c56e11637c"),
-                            Middlename = "Иванович",
-                            Name = "Иван",
-                            Surname = "Иванов",
-                            dateOfEmployment = new DateTime(2015, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            dateOfEndVacation = new DateTime(2016, 11, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            dateOfStartVacation = new DateTime(2016, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            days = 0.0,
-                            value = 0.0
+                            middlename = "Иванович",
+                            name = "Иван",
+                            surname = "Иванов"
                         });
-                });
-
-            modelBuilder.Entity("RestFullApiCorpitech.Models.Vacation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("endVacation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("startVacation")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Vacation");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -338,18 +296,6 @@ namespace RestFullApiCorpitech.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("RestFullApiCorpitech.Models.Vacation", b =>
-                {
-                    b.HasOne("RestFullApiCorpitech.Models.User", null)
-                        .WithMany("Vacations")
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("RestFullApiCorpitech.Models.User", b =>
-                {
-                    b.Navigation("Vacations");
                 });
 #pragma warning restore 612, 618
         }
