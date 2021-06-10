@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,10 +25,9 @@ namespace RestFullApiCorpitech.Models
                 Surname = "Иванов",
                 Name = "Иван",
                 Middlename = "Иванович",
-                dateOfEmployment = new DateTime(2015,11,11),
-                dateOfStartVacation = new DateTime(2016, 11, 11),
-                dateOfEndVacation = new DateTime(2016, 11, 21)
-            });
+                dateOfEmployment = new DateTime(2015, 11, 11)
+            }
+            );
 
             modelBuilder.Entity<User>().HasMany(c => c.Vacations).WithOne(e => e.user);
         }
