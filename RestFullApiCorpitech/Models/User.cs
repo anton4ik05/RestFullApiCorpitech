@@ -44,8 +44,15 @@ namespace RestFullApiCorpitech.Models
         public Double eval(DateTime startDate, DateTime endDate)
 
         {
-            if(startDate < dateOfEmployment || endDate <= dateOfEmployment || startDate >= endDate) {
+            if(startDate < dateOfEmployment || endDate < dateOfEmployment || startDate > endDate) {
+                this.days = 0;
                 return 0;            
+            }
+
+            if (startDate == endDate)
+            {
+                this.days = 1;
+                return 1;
             }
             
             ICollection<DateTime> allVacationDates = new List<DateTime>();
