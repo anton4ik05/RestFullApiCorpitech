@@ -21,32 +21,33 @@ namespace RestFullApiCorpitech.Service
 
         public void EvalUsers(DateTime startDate, DateTime endDate)
         {
-            //ArrayList<User> users = new ArrayList<User>();
+            //Set<User> output = new Set<User>();
 
-            //foreach (User user in context.Users.Include(x => x.Vacations).ToList())
-            //{
-            //    eval(user, startDate, endDate);
-            //    context.Update(user);
-            //}
-            //context.SaveChanges();
+            foreach (User user in context.Users.Include(x => x.Vacations).ToList())
+            {
+                output.Add(user);
+                eval(user, startDate, endDate);
+            }
 
-            //return 
         }
 
-        public int eval(User user, DateTime startDate, DateTime endDate)
+        public List<Double> eval(User user, DateTime startDate, DateTime endDate)
 
         {
+            List<Double> output = new List<Double>();
 
             if (startDate < user.dateOfEmployment || endDate < user.dateOfEmployment || startDate > endDate)
             {
-                user.days = 0;
-                return 0;
+                output.Add(0);
+                output.Add(0);
+                return output;
             }
 
             if (startDate == endDate)
             {
-                user.days = 1;
-                return 0;
+                output.Add(1);
+                output.Add(0);
+                return output;
             }
 
             ICollection<DateTime> allVacationDates = new List<DateTime>();
@@ -69,10 +70,11 @@ namespace RestFullApiCorpitech.Service
             }
 
             Double days = (endDate - startDate).Days + 1 - intersect;
-            user.days = days;
-            user.value = Math.Round(Math.Round(days / 29.7) * 2.33);
+            Double value = Math.Round(Math.Round(days / 29.7) * 2.33);
 
-            return 0;
+            output.Add(days);
+            output.Add(value);
+            return output;
         }
 
         private static ICollection<DateTime> AllDates(DateTime startDate, DateTime endDate, ICollection<DateTime> allDates)
@@ -93,17 +95,16 @@ namespace RestFullApiCorpitech.Service
             context.SaveChanges();
         }
 
-        public void UpdateUser(Guid id, User model)
+        public void UpdateUser(Guid id, String Surname, String Name, String Middlename, DateTime dateOfEmployment, ICollection<Vacation> Vacations)
         {
-            var record = context.Users.Include(x=> x.Vacations).SingleOrDefault(x => x.Id == id);
+            User user = context.Users.Where(x => x.Id == id).FirstOrDefault();
+            user.Name = Name;
+            user.Surname = Surname;
+            user.Middlename = Middlename;
+            user.dateOfEmployment = dateOfEmployment;
+            user.Vacations = Vacations;
 
-            if (record == null) return;
-            record.Vacations = model.Vacations;
-            record.Middlename = model.Middlename;
-            record.Name = model.Name;
-            record.Surname = model.Surname;
-            record.dateOfEmployment = model.dateOfEmployment;
-            context.Update(record);
+            context.Update(user);
             context.SaveChanges();
         }
 
@@ -111,8 +112,7 @@ namespace RestFullApiCorpitech.Service
         public void DeleteUser(Guid id)
         {
 
-            User user = context.Users.FirstOrDefault(x => x.Id == id);
-
+            User user = context.Users.Where(x => x.Id == id).FirstOrDefault();
             context.Users.Remove(user);
             context.SaveChanges();
         }
