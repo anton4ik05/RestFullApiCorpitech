@@ -60,7 +60,7 @@ class User extends React.Component {
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log(result)
+                    console.log(this.state.data.id+"  "+result)
                     // this.setState({ users: result });
                 },
                 (error) => {
