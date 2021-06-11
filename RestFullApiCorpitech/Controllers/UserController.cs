@@ -26,6 +26,13 @@ namespace RestFullApiCorpitech
             return new ObjectResult(userService.GetUsers());
         }
 
+        [HttpGet]
+        [Route("/api/users/{id}")]
+        public IActionResult Get(Guid id, DateTime startDate, DateTime endDate)
+        {
+            
+            return new ObjectResult(userService.EvalUser(id, startDate, endDate));
+        }
 
         [HttpPost]
         [Route("/api/users")]

@@ -21,46 +21,28 @@ namespace RestFullApiCorpitech.Service
 
         public void EvalUsers(DateTime startDate, DateTime endDate)
         {
-            //Set<User> output = new Set<User>();
 
             foreach (User user in context.Users.Include(x => x.Vacations).ToList())
             {
-                //output.Add(user);
                 eval(user, startDate, endDate);
             }
 
         }
 
-        public List<Double> eval(User user, DateTime startDate, DateTime endDate)
+        public Double EvalUser(Guid id, DateTime startDate, DateTime endDate)
+        {
+            return eval(GetUser(id), startDate, endDate);
+
+        }
+
+        public Double eval(User user, DateTime startDate, DateTime endDate)
 
         {
-            List<Double> output = new List<Double>();
-
-            Double days = 0;
             Double value = 0;
 
-            if (startDate < user.dateOfEmployment || endDate < user.dateOfEmployment || startDate > endDate)
+            if (startDate < user.dateOfEmployment || endDate < user.dateOfEmployment || startDate > endDate || startDate == endDate || user.Vacations == null)
             {
-                output.Add(days);
-                output.Add(value);
-                return output;
-            }
-
-            if (startDate == endDate)
-            {
-                days = 1;
-                output.Add(days);
-                output.Add(value);
-                return output;
-            }
-
-            if(user.Vacations == null)
-            {
-                days = (endDate - startDate).Days + 1;
-                value = 0;
-                output.Add(days);
-                output.Add(value);
-                return output;
+                return value;
             }
 
             ICollection<DateTime> allVacationDates = new List<DateTime>();
@@ -82,12 +64,10 @@ namespace RestFullApiCorpitech.Service
                 };
             }
 
-            days = (endDate - startDate).Days + 1 - intersect;
+            Double days = (endDate - startDate).Days + 1 - intersect;
             value = Math.Round(Math.Round(days / 29.7) * 2.33);
 
-            output.Add(days);
-            output.Add(value);
-            return output;
+            return value;
         }
 
         private static ICollection<DateTime> AllDates(DateTime startDate, DateTime endDate, ICollection<DateTime> allDates)
@@ -138,12 +118,7 @@ namespace RestFullApiCorpitech.Service
 
         public User GetUser(Guid id)
         {
-            return context.Users.Find(id);
-        }
-
-        public User GetUser(User model)
-        {
-            return context.Users.Find(model);
+            return context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
         }
     }
 }
