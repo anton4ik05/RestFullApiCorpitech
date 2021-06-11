@@ -40,23 +40,28 @@ class User extends React.Component {
         this.myDatePicker = "";
         this.myDatePickerFirst = "";
         this.state = { data: props.user, fromDate: this.myDatePickerFirst, onDate: this.myDatePicker };
-
+        this.updateDate = this.updateDate.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
+        this.idForInp = Math.round(Math.random() * 10000);
     }
 
     onDateUpdate(e) {
-        this.setState({ onDate: e.target.textContent });
-        console.log(this.myDatePicker);
+        this.setState({ onDate: this.myDatePicker });
     }
 
+    updateDate(myDatePicker) {
+        this.setState({ onDate: myDatePicker });
+    }
     componentDidMount() {
         let myDatePicker = "";
-        $('[data-toggle="datepicker"]').datepicker({
+        let updateDate = this.updateDate.bind();
+        $('#date' + this.idForInp+'[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
-                $(this).text(formatDateForInput(date.date));
                 myDatePicker = formatDateForInput(date.date);
+                updateDate(myDatePicker);
             },
             autoPick: true,
+            autoHide: true,
             format: 'YYYY-mm-dd',
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
             daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
@@ -64,7 +69,6 @@ class User extends React.Component {
             months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
-        this.myDatePicker = myDatePicker;
     }
 
     render() {
@@ -73,8 +77,7 @@ class User extends React.Component {
             React.createElement('td', {}, this.state.data.surname + " " + this.state.data.name + " " + this.state.data.middlename),
             React.createElement('td', {}, formatDate(new Date(this.state.data.dateOfEmployment))),
             React.createElement('td', {}, Math.round(this.state.data.days)),
-            //React.createElement('td', {}, formatDate(new Date(this.state.data.dateOfEndVacation))),
-            React.createElement('td', {}, React.createElement('input', { "data-toggle": "datepicker", type: 'text',  onChange: this.onDateUpdate, value: this.state.onDate })),
+            React.createElement('td', {}, React.createElement('input', { id: "date" + this.idForInp, "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.onDate })),
 
         );
     }
@@ -85,12 +88,12 @@ class UserForm extends React.Component {
         super(props);
         this.myDatePicker = "";
         this.state = { name: "", surname: "", middlename: "", dateOfEmployment: this.myDatePicker };
-        
         this.onSubmit = this.onSubmit.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
         this.onSurnameChange = this.onSurnameChange.bind(this);
         this.onMiddlenameChange = this.onMiddlenameChange.bind(this);
         this.onDateOfEmploymentChange = this.onDateOfEmploymentChange.bind(this);
+        this.updateDate = this.updateDate.bind(this);
 
     }
     onNameChange(e) {
@@ -106,14 +109,20 @@ class UserForm extends React.Component {
     onDateOfEmploymentChange(e) {
         this.setState({ dateOfEmployment: e.target.textContent });
     }
-
+    updateDate(myDatePicker) {
+        this.setState({ dateOfEmployment: myDatePicker });
+    }
     componentDidMount() {
-        let myDatePicker ="";
+        let myDatePicker = "";
+        let updateDate = this.updateDate.bind();
         $('[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
                 $(this).text(formatDateForInput(date.date));
                 myDatePicker = formatDateForInput(date.date);
+                updateDate(myDatePicker);
             },
+            
+            autoHide: true,
             autoPick: true,
             format: 'YYYY-mm-dd',
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
@@ -122,7 +131,6 @@ class UserForm extends React.Component {
             months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
-        this.myDatePicker = myDatePicker;
     }
 
     onSubmit(e) {
@@ -144,7 +152,7 @@ class UserForm extends React.Component {
             React.createElement('input', { placeholder: 'Surname', type: 'text', onChange: this.onSurnameChange, value: this.state.surname }),
             React.createElement('input', { placeholder: 'Middlename', type: 'text', onChange: this.onMiddlenameChange, value: this.state.middlename }),
             React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
-            React.createElement('button', { type: 'submit', className: 'postfix' }, 'Submit')
+            React.createElement('button', { type: 'submit', className: 'postfix' }, 'Добавить')
         )
     }
 }
@@ -160,6 +168,7 @@ class UserList extends React.Component {
     }
     loadData() {
         let startDate = "2000-02-11", endDate = formatDateForInput(new Date);
+        console.log(endDate);
         fetch(`../api/users?=startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`, {
             method: "GET",
         })
@@ -232,7 +241,7 @@ class UserList extends React.Component {
                         React.createElement('th', {}, "На дату"))),
                 React.createElement('tbody', {},
                     this.state.users.map(function (user) {
-                        return React.createElement(User, { key: Math.random(), user: user })
+                        return React.createElement(User, { key: Math.random() * Math.random(), user: user })
                     })
                 )
 
