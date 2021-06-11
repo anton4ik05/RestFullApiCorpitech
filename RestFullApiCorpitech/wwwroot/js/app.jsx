@@ -39,7 +39,7 @@ class User extends React.Component {
         super(props);
         this.myDatePicker = "";
         this.myDatePickerFirst = "";
-        this.state = { data: props.user, fromDate: this.myDatePickerFirst, onDate: this.myDatePicker };
+        this.state = { data: props.user, fromDate: formatDateForInput(new Date(props.user.dateOfEmployment)), onDate: formatDateForInput(new Date()) };
         this.updateDate = this.updateDate.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
         this.fromDateUpdate = this.fromDateUpdate.bind(this);
@@ -53,6 +53,21 @@ class User extends React.Component {
     fromDateUpdate(e) {
         this.setState({ fromDate: this.myDatePickerFirst });
     }
+    evalVacation() {
+        fetch(`../api/users/` + this.state.data.id + `?=startDate=${encodeURIComponent(this.state.fromDate)}&endDate=${encodeURIComponent(this.state.onDate)}`, {
+            method: "GET",
+        })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log(result)
+                    // this.setState({ users: result });
+                },
+                (error) => {
+                    console.log(error)
+                }
+            )
+    }
 
     updateDate(myDatePicker, on) { //true - onDate,false- fromDate
         if (on) {
@@ -60,6 +75,9 @@ class User extends React.Component {
         } else {
             this.setState({ fromDate: myDatePicker });
         }
+        this.evalVacation();
+        
+        
         
     }
     componentDidMount() {
@@ -95,19 +113,6 @@ class User extends React.Component {
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
         $('#fromDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker('setDate', new Date(this.state.data.dateOfEmployment));
-       /* fetch(`../api/users?=userID=${encodeURIComponent(startDate)}&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`, {
-            method: "GET",
-        })
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    console.log(result)
-                   // this.setState({ users: result });
-                },
-                (error) => {
-                    console.log(error)
-                }
-            )*/
     }
 
     render() {
