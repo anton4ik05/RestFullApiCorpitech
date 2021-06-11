@@ -41,11 +41,11 @@ namespace RestFullApiCorpitech.Models
         public ICollection<Vacation> Vacations { get; set; }
 
 
-        public Double eval(DateTime startDate, DateTime endDate)
+        public int eval(DateTime startDate, DateTime endDate)
 
         {
 
-            if(startDate < dateOfEmployment || endDate < dateOfEmployment || startDate > endDate || Vacations == null) {
+            if(startDate < dateOfEmployment || endDate < dateOfEmployment || startDate > endDate) {
                 this.days = 0;
                 return 0;            
             }
@@ -79,7 +79,7 @@ namespace RestFullApiCorpitech.Models
             this.days = days;
             this.value = Math.Round(Math.Round(days / 29.7) * 2.33);
 
-            return this.value;
+            return 0;
         }
 
         private static ICollection<DateTime> AllDates(DateTime startDate, DateTime endDate, ICollection<DateTime> allDates)

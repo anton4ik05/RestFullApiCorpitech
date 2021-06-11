@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using RestFullApiCorpitech.Models;
 using RestFullApiCorpitech.Service;
@@ -40,15 +41,15 @@ namespace RestFullApiCorpitech
 
         [HttpPut]
         [Route("/api/users/{id}")]
-        public IActionResult UserEdit(Guid id, User model)
+        public IActionResult UserEdit(Guid id, String Surname, String Name, String Middlename, DateTime dateOfEmployment, ICollection<Vacation> Vacations)
         {
             if (ModelState.IsValid)
             {
-                userService.UpdateUser(id, model);
+                userService.UpdateUser(id, Surname, Name, Middlename, dateOfEmployment, Vacations);
             }
 
-            return new ObjectResult(model);
-        }
+            return new ObjectResult("updated");
+    }
 
 
         [HttpDelete]
