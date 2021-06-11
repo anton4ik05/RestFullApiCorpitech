@@ -42,6 +42,7 @@ class User extends React.Component {
         this.state = { data: props.user, fromDate: this.myDatePickerFirst, onDate: this.myDatePicker };
         this.updateDate = this.updateDate.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
+        this.fromDateUpdate = this.fromDateUpdate.bind(this);
         this.idForInp = Math.round(Math.random() * 10000);
     }
 
@@ -49,16 +50,25 @@ class User extends React.Component {
         this.setState({ onDate: this.myDatePicker });
     }
 
-    updateDate(myDatePicker) {
-        this.setState({ onDate: myDatePicker });
+    fromDateUpdate(e) {
+        this.setState({ fromDate: this.myDatePickerFirst });
+    }
+
+    updateDate(myDatePicker, on) { //true - onDate,false- fromDate
+        if (on) {
+            this.setState({ onDate: myDatePicker });
+        } else {
+            this.setState({ fromDate: myDatePicker });
+        }
+        
     }
     componentDidMount() {
-        let myDatePicker = "";
+        let myDatePicker = "", myDatePickerFirst = ""; 
         let updateDate = this.updateDate.bind();
-        $('#date' + this.idForInp+'[data-toggle="datepicker"]').datepicker({
+        $('#onDate' + this.idForInp+'[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
                 myDatePicker = formatDateForInput(date.date);
-                updateDate(myDatePicker);
+                updateDate(myDatePicker,true);
             },
             autoPick: true,
             autoHide: true,
@@ -69,15 +79,32 @@ class User extends React.Component {
             months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
+        $('#fromDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
+            pick: function (date, view) {
+                myDatePickerFirst = formatDateForInput(date.date);
+                updateDate(myDatePickerFirst,false);
+            },
+            'setDate': new Date(this.state.data.dateOfEmployment),
+            autoPick: false,
+            autoHide: true,
+            format: 'YYYY-mm-dd',
+            days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+            daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+            monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+        });
+        $('#fromDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker('setDate', new Date(this.state.data.dateOfEmployment));
     }
 
     render() {
         return React.createElement(
             'tr', null,
             React.createElement('td', {}, this.state.data.surname + " " + this.state.data.name + " " + this.state.data.middlename),
-            React.createElement('td', {}, formatDate(new Date(this.state.data.dateOfEmployment))),
+           // React.createElement('td', {}, formatDate(new Date(this.state.data.dateOfEmployment))),
+            React.createElement('td', {}, React.createElement('input', { id: "fromDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.fromDate })),
             React.createElement('td', {}, Math.round(this.state.data.days)),
-            React.createElement('td', {}, React.createElement('input', { id: "date" + this.idForInp, "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.onDate })),
+            React.createElement('td', {}, React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.onDate })),
 
         );
     }
@@ -236,9 +263,9 @@ class UserList extends React.Component {
                 React.createElement('thead', {},
                     React.createElement('tr', {},
                         React.createElement('th', {}, "ФИО"),
-                        React.createElement('th', {}, "Дата трудоустройства"),
+                        React.createElement('th', {}, "Начальная дата"),
                         React.createElement('th', {}, "Дней Отпуска"),
-                        React.createElement('th', {}, "На дату"))),
+                        React.createElement('th', {}, "Конечная дата"))),
                 React.createElement('tbody', {},
                     this.state.users.map(function (user) {
                         return React.createElement(User, { key: Math.random() * Math.random(), user: user })
