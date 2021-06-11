@@ -42,10 +42,11 @@ class User extends React.Component {
         this.state = { data: props.user, fromDate: this.myDatePickerFirst, onDate: this.myDatePicker };
         this.updateDate = this.updateDate.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
+        this.idForInp = Math.round(Math.random() * 10000);
     }
 
     onDateUpdate(e) {
-        this.setState({ onDate: e.target.textContent });
+        this.setState({ onDate: this.myDatePicker });
     }
 
     updateDate(myDatePicker) {
@@ -54,9 +55,8 @@ class User extends React.Component {
     componentDidMount() {
         let myDatePicker = "";
         let updateDate = this.updateDate.bind();
-        $('[data-toggle="datepicker"]').datepicker({
+        $('#date' + this.idForInp+'[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
-                $(this).text(formatDateForInput(date.date));
                 myDatePicker = formatDateForInput(date.date);
                 updateDate(myDatePicker);
             },
@@ -77,8 +77,7 @@ class User extends React.Component {
             React.createElement('td', {}, this.state.data.surname + " " + this.state.data.name + " " + this.state.data.middlename),
             React.createElement('td', {}, formatDate(new Date(this.state.data.dateOfEmployment))),
             React.createElement('td', {}, Math.round(this.state.data.days)),
-            //React.createElement('td', {}, formatDate(new Date(this.state.data.dateOfEndVacation))),
-            React.createElement('td', {}, React.createElement('input', { "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.onDate })),
+            React.createElement('td', {}, React.createElement('input', { id: "date" + this.idForInp, "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.onDate })),
 
         );
     }
@@ -89,7 +88,6 @@ class UserForm extends React.Component {
         super(props);
         this.myDatePicker = "";
         this.state = { name: "", surname: "", middlename: "", dateOfEmployment: this.myDatePicker };
-        
         this.onSubmit = this.onSubmit.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
         this.onSurnameChange = this.onSurnameChange.bind(this);
@@ -154,7 +152,7 @@ class UserForm extends React.Component {
             React.createElement('input', { placeholder: 'Surname', type: 'text', onChange: this.onSurnameChange, value: this.state.surname }),
             React.createElement('input', { placeholder: 'Middlename', type: 'text', onChange: this.onMiddlenameChange, value: this.state.middlename }),
             React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
-            React.createElement('button', { type: 'submit', className: 'postfix' }, 'Submit')
+            React.createElement('button', { type: 'submit', className: 'postfix' }, 'Добавить')
         )
     }
 }
@@ -170,6 +168,7 @@ class UserList extends React.Component {
     }
     loadData() {
         let startDate = "2000-02-11", endDate = formatDateForInput(new Date);
+        console.log(endDate);
         fetch(`../api/users?=startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`, {
             method: "GET",
         })
@@ -242,7 +241,7 @@ class UserList extends React.Component {
                         React.createElement('th', {}, "На дату"))),
                 React.createElement('tbody', {},
                     this.state.users.map(function (user) {
-                        return React.createElement(User, { key: Math.random(), user: user })
+                        return React.createElement(User, { key: Math.random() * Math.random(), user: user })
                     })
                 )
 
