@@ -10,7 +10,6 @@ namespace RestFullApiCorpitech.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [JsonIgnore]
         public Guid Id { get; set; }
 
         [Display(Name = "Дата начала отпуска")]
