@@ -38,12 +38,13 @@ namespace RestFullApiCorpitech.Models
 
         public Double days { get; set; } = 0;
 
-        public ICollection<Vacation> Vacations { get; set; }// = new List<Vacation>();
+        public ICollection<Vacation> Vacations { get; set; }
 
 
         public Double eval(DateTime startDate, DateTime endDate)
 
         {
+
             if(startDate < dateOfEmployment || endDate < dateOfEmployment || startDate > endDate || Vacations == null) {
                 this.days = 0;
                 return 0;            
@@ -52,7 +53,7 @@ namespace RestFullApiCorpitech.Models
             if (startDate == endDate)
             {
                 this.days = 1;
-                return 1;
+                return 0;
             }
             
             ICollection<DateTime> allVacationDates = new List<DateTime>();

@@ -1,5 +1,4 @@
 ﻿using RestFullApiCorpitech.Models;
-using RestFullApiCorpitech.Repos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,17 +13,14 @@ namespace RestFullApiCorpitech.Service
 
         private readonly ApplicationContext context;
 
-        private EFGenericRepository<User> userRepository;
-
         public UserService(ApplicationContext context)
         {
             this.context = context;
-            this.userRepository = new EFGenericRepository<User>(context);
         }
 
         public void EvalUsers(DateTime startDate, DateTime endDate)
         {
-            foreach (User user in userRepository.Get())
+            foreach (User user in context.Users.Include(x => x.Vacations).ToList())
             {
                 user.eval(startDate, endDate);
             }
@@ -32,24 +28,39 @@ namespace RestFullApiCorpitech.Service
 
         public void SaveUser(User model)
         {
-            userRepository.Create(model);
+            context.Users.Add(model);
+            context.SaveChanges();
         }
 
-        public void UpdateUser(User model)
+        public void UpdateUser(Guid id, User model)
         {
-            userRepository.Update(model);
+            model.Id = id;
+            context.Entry(model).State = EntityState.Modified;
+            context.SaveChanges();
         }
 
 
         public void DeleteUser(Guid id)
         {
-            userRepository.Remove(new User() { Id = id });
+
+            User user = context.Users.Where(x => x.Id == id).FirstOrDefault();
+            context.Users.Remove(user);
+            context.SaveChanges();
         }
 
         public IEnumerable<User> GetUsers()
         {
-            var users = context.Users.Include(x => x.Vacations).ToList();
-            return users;
+            return context.Users.Include(x => x.Vacations).ToList();
+        }
+
+        public User GetUser(Guid id)
+        {
+            return context.Users.Find(id);
+        }
+
+        public User GetUser(User model)
+        {
+            return context.Users.Find(model);
         }
     }
 }
