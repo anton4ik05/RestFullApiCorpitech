@@ -13,7 +13,6 @@ namespace RestFullApiCorpitech.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [JsonIgnore]
         public Guid Id { get; set; }
 
         [Required(ErrorMessage = "Заполните Фамилию")]
