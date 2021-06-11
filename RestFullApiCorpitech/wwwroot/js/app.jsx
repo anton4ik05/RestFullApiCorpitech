@@ -26,6 +26,7 @@ function formatDateForInput(date) {
     return yy + '-' + mm + '-' + dd ;
 }
 
+let myDatePicker="";
 class User extends React.Component {
     constructor(props) {
         super(props);
@@ -46,7 +47,7 @@ class User extends React.Component {
 class UserForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { name: "", surname: "", middlename: "", dateOfEmployment: ""};
+        this.state = { name: "", surname: "", middlename: "", dateOfEmployment: myDatePicker};
 
         this.onSubmit = this.onSubmit.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
@@ -63,31 +64,17 @@ class UserForm extends React.Component {
     }
     onMiddlenameChange(e) {
         this.setState({ middlename: e.target.value });
+       
     }
     onDateOfEmploymentChange(e) {
-        console.log(e.target.textContent);
-        this.setState({ dateOfEmployment: e.target.textContent   } );
-    }
-    dateLoad(e) {
-        $('[data-toggle="datepicker"]').datepicker({
-            pick: function (date, view) {
-                this.setState({ dateOfEmployment: formatDateForInput(date.date) });
-                $(this).change();
-            },
-            autoPick: true,
-            format: 'YYYY-mm-dd',
-            days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
-            daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
-            daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
-            months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
-            monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
-        });
+        this.setState({ dateOfEmployment: e.target.textContent });
     }
 
     componentDidMount() {
         $('[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
                 $(this).text(formatDateForInput(date.date));
+                myDatePicker = formatDateForInput(date.date);
             },
             autoPick: true,
             format: 'YYYY-mm-dd',
@@ -104,7 +91,7 @@ class UserForm extends React.Component {
         var name = this.state.name.trim();
         var surname = this.state.surname.trim();
         var middlename = this.state.middlename.trim();
-        var dateOfEmployment = this.state.dateOfEmployment.trim();
+        var dateOfEmployment = myDatePicker.trim();
 
         console.log(name + " " + surname + " " + middlename);
         if (!name || !surname || !middlename || !dateOfEmployment) {
@@ -119,7 +106,7 @@ class UserForm extends React.Component {
             React.createElement('input', { placeholder: 'Name', type: 'text', onChange: this.onNameChange, value: this.state.name }),
             React.createElement('input', { placeholder: 'Surname', type: 'text', onChange: this.onSurnameChange, value: this.state.surname }),
             React.createElement('input', { placeholder: 'Middlename', type: 'text', onChange: this.onMiddlenameChange, value: this.state.middlename }),
-            React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text',  onChange: this.onDateOfEmploymentChange,value: this.state.dateOfEmployment }),
+            React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
             React.createElement('button', { type: 'submit', className: 'postfix' }, 'Submit')
         )
     }
