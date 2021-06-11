@@ -32,15 +32,19 @@ namespace RestFullApiCorpitech.Service
             context.SaveChanges();
         }
 
-        public void UpdateUser(User model)
+        public void UpdateUser(Guid id, User model)
         {
-            context.Users.Update(model);
+            //User user = GetUser(id);
+            model.Id = id;
+            //user = model;
+            context.Entry(model).State = EntityState.Modified;
             context.SaveChanges();
         }
 
 
         public void DeleteUser(Guid id)
         {
+<<<<<<< HEAD
             //[HttpDelete]
             //public void DeleteWorker(Guid id)
             //{
@@ -50,12 +54,25 @@ namespace RestFullApiCorpitech.Service
             //}
             User user = context.Users.Where(x => x.Id == id).FirstOrDefault();
             context.Users.Remove(user);
+=======
+            context.Users.Remove(new User() { Id = id });
+>>>>>>> xrect
             context.SaveChanges();
         }
 
         public IEnumerable<User> GetUsers()
         {
             return context.Users.Include(x => x.Vacations).ToList();
+        }
+
+        public User GetUser(Guid id)
+        {
+            return context.Users.Find(id);
+        }
+
+        public User GetUser(User model)
+        {
+            return context.Users.Find(model);
         }
     }
 }
