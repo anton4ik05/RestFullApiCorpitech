@@ -34,8 +34,15 @@ namespace RestFullApiCorpitech.Service
 
         public void UpdateUser(Guid id, User model)
         {
-            model.Id = id;
-            context.Entry(model).State = EntityState.Modified;
+            var record = context.Users.Include(x=> x.Vacations).SingleOrDefault(x => x.Id == id);
+
+            if (record == null) return;
+            record.Vacations = model.Vacations;
+            record.Middlename = model.Middlename;
+            record.Name = model.Name;
+            record.Surname = model.Surname;
+            record.dateOfEmployment = model.dateOfEmployment;
+            context.Update(record);
             context.SaveChanges();
         }
 
