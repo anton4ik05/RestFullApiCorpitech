@@ -45,6 +45,7 @@ class User extends React.Component {
     }
 
     onDateUpdate(e) {
+        this.setState({ onDate: e.target.textContent });
         console.log(this.myDatePicker);
     }
 
@@ -73,7 +74,7 @@ class User extends React.Component {
             React.createElement('td', {}, formatDate(new Date(this.state.data.dateOfEmployment))),
             React.createElement('td', {}, Math.round(this.state.data.days)),
             //React.createElement('td', {}, formatDate(new Date(this.state.data.dateOfEndVacation))),
-            React.createElement('td', {}, React.createElement('input', { "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.data.dateOfEndVacation })),
+            React.createElement('td', {}, React.createElement('input', { "data-toggle": "datepicker", type: 'text',  onChange: this.onDateUpdate, value: this.state.onDate })),
 
         );
     }
@@ -159,7 +160,7 @@ class UserList extends React.Component {
     }
     loadData() {
         let startDate = "2000-02-11", endDate = formatDateForInput(new Date);
-        fetch(`../users?=startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`, {
+        fetch(`../api/users?=startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`, {
             method: "GET",
         })
             .then(res => res.json())
@@ -202,7 +203,7 @@ class UserList extends React.Component {
             data.append("dateOfEmployment", user.dateOfEmployment);
             data.append("vacations", user.vacations);
             console.log(data);
-            fetch('../users', {
+            fetch('../api/users', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json; charset=utf-8',
