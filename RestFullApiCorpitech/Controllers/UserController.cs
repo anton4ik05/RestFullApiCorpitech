@@ -41,11 +41,11 @@ namespace RestFullApiCorpitech
 
         [HttpPut]
         [Route("/api/users/{id}")]
-        public IActionResult UserEdit(Guid id, String Surname, String Name, String Middlename, DateTime dateOfEmployment, ICollection<Vacation> Vacations)
+        public IActionResult UserEdit(Guid id, User model)
         {
             if (ModelState.IsValid)
             {
-                userService.UpdateUser(id, Surname, Name, Middlename, dateOfEmployment, Vacations);
+                userService.UpdateUser(id, model);
             }
 
             return new ObjectResult("updated");

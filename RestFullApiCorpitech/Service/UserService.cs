@@ -21,16 +21,16 @@ namespace RestFullApiCorpitech.Service
 
         public void EvalUsers(DateTime startDate, DateTime endDate)
         {
-            ArrayList<User> users = new ArrayList<User>;
+            //ArrayList<User> users = new ArrayList<User>();
 
-            foreach (User user in context.Users.Include(x => x.Vacations).ToList())
-            {
-                eval(user, startDate, endDate);
-                context.Update(user);
-            }
-            context.SaveChanges();
+            //foreach (User user in context.Users.Include(x => x.Vacations).ToList())
+            //{
+            //    eval(user, startDate, endDate);
+            //    context.Update(user);
+            //}
+            //context.SaveChanges();
 
-            return 
+            //return 
         }
 
         public int eval(User user, DateTime startDate, DateTime endDate)
@@ -93,7 +93,7 @@ namespace RestFullApiCorpitech.Service
             context.SaveChanges();
         }
 
-        public void UpdateUser(Guid id, String Surname, String Name, String Middlename, DateTime dateOfEmployment, ICollection<Vacation> Vacations)
+        public void UpdateUser(Guid id, User model)
         {
             var record = context.Users.Include(x=> x.Vacations).SingleOrDefault(x => x.Id == id);
 
