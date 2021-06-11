@@ -26,6 +26,13 @@ function formatDateForInput(date) {
     return yy + '-' + mm + '-' + dd ;
 }
 
+function objToQueryString(obj) {
+    const keyValuePairs = [];
+    for (const key in obj) {
+        keyValuePairs.push(encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]));
+    }
+    return keyValuePairs.join('&');
+}
 let myDatePicker="";
 class User extends React.Component {
     constructor(props) {
@@ -122,7 +129,10 @@ class UserList extends React.Component {
        // this.onRemoveUser = this.onRemoveUser.bind(this);
     }
     loadData() {
-        fetch("../users")
+        let startDate = "2000-02-11", endDate = "2125-06-11";
+        fetch(`../users?=startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`, {
+            method: "GET",
+        })
             .then(res => res.json())
             .then(
                 (result) => {
@@ -133,6 +143,17 @@ class UserList extends React.Component {
                     console.log(error)
                 }
             )
+        /*fetch("../users")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log(result)
+                    this.setState({ users: result });
+                },
+                (error) => {
+                    console.log(error)
+                }
+            )*/
 
     }
     componentDidMount() {
