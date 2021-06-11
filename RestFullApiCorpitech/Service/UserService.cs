@@ -39,11 +39,14 @@ namespace RestFullApiCorpitech.Service
 
         {
             Double value = 0;
+            Double intersect = 0;
 
-            if (startDate < user.dateOfEmployment || endDate < user.dateOfEmployment || startDate > endDate || startDate == endDate || user.Vacations == null)
+            if (startDate < user.dateOfEmployment || endDate < user.dateOfEmployment || startDate > endDate || startDate == endDate)
             {
                 return value;
             }
+
+            if (user.Vacations != null) { 
 
             ICollection<DateTime> allVacationDates = new List<DateTime>();
             var vacations = user.Vacations.ToArray();
@@ -54,7 +57,7 @@ namespace RestFullApiCorpitech.Service
                 allVacationDates = AllDates(vacation.startVacation, vacation.endVacation, allVacationDates);
             }
 
-            Double intersect = 0;
+            
 
             foreach (var date in allVacationDates)
             {
@@ -64,6 +67,7 @@ namespace RestFullApiCorpitech.Service
                 };
             }
 
+        }
             Double days = (endDate - startDate).Days + 1 - intersect;
             value = Math.Round(Math.Round(days / 29.7) * 2.33);
 
