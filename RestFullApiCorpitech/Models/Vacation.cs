@@ -23,6 +23,7 @@ namespace RestFullApiCorpitech.Models
         public DateTime endVacation { get; set; }
 
         [JsonIgnore]
+        [ForeignKey("User")]
         public User user { get; set; }
 
     }

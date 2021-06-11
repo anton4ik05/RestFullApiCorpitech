@@ -32,16 +32,18 @@ namespace RestFullApiCorpitech.Service
             context.SaveChanges();
         }
 
-        public void UpdateUser(User model)
+        public void UpdateUser(Guid id, User model)
         {
-            context.Users.Update(model);
+            //User user = GetUser(id);
+            model.Id = id;
+            //user = model;
+            context.Entry(model).State = EntityState.Modified;
             context.SaveChanges();
         }
 
 
         public void DeleteUser(Guid id)
         {
-            context.Vacations.Remove(new Vacation() { user = new User() { Id = id } });
             context.Users.Remove(new User() { Id = id });
             context.SaveChanges();
         }
@@ -49,6 +51,16 @@ namespace RestFullApiCorpitech.Service
         public IEnumerable<User> GetUsers()
         {
             return context.Users.Include(x => x.Vacations).ToList();
+        }
+
+        public User GetUser(Guid id)
+        {
+            return context.Users.Find(id);
+        }
+
+        public User GetUser(User model)
+        {
+            return context.Users.Find(model);
         }
     }
 }
