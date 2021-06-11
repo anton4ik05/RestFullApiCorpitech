@@ -95,13 +95,25 @@ class User extends React.Component {
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
         $('#fromDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker('setDate', new Date(this.state.data.dateOfEmployment));
+       /* fetch(`../api/users?=userID=${encodeURIComponent(startDate)}&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`, {
+            method: "GET",
+        })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log(result)
+                   // this.setState({ users: result });
+                },
+                (error) => {
+                    console.log(error)
+                }
+            )*/
     }
 
     render() {
         return React.createElement(
             'tr', null,
             React.createElement('td', {}, this.state.data.surname + " " + this.state.data.name + " " + this.state.data.middlename),
-           // React.createElement('td', {}, formatDate(new Date(this.state.data.dateOfEmployment))),
             React.createElement('td', {}, React.createElement('input', { id: "fromDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.fromDate })),
             React.createElement('td', {}, Math.round(this.state.data.days)),
             React.createElement('td', {}, React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.onDate })),
@@ -209,24 +221,10 @@ class UserList extends React.Component {
                     console.log(error)
                 }
             )
-        /*fetch("../users")
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    console.log(result)
-                    this.setState({ users: result });
-                },
-                (error) => {
-                    console.log(error)
-                }
-            )*/
 
     }
     componentDidMount() {
         this.loadData();
-        /*$('[data-toggle="datepicker"]').datepicker({
-            language: 'ru-RU'
-        });*/
     }
 
     onAddUser(user) {
