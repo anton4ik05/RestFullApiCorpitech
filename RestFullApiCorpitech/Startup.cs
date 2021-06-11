@@ -6,7 +6,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using RestFullApiCorpitech.Models;
-using RestFullApiCorpitech.Repos;
 using Microsoft.AspNetCore.Http;
 using React.AspNet;
 using JavaScriptEngineSwitcher.ChakraCore;
@@ -34,7 +33,6 @@ namespace RestFullApiCorpitech
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "RestFullApiCorpitech", Version = "v1" });
             });
 
-            services.AddTransient<UserRepository>();
             services.AddTransient<UserService>();
 
             string connection = Configuration.GetConnectionString("DefaultConnection");

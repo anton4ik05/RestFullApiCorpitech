@@ -1,14 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using RestFullApiCorpitech.Models;
-using RestFullApiCorpitech.Repos;
 using RestFullApiCorpitech.Service;
 
 namespace RestFullApiCorpitech
 {
    
     [ApiController]
-    [Route("/users")]
+    [Route("/api/users")]
     
     public class UserController : Controller
     {
@@ -20,15 +20,16 @@ namespace RestFullApiCorpitech
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get(DateTime startDate, DateTime endDate)
         {
-            userService.EvalUsers();
+            userService.EvalUsers(startDate, endDate);
             return new ObjectResult(userService.GetUsers());
         }
 
 
         [HttpPost]
-        public IActionResult UserEdit(User model)
+        [Route("/api/users")]
+        public IActionResult UserCreate(User model)
         {
             if (ModelState.IsValid)
             {
@@ -38,8 +39,21 @@ namespace RestFullApiCorpitech
             return new ObjectResult(model);
         }
 
+        [HttpPut]
+        [Route("/api/users/{id}")]
+        public IActionResult UserEdit(Guid id, User model)
+        {
+            if (ModelState.IsValid)
+            {
+                userService.UpdateUser(id, model);
+            }
+
+            return new ObjectResult("updated");
+    }
+
 
         [HttpDelete]
+        [Route("/api/users/del")]
         public IActionResult UserDelete(Guid id)
         {
             userService.DeleteUser(id);

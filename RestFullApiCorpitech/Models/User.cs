@@ -34,53 +34,64 @@ namespace RestFullApiCorpitech.Models
         [DataType(DataType.Date)]
         public DateTime dateOfEmployment { get; set; } = DateTime.MinValue;
 
-        [Display(Name = "Дата начала отпуска")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
-        [DataType(DataType.Date)]
-        public DateTime dateOfStartVacation { get; set; } = DateTime.MinValue;
-
-        [Display(Name = "Дата конца отпуска")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
-        [DataType(DataType.Date)]
-        public DateTime dateOfEndVacation { get; set; } = DateTime.MinValue;
-
         public Double value { get; set; } = 0;
 
         public Double days { get; set; } = 0;
 
-        public ICollection<Vacation> Vacations { get; set; } = new List<Vacation>();
+        public ICollection<Vacation> Vacations { get; set; }
 
-        public void AddVacation(DateTime x, DateTime y)
+
+        public int eval(DateTime startDate, DateTime endDate)
+
         {
-            Vacation vacation = new Vacation
+
+            if(startDate < dateOfEmployment || endDate < dateOfEmployment || startDate > endDate) {
+                this.days = 0;
+                return 0;            
+            }
+
+            if (startDate == endDate)
             {
-                startVacation = x,
-                endVacation = y
-            };
-            Vacations.Add(vacation);
+                this.days = 1;
+                return 0;
+            }
+            
+            ICollection<DateTime> allVacationDates = new List<DateTime>();
+            var vacations = Vacations.ToArray();
+
+            foreach (var vacation in vacations)
+            {
+                DateTime date = vacation.endVacation;
+                allVacationDates = AllDates(vacation.startVacation, vacation.endVacation, allVacationDates);
+            }
+
+            Double intersect = 0;
+
+            foreach (var date in allVacationDates)
+            {
+                if(Between(date ,startDate, endDate))
+                {
+                    intersect++;
+                };
+            }
+
+            Double days = (endDate - startDate).Days + 1 - intersect;
+            this.days = days;
+            this.value = Math.Round(Math.Round(days / 29.7) * 2.33);
+
+            return 0;
         }
 
-
-        public Double eval(DateTime endDate)
-
+        private static ICollection<DateTime> AllDates(DateTime startDate, DateTime endDate, ICollection<DateTime> allDates)
         {
-            DateTime startDate = new DateTime();
-            if(dateOfEndVacation != DateTime.MinValue)
-            {
-                startDate = dateOfEndVacation;
-            }
-            else
-            {
-                startDate = dateOfEmployment;
-            }
+            for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+                allDates.Add(date);
+            return allDates;
+        }
 
-            Double days = (endDate - startDate).Days;
-            this.days = days;
-            this.value = Math.Round(days / 29.7) * 2.33;
-            AddVacation(dateOfStartVacation, dateOfEndVacation);
-            AddVacation(dateOfEndVacation,dateOfStartVacation);
-
-            return this.value;
+        private static bool Between(DateTime input, DateTime date1, DateTime date2)
+        {
+            return (input >= date1 && input <= date2);
         }
     }
 }

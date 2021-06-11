@@ -8,14 +8,14 @@
     text-align: center;
 }
 caption {
-    border: 1px solid #000;
+    border: 2px solid #000;
 }
 thead{
     background:#fff0b6
 }
 th {
-    border: 1px solid #000;
+    border: 2px solid #000;
 }
-td{
-    border:1px solid #000;
+td {
+    border: 2px solid #000;
 }
