@@ -39,18 +39,21 @@ class User extends React.Component {
         super(props);
         this.myDatePicker = "";
         this.myDatePickerFirst = "";
-        this.state = { data: props.user, onDate: this.myDatePicker };
+        this.state = { data: props.user, fromDate: this.myDatePickerFirst, onDate: this.myDatePicker };
+
+        this.onDateUpdate = this.onDateUpdate.bind(this);
     }
 
-    onDateOfEmploymentChange(e) {
-        this.setState({ dateOfEmployment: e.target.textContent });
+    onDateUpdate(e) {
+        console.log(this.myDatePicker);
     }
 
     componentDidMount() {
+        let myDatePicker = "";
         $('[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
                 $(this).text(formatDateForInput(date.date));
-                this.myDatePicker = formatDateForInput(date.date);
+                myDatePicker = formatDateForInput(date.date);
             },
             autoPick: true,
             format: 'YYYY-mm-dd',
@@ -60,6 +63,7 @@ class User extends React.Component {
             months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
+        this.myDatePicker = myDatePicker;
     }
 
     render() {
@@ -69,7 +73,7 @@ class User extends React.Component {
             React.createElement('td', {}, formatDate(new Date(this.state.data.dateOfEmployment))),
             React.createElement('td', {}, Math.round(this.state.data.days)),
             //React.createElement('td', {}, formatDate(new Date(this.state.data.dateOfEndVacation))),
-            React.createElement('td', {}, React.createElement('input', { "data-toggle": "datepicker", type: 'text', value: this.state.data.dateOfEndVacation })),
+            React.createElement('td', {}, React.createElement('input', { "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.data.dateOfEndVacation })),
 
         );
     }
@@ -103,10 +107,11 @@ class UserForm extends React.Component {
     }
 
     componentDidMount() {
+        let myDatePicker ="";
         $('[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
                 $(this).text(formatDateForInput(date.date));
-                this.myDatePicker = formatDateForInput(date.date);
+                myDatePicker = formatDateForInput(date.date);
             },
             autoPick: true,
             format: 'YYYY-mm-dd',
@@ -116,6 +121,7 @@ class UserForm extends React.Component {
             months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
+        this.myDatePicker = myDatePicker;
     }
 
     onSubmit(e) {
@@ -124,8 +130,6 @@ class UserForm extends React.Component {
         var surname = this.state.surname.trim();
         var middlename = this.state.middlename.trim();
         var dateOfEmployment = this.myDatePicker.trim();
-
-        console.log(name + " " + surname + " " + middlename);
         if (!name || !surname || !middlename || !dateOfEmployment) {
             return;
         }
