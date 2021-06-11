@@ -236,12 +236,6 @@ namespace RestFullApiCorpitech.Migrations
                     b.Property<DateTime>("dateOfEmployment")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("dateOfEndVacation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("dateOfStartVacation")
-                        .HasColumnType("datetime2");
-
                     b.Property<double>("days")
                         .HasColumnType("float");
 
@@ -255,13 +249,81 @@ namespace RestFullApiCorpitech.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("716c2e99-6f6c-4472-81a5-43c56e11637c"),
+                            Id = new Guid("2916855f-92c1-48e8-b503-9c9b9a82c767"),
                             Middlename = "Иванович",
                             Name = "Иван",
                             Surname = "Иванов",
                             dateOfEmployment = new DateTime(2015, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            dateOfEndVacation = new DateTime(2016, 11, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            dateOfStartVacation = new DateTime(2016, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            days = 0.0,
+                            value = 0.0
+                        },
+                        new
+                        {
+                            Id = new Guid("bde8aee1-7453-4faf-bad8-e126cef7b708"),
+                            Middlename = "Василиевич",
+                            Name = "Дмитрий",
+                            Surname = "Пупкин",
+                            dateOfEmployment = new DateTime(2020, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            days = 0.0,
+                            value = 0.0
+                        },
+                        new
+                        {
+                            Id = new Guid("5aa51e86-85e0-4de4-911f-d152759df7be"),
+                            Middlename = "Яновичк",
+                            Name = "Максим",
+                            Surname = "Козий",
+                            dateOfEmployment = new DateTime(2017, 9, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            days = 0.0,
+                            value = 0.0
+                        },
+                        new
+                        {
+                            Id = new Guid("263542b1-67fb-4f7e-a101-ed6269b55be4"),
+                            Middlename = "Безотчествович",
+                            Name = "Ян",
+                            Surname = "Гордынский",
+                            dateOfEmployment = new DateTime(2016, 12, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            days = 0.0,
+                            value = 0.0
+                        },
+                        new
+                        {
+                            Id = new Guid("afbf3ddd-385c-46ae-8c63-8a30b59facec"),
+                            Middlename = "Сергеевич",
+                            Name = "Антон",
+                            Surname = "Новиков",
+                            dateOfEmployment = new DateTime(2021, 3, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            days = 0.0,
+                            value = 0.0
+                        },
+                        new
+                        {
+                            Id = new Guid("d459ba5a-769e-4f9b-89f5-afa101e11cb8"),
+                            Middlename = "Васильевич",
+                            Name = "Василий",
+                            Surname = "Васин",
+                            dateOfEmployment = new DateTime(2018, 2, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            days = 0.0,
+                            value = 0.0
+                        },
+                        new
+                        {
+                            Id = new Guid("aa91cd24-0c04-41a9-8381-6a61cb25d9c9"),
+                            Middlename = "Данилович",
+                            Name = "Иван",
+                            Surname = "Обжигайлов",
+                            dateOfEmployment = new DateTime(2017, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            days = 0.0,
+                            value = 0.0
+                        },
+                        new
+                        {
+                            Id = new Guid("b99f0b92-d465-4f88-86b8-05c3f79b061b"),
+                            Middlename = "Андреевна",
+                            Name = "Альбина",
+                            Surname = "Кузина",
+                            dateOfEmployment = new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             days = 0.0,
                             value = 0.0
                         });
@@ -273,20 +335,20 @@ namespace RestFullApiCorpitech.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("endVacation")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("startVacation")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("userId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("userId");
 
-                    b.ToTable("Vacation");
+                    b.ToTable("Vacations");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -342,9 +404,13 @@ namespace RestFullApiCorpitech.Migrations
 
             modelBuilder.Entity("RestFullApiCorpitech.Models.Vacation", b =>
                 {
-                    b.HasOne("RestFullApiCorpitech.Models.User", null)
+                    b.HasOne("RestFullApiCorpitech.Models.User", "user")
                         .WithMany("Vacations")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("userId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("RestFullApiCorpitech.Models.User", b =>
