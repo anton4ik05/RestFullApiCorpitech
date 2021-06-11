@@ -25,7 +25,7 @@ namespace RestFullApiCorpitech.Service
 
             foreach (User user in context.Users.Include(x => x.Vacations).ToList())
             {
-                output.Add(user);
+                //output.Add(user);
                 eval(user, startDate, endDate);
             }
 
@@ -36,7 +36,7 @@ namespace RestFullApiCorpitech.Service
         {
             List<Double> output = new List<Double>();
 
-            if (startDate < user.dateOfEmployment || endDate < user.dateOfEmployment || startDate > endDate)
+            if (startDate < user.dateOfEmployment || endDate < user.dateOfEmployment || startDate > endDate || user.Vacations == null)
             {
                 output.Add(0);
                 output.Add(0);
