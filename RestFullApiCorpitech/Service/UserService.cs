@@ -111,7 +111,8 @@ namespace RestFullApiCorpitech.Service
         public void DeleteUser(Guid id)
         {
 
-            User user = context.Users.Where(x => x.Id == id).FirstOrDefault();
+            User user = context.Users.FirstOrDefault(x => x.Id == id);
+
             context.Users.Remove(user);
             context.SaveChanges();
         }
