@@ -44,19 +44,9 @@ namespace RestFullApiCorpitech.Service
 
         public void DeleteUser(Guid id)
         {
-<<<<<<< HEAD
-            //[HttpDelete]
-            //public void DeleteWorker(Guid id)
-            //{
-            //    Worker worker = _context.Workers.Where(x => x.Id == id).FirstOrDefault();
-            //    _context.Workers.Remove(worker);
-            //    _context.SaveChanges();
-            //}
+
             User user = context.Users.Where(x => x.Id == id).FirstOrDefault();
             context.Users.Remove(user);
-=======
-            context.Users.Remove(new User() { Id = id });
->>>>>>> xrect
             context.SaveChanges();
         }
 
