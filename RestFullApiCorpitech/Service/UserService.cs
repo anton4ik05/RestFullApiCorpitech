@@ -34,9 +34,7 @@ namespace RestFullApiCorpitech.Service
 
         public void UpdateUser(Guid id, User model)
         {
-            //User user = GetUser(id);
             model.Id = id;
-            //user = model;
             context.Entry(model).State = EntityState.Modified;
             context.SaveChanges();
         }

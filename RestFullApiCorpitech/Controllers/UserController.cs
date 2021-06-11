@@ -7,7 +7,7 @@ namespace RestFullApiCorpitech
 {
    
     [ApiController]
-    [Route("/users")]
+    [Route("/api/users")]
     
     public class UserController : Controller
     {
@@ -27,6 +27,7 @@ namespace RestFullApiCorpitech
 
 
         [HttpPost]
+        [Route("/api/users")]
         public IActionResult UserCreate(User model)
         {
             if (ModelState.IsValid)
@@ -38,7 +39,7 @@ namespace RestFullApiCorpitech
         }
 
         [HttpPut]
-        [Route("/users/{id}")]
+        [Route("/api/users/{id}")]
         public IActionResult UserEdit(Guid id, User model)
         {
             if (ModelState.IsValid)
@@ -51,6 +52,7 @@ namespace RestFullApiCorpitech
 
 
         [HttpDelete]
+        [Route("/api/users/del")]
         public IActionResult UserDelete(Guid id)
         {
             userService.DeleteUser(id);
