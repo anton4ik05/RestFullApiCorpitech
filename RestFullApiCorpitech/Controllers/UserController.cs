@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using RestFullApiCorpitech.Models;
-using RestFullApiCorpitech.Repos;
 using RestFullApiCorpitech.Service;
 
 namespace RestFullApiCorpitech

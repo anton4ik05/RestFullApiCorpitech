@@ -96,7 +96,10 @@ namespace RestFullApiCorpitech.Models
 
                 });
 
-            //modelBuilder.Entity<User>().HasMany(c => c.Vacations).WithOne();
+            modelBuilder.Entity<User>()
+            .HasMany(p => p.Vacations)
+            .WithOne(t => t.user)
+            .OnDelete(DeleteBehavior.ClientCascade);
         }
 
     }
