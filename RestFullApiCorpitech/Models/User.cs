@@ -44,7 +44,7 @@ namespace RestFullApiCorpitech.Models
         public Double eval(DateTime startDate, DateTime endDate)
 
         {
-            if(startDate < dateOfEmployment || endDate < dateOfEmployment || startDate > endDate) {
+            if(startDate < dateOfEmployment || endDate < dateOfEmployment || startDate > endDate || Vacations == null) {
                 this.days = 0;
                 return 0;            
             }
