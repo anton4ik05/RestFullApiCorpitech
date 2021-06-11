@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.SignalR;
 
 namespace RestFullApiCorpitech.Models
 {
@@ -24,6 +25,8 @@ namespace RestFullApiCorpitech.Models
 
         [JsonIgnore]
         public User user { get; set; }
+
+        public Guid userId { get; set; }
 
     }
 }

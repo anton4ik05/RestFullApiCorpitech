@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -96,10 +96,11 @@ namespace RestFullApiCorpitech.Models
 
                 });
 
-            modelBuilder.Entity<User>()
-            .HasMany(p => p.Vacations)
-            .WithOne(t => t.user)
-            .OnDelete(DeleteBehavior.ClientCascade);
+            //modelBuilder.Entity<User>()
+            //.HasMany(p => p.Vacations)
+            //.WithOne(t => t.user)
+            //.OnDelete(DeleteBehavior.ClientCascade);
+            modelBuilder.Entity<User>().HasMany(x => x.Vacations).WithOne(x=> x.user);
         }
 
     }
