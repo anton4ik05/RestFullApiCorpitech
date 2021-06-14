@@ -53,6 +53,10 @@ class User extends React.Component {
     fromDateUpdate(e) {
         this.setState({ fromDate: this.myDatePickerFirst });
     }
+    deleteEmploye() {
+        confirm("Тоха, откисай");
+    }
+
     evalVacation() {
         fetch(`../api/users/` + this.state.data.id + `?startDate=${encodeURIComponent(this.state.fromDate)}&endDate=${encodeURIComponent(this.state.onDate)}`, {
             method: "GET",
@@ -119,8 +123,11 @@ class User extends React.Component {
             React.createElement('td', {}, this.state.data.surname + " " + this.state.data.name + " " + this.state.data.middlename),
             React.createElement('td', {}, React.createElement('input', { id: "fromDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.fromDate })),
             React.createElement('td', {}, Math.round(this.state.vacationDays)),
-            React.createElement('td', {}, React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.onDate })),
-
+            React.createElement('td', {}, React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", width: "55",type: 'text', onChange: this.onDateUpdate, value: this.state.onDate })),
+            React.createElement('td', { className: "operations" },
+                React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✎'),
+                React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✘'),
+            )
         );
     }
 }
