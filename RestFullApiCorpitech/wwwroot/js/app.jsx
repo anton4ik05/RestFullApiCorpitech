@@ -176,14 +176,15 @@ class UserForm extends React.Component {
     }
 
     onSubmit(e) {
+       
         e.preventDefault();
         var name = this.state.name.trim();
         var surname = this.state.surname.trim();
         var middlename = this.state.middlename.trim();
-        var dateOfEmployment = this.myDatePicker.trim();
+        var dateOfEmployment = this.state.dateOfEmployment.trim();
         if (!name || !surname || !middlename || !dateOfEmployment) {
             return;
-        }
+        } 
         this.props.onUserSubmit({ name: name, surname: surname, middlename: middlename, dateOfEmployment: dateOfEmployment, vacations: [] });
         this.setState({ name: "", surname: "", middlename: "", dateOfEmployment: "" });
     }
