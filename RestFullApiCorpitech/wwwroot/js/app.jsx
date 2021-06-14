@@ -39,7 +39,7 @@ class User extends React.Component {
         super(props);
         this.myDatePicker = "";
         this.myDatePickerFirst = "";
-        this.state = { data: props.user, fromDate: formatDateForInput(new Date(props.user.dateOfEmployment)), onDate: formatDateForInput(new Date()) };
+        this.state = { data: props.user, vacationDays:0, fromDate: formatDateForInput(new Date(props.user.dateOfEmployment)), onDate: formatDateForInput(new Date()) };
         this.updateDate = this.updateDate.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
         this.fromDateUpdate = this.fromDateUpdate.bind(this);
@@ -60,13 +60,14 @@ class User extends React.Component {
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log(this.state.data.id+"  "+result)
-                    // this.setState({ users: result });
+                    this.setState({ vacationDays: result });
+                    
                 },
                 (error) => {
                     console.log(error)
                 }
-            )
+        )
+       
     }
 
     updateDate(myDatePicker, on) { //true - onDate,false- fromDate
@@ -75,10 +76,7 @@ class User extends React.Component {
         } else {
             this.setState({ fromDate: myDatePicker });
         }
-        this.evalVacation();
-        
-        
-        
+        this.evalVacation();   
     }
     componentDidMount() {
         let myDatePicker = "", myDatePickerFirst = ""; 
@@ -120,7 +118,7 @@ class User extends React.Component {
             'tr', null,
             React.createElement('td', {}, this.state.data.surname + " " + this.state.data.name + " " + this.state.data.middlename),
             React.createElement('td', {}, React.createElement('input', { id: "fromDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.fromDate })),
-            React.createElement('td', {}, Math.round(this.state.data.days)),
+            React.createElement('td', {}, Math.round(this.state.vacationDays)),
             React.createElement('td', {}, React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.onDate })),
 
         );
