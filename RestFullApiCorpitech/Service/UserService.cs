@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using RestFullApiCorpitech.ViewModels;
 
 namespace RestFullApiCorpitech.Service
 {
@@ -83,23 +84,55 @@ namespace RestFullApiCorpitech.Service
             return (input >= date1 && input <= date2);
         }
 
-        public void SaveUser(User model)
+        public void SaveUser(UserEditViewModel model)
         {
-            context.Users.Add(model);
-            context.SaveChanges();
-        }
+            var record = new User();
+            record.Vacations = new List<Vacation>();
+            foreach (var rec in model.Vacations)
+            {
+                record.Vacations.Add(new Vacation()
+                {
+                    startVacation = rec.startVacation,
+                    endVacation = rec.endVacation,
+                    user = rec.user,
+                    userId = rec.userId
+                });
 
-        public void UpdateUser(Guid id, User model)
-        {
-            var record = context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
-
-            if (record == null) return;
-            record.Vacations = model.Vacations;
+            }
             record.Middlename = model.Middlename;
             record.Name = model.Name;
             record.Surname = model.Surname;
             record.dateOfEmployment = model.dateOfEmployment;
-            context.Update(record);
+
+            context.Users.Add(record);
+            context.SaveChanges();
+        }
+
+        public void UpdateUser(Guid id, UserEditViewModel model)
+        {
+            var record = context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
+
+            if (record == null) return;
+
+            record.Vacations = new List<Vacation>();
+
+            foreach (var rec in model.Vacations)
+            {
+                record.Vacations.Add(new Vacation()
+                {
+                    startVacation = rec.startVacation,
+                    endVacation = rec.endVacation,
+                    user = rec.user,
+                    userId = rec.userId
+                });
+
+            }
+
+            record.Middlename = model.Middlename;
+            record.Name = model.Name;
+            record.Surname = model.Surname;
+            record.dateOfEmployment = model.dateOfEmployment;
+                //context.Update(record);
             context.SaveChanges();
         }
 
