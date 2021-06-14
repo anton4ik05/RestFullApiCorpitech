@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using RestFullApiCorpitech.Models;
 using RestFullApiCorpitech.Service;
+using RestFullApiCorpitech.ViewModels;
 
 namespace RestFullApiCorpitech
 {
@@ -35,7 +36,7 @@ namespace RestFullApiCorpitech
 
         [HttpPost]
         [Route("/api/users")]
-        public IActionResult UserCreate(User model)
+        public IActionResult UserCreate(UserEditViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -47,7 +48,7 @@ namespace RestFullApiCorpitech
 
         [HttpPut]
         [Route("/api/users/{id}")]
-        public IActionResult UserEdit(Guid id, User model)
+        public IActionResult UserEdit(Guid id, UserEditViewModel model)
         {
             if (ModelState.IsValid)
             {
