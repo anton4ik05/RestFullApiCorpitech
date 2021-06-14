@@ -42,6 +42,7 @@ class User extends React.Component {
         this.state = { data: props.user, vacationDays:0, fromDate: formatDateForInput(new Date(props.user.dateOfEmployment)), onDate: formatDateForInput(new Date()) };
         this.updateDate = this.updateDate.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
+        this.deleteEmploye = this.deleteEmploye.bind(this);
         this.fromDateUpdate = this.fromDateUpdate.bind(this);
         this.idForInp = Math.round(Math.random() * 10000);
     }
@@ -54,7 +55,26 @@ class User extends React.Component {
         this.setState({ fromDate: this.myDatePickerFirst });
     }
     deleteEmploye() {
-        confirm("Тоха, откисай");
+        console.log(this.state.data.id);
+        if (confirm("Тоха, откисай")) {
+            const myDataObject = { id: 123 }
+            fetch(`../api/users/del`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(myDataObject)
+            })
+                .then(res => res.json())
+                .then(
+                    (result) => {
+                        console.log("asd");
+                    },
+                    (error) => {
+                        console.log(error)
+                    }
+                )
+        }
     }
 
     evalVacation() {
