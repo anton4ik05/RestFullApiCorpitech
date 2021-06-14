@@ -57,7 +57,7 @@ class User extends React.Component {
     deleteEmploye() {
         if (confirm("Вы точно хотите удалить пользователя?")) {
             const myDataObject = { id: this.state.data.id }
-            fetch(`../api/users/del`, {
+            fetch(`../api/users/del?id=`+ this.state.data.id, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
