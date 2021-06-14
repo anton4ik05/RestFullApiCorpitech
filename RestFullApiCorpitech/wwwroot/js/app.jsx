@@ -43,6 +43,7 @@ class User extends React.Component {
         this.updateDate = this.updateDate.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
         this.deleteEmploye = this.deleteEmploye.bind(this);
+        this.onElementRemove = this.onElementRemove.bind(this);
         this.fromDateUpdate = this.fromDateUpdate.bind(this);
         this.idForInp = Math.round(Math.random() * 10000);
     }
@@ -50,21 +51,25 @@ class User extends React.Component {
     onDateUpdate(e) {
         this.setState({ onDate: this.myDatePicker });
     }
+    onElementRemove() {
+        this.setState({ data: null });
+    }
 
     fromDateUpdate(e) {
         this.setState({ fromDate: this.myDatePickerFirst });
     }
     deleteEmploye() {
-        console.log(this.state.data.id);
+        let onElementRemove = this.onElementRemove.bind();
         if (confirm("Вы точно хотите удалить пользователя?")) {
-            let id = new FormData();
-            id.append("id", "07fd1e13-7ff7-450e-009d-08d92f0f1f73");
             $.ajax({
                 url: '../api/users/del?id=' + this.state.data.id,
                 type: 'DELETE',
-                success: function (result) { console.log(result);},
+                success: function (result) {
+                    console.log(result);
+                    onElementRemove();
+                },
                 error: function (result) { console.log(result);}
-             });
+            });
         }
     }
 
@@ -93,6 +98,7 @@ class User extends React.Component {
         }
         this.evalVacation();   
     }
+
     componentDidMount() {
         let myDatePicker = "", myDatePickerFirst = ""; 
         let updateDate = this.updateDate.bind();
@@ -129,17 +135,22 @@ class User extends React.Component {
     }
 
     render() {
-        return React.createElement(
-            'tr', null,
-            React.createElement('td', {}, this.state.data.surname + " " + this.state.data.name + " " + this.state.data.middlename),
-            React.createElement('td', {}, React.createElement('input', { id: "fromDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.fromDate })),
-            React.createElement('td', {}, Math.round(this.state.vacationDays)),
-            React.createElement('td', {}, React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", width: "55",type: 'text', onChange: this.onDateUpdate, value: this.state.onDate })),
-            React.createElement('td', { className: "operations" },
-                React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✎'),
-                React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✘'),
-            )
-        );
+        if (this.state.data != null) {
+            return React.createElement(
+                'tr', null,
+                React.createElement('td', {}, this.state.data.surname + " " + this.state.data.name + " " + this.state.data.middlename),
+                React.createElement('td', {}, React.createElement('input', { id: "fromDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.fromDate })),
+                React.createElement('td', {}, Math.round(this.state.vacationDays)),
+                React.createElement('td', {}, React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", width: "55", type: 'text', onChange: this.onDateUpdate, value: this.state.onDate })),
+                React.createElement('td', { className: "operations" },
+                    React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✎'),
+                    React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✘'),
+                )
+            );
+        } else {
+            return null;
+        }
+        
     }
 }
 
@@ -226,6 +237,8 @@ class UserList extends React.Component {
         this.state = { users: [] };
         this.onAddUser = this.onAddUser.bind(this);
     }
+
+
     loadData() {
         let startDate = "2000-02-11", endDate = formatDateForInput(new Date);
         fetch(`../api/users?=startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`, {
@@ -255,7 +268,6 @@ class UserList extends React.Component {
             data.append("Middlename", user.middlename);
             data.append("dateOfEmployment", user.dateOfEmployment);
             data.append("vacations", user.vacations);
-            console.log(data);
             fetch('../api/users', {
                 method: 'POST',
                 headers: {
