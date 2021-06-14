@@ -22,24 +22,24 @@ namespace RestFullApiCorpitech.Service
 
             foreach (User user in context.Users.Include(x => x.Vacations).ToList())
             {
-                eval(user, startDate, endDate);
+                Eval(user, startDate, endDate);
             }
 
         }
 
         public Double EvalUser(Guid id, DateTime startDate, DateTime endDate)
         {
-            return eval(GetUser(id), startDate, endDate);
+            return Eval(GetUser(id), startDate, endDate);
 
         }
 
-        public Double eval(User user, DateTime startDate, DateTime endDate)
+        public Double Eval(User user, DateTime startDate, DateTime endDate)
 
         {
             Double value = 0;
             Double intersect = 0;
 
-            if (startDate < user.dateOfEmployment || endDate < user.dateOfEmployment || startDate > endDate || startDate == endDate)
+            if (startDate < user.DateOfEmployment || endDate < user.DateOfEmployment || startDate > endDate || startDate == endDate)
             {
                 return value;
             }
@@ -51,8 +51,8 @@ namespace RestFullApiCorpitech.Service
 
                 foreach (var vacation in vacations)
                 {
-                    DateTime date = vacation.endVacation;
-                    allVacationDates = AllDates(vacation.startVacation, vacation.endVacation, allVacationDates);
+                    DateTime date = vacation.EndVacation;
+                    allVacationDates = AllDates(vacation.StartVacation, vacation.EndVacation, allVacationDates);
                 }
 
                 
@@ -86,23 +86,25 @@ namespace RestFullApiCorpitech.Service
 
         public void SaveUser(UserEditViewModel model)
         {
-            var record = new User();
-            record.Vacations = new List<Vacation>();
+            var record = new User
+            {
+                Vacations = new List<Vacation>()
+            };
             foreach (var rec in model.Vacations)
             {
                 record.Vacations.Add(new Vacation()
                 {
-                    startVacation = rec.startVacation,
-                    endVacation = rec.endVacation,
-                    user = rec.user,
-                    userId = rec.userId
+                    StartVacation = rec.startVacation,
+                    EndVacation = rec.endVacation,
+                    User = rec.user,
+                    UserId = rec.userId
                 });
 
             }
             record.Middlename = model.Middlename;
             record.Name = model.Name;
             record.Surname = model.Surname;
-            record.dateOfEmployment = model.dateOfEmployment;
+            record.DateOfEmployment = model.dateOfEmployment;
 
             context.Users.Add(record);
             context.SaveChanges();
@@ -120,10 +122,10 @@ namespace RestFullApiCorpitech.Service
             {
                 record.Vacations.Add(new Vacation()
                 {
-                    startVacation = rec.startVacation,
-                    endVacation = rec.endVacation,
-                    user = rec.user,
-                    userId = rec.userId
+                    StartVacation = rec.startVacation,
+                    EndVacation = rec.endVacation,
+                    User = rec.user,
+                    UserId = rec.userId
                 });
 
             }
@@ -131,7 +133,7 @@ namespace RestFullApiCorpitech.Service
             record.Middlename = model.Middlename;
             record.Name = model.Name;
             record.Surname = model.Surname;
-            record.dateOfEmployment = model.dateOfEmployment;
+            record.DateOfEmployment = model.dateOfEmployment;
                 //context.Update(record);
             context.SaveChanges();
         }

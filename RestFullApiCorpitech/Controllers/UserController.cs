@@ -13,7 +13,7 @@ namespace RestFullApiCorpitech
     
     public class UserController : Controller
     {
-        private UserService userService;
+        private readonly UserService userService;
 
         public UserController(UserService userService)
         {

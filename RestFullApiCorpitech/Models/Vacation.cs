@@ -15,18 +15,18 @@ namespace RestFullApiCorpitech.Models
         [Display(Name = "Дата начала отпуска")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
         [DataType(DataType.Date)]
-        public DateTime startVacation { get; set; }
+        public DateTime StartVacation { get; set; }
 
         [Display(Name = "Дата конца отпуска")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
         [DataType(DataType.Date)]
-        public DateTime endVacation { get; set; }
+        public DateTime EndVacation { get; set; }
 
         [JsonIgnore]
-        public User user { get; set; }
+        public User User { get; set; }
 
         [JsonIgnore]
-        public Guid userId { get; set; }
+        public Guid UserId { get; set; }
 
     }
 }
