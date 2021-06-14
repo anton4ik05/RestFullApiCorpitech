@@ -2,10 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections;
 
 namespace RestFullApiCorpitech.Service
 {
@@ -48,26 +45,26 @@ namespace RestFullApiCorpitech.Service
 
             if (user.Vacations != null) { 
 
-            ICollection<DateTime> allVacationDates = new List<DateTime>();
-            var vacations = user.Vacations.ToArray();
+                ICollection<DateTime> allVacationDates = new List<DateTime>();
+                var vacations = user.Vacations.ToArray();
 
-            foreach (var vacation in vacations)
-            {
-                DateTime date = vacation.endVacation;
-                allVacationDates = AllDates(vacation.startVacation, vacation.endVacation, allVacationDates);
-            }
-
-            
-
-            foreach (var date in allVacationDates)
-            {
-                if (Between(date, startDate, endDate))
+                foreach (var vacation in vacations)
                 {
-                    intersect++;
-                };
-            }
+                    DateTime date = vacation.endVacation;
+                    allVacationDates = AllDates(vacation.startVacation, vacation.endVacation, allVacationDates);
+                }
 
-        }
+                
+
+                foreach (var date in allVacationDates)
+                {
+                    if (Between(date, startDate, endDate))
+                    {
+                        intersect++;
+                    };
+                }
+
+            }
             Double days = (endDate - startDate).Days + 1 - intersect;
             value = Math.Round(Math.Round(days / 29.7) * 2.33);
 
@@ -110,14 +107,14 @@ namespace RestFullApiCorpitech.Service
         public void DeleteUser(Guid id)
         {
 
-            User user = context.Users.Where(x => x.Id == id).FirstOrDefault();
+            User user = context.Users.FirstOrDefault(x => x.Id == id);
             context.Users.Remove(user);
             context.SaveChanges();
         }
 
         public IEnumerable<User> GetUsers()
         {
-            return context.Users.Include(x => x.Vacations).ToList();
+            return context.Users.Include(x => x.Vacations).OrderBy(x => x.Surname).ThenBy(x=> x.Name).ToList();
         }
 
         public User GetUser(Guid id)

@@ -54,7 +54,7 @@ class User extends React.Component {
         this.setState({ fromDate: this.myDatePickerFirst });
     }
     evalVacation() {
-        fetch(`../api/users/` + this.state.data.id + `?=startDate=${encodeURIComponent(this.state.fromDate)}&endDate=${encodeURIComponent(this.state.onDate)}`, {
+        fetch(`../api/users/` + this.state.data.id + `?startDate=${encodeURIComponent(this.state.fromDate)}&endDate=${encodeURIComponent(this.state.onDate)}`, {
             method: "GET",
         })
             .then(res => res.json())

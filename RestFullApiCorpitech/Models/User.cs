@@ -39,58 +39,5 @@ namespace RestFullApiCorpitech.Models
 
         public ICollection<Vacation> Vacations { get; set; }
 
-
-        public int eval(DateTime startDate, DateTime endDate)
-
-        {
-
-            if(startDate < dateOfEmployment || endDate < dateOfEmployment || startDate > endDate) {
-                this.days = 0;
-                return 0;            
-            }
-
-            if (startDate == endDate)
-            {
-                this.days = 1;
-                return 0;
-            }
-            
-            ICollection<DateTime> allVacationDates = new List<DateTime>();
-            var vacations = Vacations.ToArray();
-
-            foreach (var vacation in vacations)
-            {
-                DateTime date = vacation.endVacation;
-                allVacationDates = AllDates(vacation.startVacation, vacation.endVacation, allVacationDates);
-            }
-
-            Double intersect = 0;
-
-            foreach (var date in allVacationDates)
-            {
-                if(Between(date ,startDate, endDate))
-                {
-                    intersect++;
-                };
-            }
-
-            Double days = (endDate - startDate).Days + 1 - intersect;
-            this.days = days;
-            this.value = Math.Round(Math.Round(days / 29.7) * 2.33);
-
-            return 0;
-        }
-
-        private static ICollection<DateTime> AllDates(DateTime startDate, DateTime endDate, ICollection<DateTime> allDates)
-        {
-            for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
-                allDates.Add(date);
-            return allDates;
-        }
-
-        private static bool Between(DateTime input, DateTime date1, DateTime date2)
-        {
-            return (input >= date1 && input <= date2);
-        }
     }
 }
