@@ -140,7 +140,7 @@ namespace RestFullApiCorpitech.Service
         public void DeleteUser(Guid id)
         {
 
-            User user = context.Users.FirstOrDefault(x => x.Id == id);
+            User user = context.Users.Include(x=> x.Vacations).FirstOrDefault(x => x.Id == id);
             context.Users.Remove(user);
             context.SaveChanges();
         }
