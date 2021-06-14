@@ -55,24 +55,16 @@ class User extends React.Component {
         this.setState({ fromDate: this.myDatePickerFirst });
     }
     deleteEmploye() {
+        console.log(this.state.data.id);
         if (confirm("Вы точно хотите удалить пользователя?")) {
-            const myDataObject = { id: this.state.data.id }
-            fetch(`../api/users/del`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(myDataObject)
-            })
-                .then(res => res.json())
-                .then(
-                    (result) => {
-                        console.log("asd");
-                    },
-                    (error) => {
-                        console.log(error)
-                    }
-                )
+            let id = new FormData();
+            id.append("id", "07fd1e13-7ff7-450e-009d-08d92f0f1f73");
+            $.ajax({
+                url: '../api/users/del?id=' + this.state.data.id,
+                type: 'DELETE',
+                success: function (result) { console.log(result);},
+                error: function (result) { console.log(result);}
+             });
         }
     }
 
@@ -233,18 +225,15 @@ class UserList extends React.Component {
         super(props);
         this.state = { users: [] };
         this.onAddUser = this.onAddUser.bind(this);
-        // this.onRemoveUser = this.onRemoveUser.bind(this);
     }
     loadData() {
         let startDate = "2000-02-11", endDate = formatDateForInput(new Date);
-        console.log(endDate);
         fetch(`../api/users?=startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`, {
             method: "GET",
         })
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log(result)
                     this.setState({ users: result });
                 },
                 (error) => {
