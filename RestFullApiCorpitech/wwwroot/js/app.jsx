@@ -120,6 +120,7 @@ class UserEdit extends React.Component {
         this.onMiddlenameChange = this.onMiddlenameChange.bind(this);
         this.onDateOfEmploymentChange = this.onDateOfEmploymentChange.bind(this);
         this.updateDate = this.updateDate.bind(this);
+        this.addVacation = this.addVacation.bind(this);
         this.close = this.close.bind(this);
         console.log(this.state);
     }
@@ -162,6 +163,23 @@ class UserEdit extends React.Component {
             months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
+
+        const demo = document.querySelector('#allVacations');
+        new PerfectScrollbar(demo, {
+            wheelSpeed: 0.5,
+            suppressScrollX: true,
+            useBothWheelAxes: true,
+
+
+
+        });
+    }
+
+    addVacation() {
+        
+        let myVacs = this.state.vacations;
+        myVacs.push({ startVacation: formatDateForInput(new Date()), endVacation: formatDateForInput(new Date()) });
+        this.setState({ vacations: myVacs });
     }
 
     onSubmit(e) {
@@ -179,12 +197,14 @@ class UserEdit extends React.Component {
                 React.createElement('input', { placeholder: 'Surname', type: 'text', onChange: this.onSurnameChange, value: this.state.surname }),
                 React.createElement('input', { placeholder: 'Middlename', type: 'text', onChange: this.onMiddlenameChange, value: this.state.middlename }),
                 React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
-                React.createElement('div', { className: "vacations" }, "Все отпуска",
-                    this.state.vacations.map(function (vacation) {
-                        return React.createElement(Vacation, { key: Math.random() * Math.random(), vacation: vacation })
-                    })
+                React.createElement('div', { id: "vacations", className: "vacations" }, "Все отпуска",
+                    React.createElement('div', { id: "allVacations", className:"allVacations" },
+                        this.state.vacations.map(function (vacation) {
+                              return React.createElement(Vacation, { key: Math.random() * Math.random(), vacation: vacation })
+                         })
+                    ),
+                    React.createElement('div', { onClick:this.addVacation,className: "addVac" }, "➕")
                 ),
-
                 React.createElement('button', { type: 'submit', className: 'postfix' }, 'Изменить')
             ),
         ) :  null;
