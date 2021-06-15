@@ -138,7 +138,6 @@ namespace RestFullApiCorpitech.Service
             record.Name = model.Name;
             record.Surname = model.Surname;
             record.DateOfEmployment = model.dateOfEmployment;
-                //context.Update(record);
             context.SaveChanges();
         }
 
@@ -147,8 +146,12 @@ namespace RestFullApiCorpitech.Service
         {
 
             User user = context.Users.Include(x=> x.Vacations).FirstOrDefault(x => x.Id == id);
-            context.Users.Remove(user);
-            context.SaveChanges();
+            if (user != null)
+            {
+                context.Users.Remove(user!);
+                context.SaveChanges();
+            }
+            
         }
 
         public IEnumerable<User> GetUsers()
