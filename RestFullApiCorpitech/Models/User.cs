@@ -37,7 +37,7 @@ namespace RestFullApiCorpitech.Models
 
         public Double Days { get; set; } = 0;
 
-        public ICollection<Vacation> Vacations { get; set; }
+        public ICollection<Vacation> Vacations { get; set; } = new List<Vacation>();
 
     }
 }

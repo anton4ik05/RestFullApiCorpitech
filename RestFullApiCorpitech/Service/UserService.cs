@@ -90,6 +90,9 @@ namespace RestFullApiCorpitech.Service
             {
                 Vacations = new List<Vacation>()
             };
+
+           
+            {
             foreach (var rec in model.Vacations)
             {
                 record.Vacations.Add(new Vacation()
@@ -100,6 +103,7 @@ namespace RestFullApiCorpitech.Service
                     UserId = rec.userId
                 });
 
+            }
             }
             record.Middlename = model.Middlename;
             record.Name = model.Name;

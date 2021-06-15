@@ -28,6 +28,6 @@ namespace RestFullApiCorpitech.ViewModels
 
         public Double days { get; set; } = 0;
 
-        public ICollection<VacationEditModel> Vacations { get; set; }
+        public ICollection<VacationEditModel> Vacations { get; set; } = new List<VacationEditModel>();
     }
 }
