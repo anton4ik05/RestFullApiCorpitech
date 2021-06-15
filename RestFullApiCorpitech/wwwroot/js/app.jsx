@@ -213,7 +213,7 @@ class UserEdit extends React.Component {
                 }).then((response) => response.json())
             .then((responseJson) => {
                 console.log('Success:', JSON.stringify(responseJson));
-                this.loadData();
+                this.close();
             })
             .catch(error => console.error('Error:', error));
 
