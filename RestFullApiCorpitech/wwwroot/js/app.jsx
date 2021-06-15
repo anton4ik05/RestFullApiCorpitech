@@ -112,7 +112,15 @@ class UserEdit extends React.Component {
     constructor(props) {
         super(props);
         this.myDatePicker = "";
-        this.state = { data: props.user, status:true,name: props.user.name, surname: props.user.surname, middlename: props.user.middlename, dateOfEmployment: props.user.dateOfEmployment, vacations: props.user.vacations };
+        this.state = {
+            data: props.user,
+            status: true,
+            name: props.user.name,
+            surname: props.user.surname,
+            middlename: props.user.middlename,
+            dateOfEmployment: props.user.dateOfEmployment,
+            vacations: props.user.vacations
+        };
         this.onSubmit = this.onSubmit.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
         this.onSurnameChange = this.onSurnameChange.bind(this);
@@ -122,31 +130,38 @@ class UserEdit extends React.Component {
         this.addVacation = this.addVacation.bind(this);
         this.close = this.close.bind(this);
     }
+
     onNameChange(e) {
         this.setState({ name: e.target.value });
     }
+
     onSurnameChange(e) {
         this.setState({ surname: e.target.value });
     }
+
     onMiddlenameChange(e) {
         this.setState({ middlename: e.target.value });
 
     }
+
     onDateOfEmploymentChange(e) {
         this.setState({ dateOfEmployment: e.target.textContent });
     }
+
     updateDate(myDatePicker) {
         this.setState({ dateOfEmployment: myDatePicker });
     }
+
     close() {
         this.setState({ status: false });
         $('#edit').remove();
     }
+
     componentDidMount() {
         let myDatePicker = "";
         let updateDate = this.updateDate.bind();
         $('[data-toggle="datepicker"]').datepicker({
-            pick: function (date, view) {
+            pick: function(date, view) {
                 $(this).text(formatDateForInput(date.date));
                 myDatePicker = formatDateForInput(date.date);
                 updateDate(myDatePicker);
@@ -158,16 +173,20 @@ class UserEdit extends React.Component {
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
             daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
             daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
-            months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+            months: [
+                'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь',
+                'Декабрь'
+            ],
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
 
         const demo = document.querySelector('#allVacations');
-        new PerfectScrollbar(demo, {
-            wheelSpeed: 0.5,
-            suppressScrollX: true,
-            useBothWheelAxes: true,
-        });
+        new PerfectScrollbar(demo,
+            {
+                wheelSpeed: 0.5,
+                suppressScrollX: true,
+                useBothWheelAxes: true,
+            });
     }
 
     addVacation() {
@@ -175,24 +194,33 @@ class UserEdit extends React.Component {
         myVacs.push({ startVacation: formatDateForInput(new Date()), endVacation: formatDateForInput(new Date()) });
         this.setState({ vacations: myVacs });
     }
+
     putTheEdit(id, user) {
-        console.log(id);
-        console.log(user);
-        $.ajax({
-            url: '../api/users/' + id,
-            type: 'PUT',
-            contentType: 'application/json',
-            data: {
-                "id": id,
-                "model": user,
-            },
-            success: function (result) {
-                console.log(result);
-                onElementRemove();
-            },
-            error: function (result) { console.log(result); }
-        });
+        const data = new FormData();
+        data.append("Name", user.name);
+        data.append("Surname", user.surname);
+        data.append("Middlename", user.middlename);
+        data.append("dateOfEmployment", user.dateOfEmployment);
+        data.append("vacations", user.vacations);
+        fetch('../api/users/' + id,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json; charset=utf-8',
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    },
+                    body: JSON.stringify(user),
+                }).then((response) => response.json())
+            .then((responseJson) => {
+                console.log('Success:', JSON.stringify(responseJson));
+                this.loadData();
+            })
+            .catch(error => console.error('Error:', error));
+
     }
+
+
+
     onSubmit(e) {
         e.preventDefault(); 
         let myVacations = [];
