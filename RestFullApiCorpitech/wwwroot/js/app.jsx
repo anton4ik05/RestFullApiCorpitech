@@ -33,6 +33,18 @@ function objToQueryString(obj) {
     }
     return keyValuePairs.join('&');
 }
+class Vacation extends React.Component {
+    constructor(props) {
+        super(props);
+        this.myDatePicker = "";
+        this.state = { data: props.vacation, status: true, vacation: props.vacation.vacation };
+        this.onNameChange = this.onNameChange.bind(this);
+        console.log(this.state);
+    }
+    render() {
+        return null;
+    }
+}
 
 class UserEdit extends React.Component {
     constructor(props) {
@@ -47,7 +59,6 @@ class UserEdit extends React.Component {
         this.updateDate = this.updateDate.bind(this);
         this.close = this.close.bind(this);
         console.log(this.state);
-
     }
     onNameChange(e) {
         this.setState({ name: e.target.value });
@@ -105,7 +116,13 @@ class UserEdit extends React.Component {
                 React.createElement('input', { placeholder: 'Surname', type: 'text', onChange: this.onSurnameChange, value: this.state.surname }),
                 React.createElement('input', { placeholder: 'Middlename', type: 'text', onChange: this.onMiddlenameChange, value: this.state.middlename }),
                 React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
-                React.createElement('button', { type: 'submit', className: 'postfix' }, 'Добавить')
+                React.createElement('div', { className: "vacations" },
+                    this.state.vacations.map(function (vacation) {
+                        return React.createElement(Vacation, { key: Math.random() * Math.random(), vacation: vacation })
+                    })
+                ),
+
+                React.createElement('button', { type: 'submit', className: 'postfix' }, 'Изменить')
             ),
         ) :  null;
 
