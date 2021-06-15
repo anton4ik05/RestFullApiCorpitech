@@ -29,7 +29,7 @@ namespace RestFullApiCorpitech.Models
             modelBuilder.Entity<Vacation>().Property<bool>("isDeleted");
             modelBuilder.Entity<Vacation>().HasQueryFilter(m => EF.Property<bool>(m, "isDeleted") == false);
 
-            modelBuilder.Entity<User>().HasMany(x => x.Vacations).WithOne(x=> x.user);
+            modelBuilder.Entity<User>().HasMany(x => x.Vacations).WithOne(x=> x.User);
         }
 
         public override int SaveChanges()
@@ -38,7 +38,7 @@ namespace RestFullApiCorpitech.Models
             return base.SaveChanges();
         }
 
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
             UpdateSoftDeleteStatuses();
             return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);

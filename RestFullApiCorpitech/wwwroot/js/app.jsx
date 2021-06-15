@@ -55,10 +55,9 @@ class User extends React.Component {
         this.setState({ fromDate: this.myDatePickerFirst });
     }
     deleteEmploye() {
-        console.log(this.state.data.id);
-        if (confirm("Тоха, откисай")) {
-            const myDataObject = { id: 123 }
-            fetch(`../api/users/del`, {
+        if (confirm("Вы точно хотите удалить пользователя?")) {
+            const myDataObject = { id: this.state.data.id }
+            fetch(`../api/users/del?id=`+ this.state.data.id, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
