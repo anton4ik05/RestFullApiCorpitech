@@ -177,21 +177,22 @@ class UserEdit extends React.Component {
     }
     putTheEdit(id, user) {
         console.log(id);
-        console.log(user);
+        console.log(JSON.stringify(user));
+        let data = { "id": id, "model": this.state.data };
+
         $.ajax({
             url: '../api/users/' + id,
             type: 'PUT',
             contentType: 'application/json',
             data: {
-                "id": id,
-                "model": user,
+                "model": JSON.stringify(user)
             },
             success: function (result) {
                 console.log(result);
-                onElementRemove();
             },
             error: function (result) { console.log(result); }
         });
+        
     }
     onSubmit(e) {
         e.preventDefault(); 
