@@ -24,10 +24,6 @@ namespace RestFullApiCorpitech.ViewModels
         [DataType(DataType.Date)]
         public DateTime dateOfEmployment { get; set; } = DateTime.MinValue;
 
-        public Double value { get; set; } = 0;
-
-        public Double days { get; set; } = 0;
-
         public ICollection<VacationEditModel> Vacations { get; set; } = new List<VacationEditModel>();
     }
 }
