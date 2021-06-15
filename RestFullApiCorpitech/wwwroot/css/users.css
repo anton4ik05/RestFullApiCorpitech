@@ -41,3 +41,46 @@ td input {
 .operation:active {
     font-weight: 200;
 }
+#edit {
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    position: absolute;
+    background: rgb(0 0 0 / 0.52);
+}
+.editBlock {
+    position: relative;
+    width: 500px;
+    height: 500px;
+    top: 50px;
+    border-radius:20px;
+    background: #fff;
+    padding:10px;
+    margin: auto;
+}
+.editBlock form {
+   width:300px;
+   margin:auto;
+}
+.editBlock .close{
+    position:absolute;
+    right:15px;
+    top:15px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:bold;
+    color:#000;
+}
+.editBlock input {
+    width: 300px;
+    margin: 10px auto;
+    height:30px;
+    text-align:center;
+    box-sizing: border-box;
+}
+.editBlock button {
+    width: 300px;
+    height: 30px;
+    margin: 10px auto;
+}

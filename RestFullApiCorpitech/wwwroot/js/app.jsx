@@ -34,16 +34,96 @@ function objToQueryString(obj) {
     return keyValuePairs.join('&');
 }
 
+class UserEdit extends React.Component {
+    constructor(props) {
+        super(props);
+        this.myDatePicker = "";
+        this.state = { data: props.user, status:true,name: props.user.name, surname: props.user.surname, middlename: props.user.middlename, dateOfEmployment: props.user.dateOfEmployment, vacations: props.user.vacations };
+        this.onSubmit = this.onSubmit.bind(this);
+        this.onNameChange = this.onNameChange.bind(this);
+        this.onSurnameChange = this.onSurnameChange.bind(this);
+        this.onMiddlenameChange = this.onMiddlenameChange.bind(this);
+        this.onDateOfEmploymentChange = this.onDateOfEmploymentChange.bind(this);
+        this.updateDate = this.updateDate.bind(this);
+        this.close = this.close.bind(this);
+        console.log(this.state);
+
+    }
+    onNameChange(e) {
+        this.setState({ name: e.target.value });
+    }
+    onSurnameChange(e) {
+        this.setState({ surname: e.target.value });
+    }
+    onMiddlenameChange(e) {
+        this.setState({ middlename: e.target.value });
+
+    }
+    onDateOfEmploymentChange(e) {
+        this.setState({ dateOfEmployment: e.target.textContent });
+    }
+    updateDate(myDatePicker) {
+        this.setState({ dateOfEmployment: myDatePicker });
+    }
+    close() {
+        this.setState({ status: false });
+        $('#edit').remove();
+    }
+    componentDidMount() {
+        let myDatePicker = "";
+        let updateDate = this.updateDate.bind();
+        $('[data-toggle="datepicker"]').datepicker({
+            pick: function (date, view) {
+                $(this).text(formatDateForInput(date.date));
+                myDatePicker = formatDateForInput(date.date);
+                updateDate(myDatePicker);
+            },
+
+            autoHide: true,
+            autoPick: true,
+            format: 'YYYY-mm-dd',
+            days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+            daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+            monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+        });
+    }
+
+    onSubmit(e) {
+
+        console.log("asd");
+    }
+
+    render() {
+
+        return this.state.status === true ?  React.createElement(
+            'div', { className: "editBlock" }, "Редактирование",
+            React.createElement('div', { onClick:this.close, className: "close" }, '✖'),
+            React.createElement('form', { onSubmit: this.onSubmit },
+                React.createElement('input', { placeholder: 'Name', type: 'text', onChange: this.onNameChange, value: this.state.name }),
+                React.createElement('input', { placeholder: 'Surname', type: 'text', onChange: this.onSurnameChange, value: this.state.surname }),
+                React.createElement('input', { placeholder: 'Middlename', type: 'text', onChange: this.onMiddlenameChange, value: this.state.middlename }),
+                React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
+                React.createElement('button', { type: 'submit', className: 'postfix' }, 'Добавить')
+            ),
+        ) :  null;
+
+
+    }
+}
+
 class User extends React.Component {
     constructor(props) {
         super(props);
         this.myDatePicker = "";
         this.myDatePickerFirst = "";
-        this.state = { data: props.user, vacationDays:0, fromDate: formatDateForInput(new Date(props.user.dateOfEmployment)), onDate: formatDateForInput(new Date()) };
+        this.state = { data: props.user, vacationDays: 0, fromDate: formatDateForInput(new Date(props.user.dateOfEmployment)), onDate: formatDateForInput(new Date()) };
         this.updateDate = this.updateDate.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
         this.deleteEmploye = this.deleteEmploye.bind(this);
         this.onElementRemove = this.onElementRemove.bind(this);
+        this.editEmploye = this.editEmploye.bind(this);
         this.fromDateUpdate = this.fromDateUpdate.bind(this);
         this.idForInp = Math.round(Math.random() * 10000);
     }
@@ -68,9 +148,17 @@ class User extends React.Component {
                     console.log(result);
                     onElementRemove();
                 },
-                error: function (result) { console.log(result);}
+                error: function (result) { console.log(result); }
             });
         }
+    }
+
+    editEmploye() {
+        $('body').append("<div id='edit'></div>");
+        ReactDOM.render(
+            React.createElement(UserEdit, { user: this.state.data}),
+            document.getElementById('edit'),
+        );
     }
 
     evalVacation() {
@@ -81,13 +169,13 @@ class User extends React.Component {
             .then(
                 (result) => {
                     this.setState({ vacationDays: result });
-                    
+
                 },
                 (error) => {
                     console.log(error)
                 }
-        )
-       
+            )
+
     }
 
     updateDate(myDatePicker, on) { //true - onDate,false- fromDate
@@ -96,16 +184,16 @@ class User extends React.Component {
         } else {
             this.setState({ fromDate: myDatePicker });
         }
-        this.evalVacation();   
+        this.evalVacation();
     }
 
     componentDidMount() {
-        let myDatePicker = "", myDatePickerFirst = ""; 
+        let myDatePicker = "", myDatePickerFirst = "";
         let updateDate = this.updateDate.bind();
-        $('#onDate' + this.idForInp+'[data-toggle="datepicker"]').datepicker({
+        $('#onDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
                 myDatePicker = formatDateForInput(date.date);
-                updateDate(myDatePicker,true);
+                updateDate(myDatePicker, true);
             },
             autoPick: true,
             autoHide: true,
@@ -119,7 +207,7 @@ class User extends React.Component {
         $('#fromDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
                 myDatePickerFirst = formatDateForInput(date.date);
-                updateDate(myDatePickerFirst,false);
+                updateDate(myDatePickerFirst, false);
             },
             'setDate': new Date(this.state.data.dateOfEmployment),
             autoPick: false,
@@ -143,14 +231,14 @@ class User extends React.Component {
                 React.createElement('td', {}, Math.round(this.state.vacationDays)),
                 React.createElement('td', {}, React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", width: "55", type: 'text', onChange: this.onDateUpdate, value: this.state.onDate })),
                 React.createElement('td', { className: "operations" },
-                    React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✎'),
+                    React.createElement('span', { className: "operation", onClick: this.editEmploye }, '✎'),
                     React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✘'),
                 )
             );
         } else {
             return null;
         }
-        
+
     }
 }
 
@@ -192,7 +280,7 @@ class UserForm extends React.Component {
                 myDatePicker = formatDateForInput(date.date);
                 updateDate(myDatePicker);
             },
-            
+
             autoHide: true,
             autoPick: true,
             format: 'YYYY-mm-dd',
@@ -205,7 +293,7 @@ class UserForm extends React.Component {
     }
 
     onSubmit(e) {
-       
+
         e.preventDefault();
         var name = this.state.name.trim();
         var surname = this.state.surname.trim();
@@ -213,7 +301,7 @@ class UserForm extends React.Component {
         var dateOfEmployment = this.state.dateOfEmployment.trim();
         if (!name || !surname || !middlename || !dateOfEmployment) {
             return;
-        } 
+        }
         this.props.onUserSubmit({ name: name, surname: surname, middlename: middlename, dateOfEmployment: dateOfEmployment, vacations: [] });
         this.setState({ name: "", surname: "", middlename: "", dateOfEmployment: "" });
     }
