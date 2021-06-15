@@ -51,7 +51,6 @@ namespace RestFullApiCorpitech.Service
 
                 foreach (var vacation in vacations)
                 {
-                    DateTime date = vacation.EndVacation;
                     allVacationDates.Concat(AllDates(vacation.StartVacation, vacation.EndVacation, allVacationDates));
                 }
                 
