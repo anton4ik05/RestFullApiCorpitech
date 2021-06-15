@@ -37,12 +37,70 @@ class Vacation extends React.Component {
     constructor(props) {
         super(props);
         this.myDatePicker = "";
-        this.state = { data: props.vacation, status: true, vacation: props.vacation.vacation };
-        this.onNameChange = this.onNameChange.bind(this);
+        this.myDatePickerFirst = "";
+        this.state = { data: props.vacation, status: true, startVacation: props.vacation.startVacation, endVacation: props.vacation.endVacation };
+        this.updateDate = this.updateDate.bind(this);
+        this.onDateUpdate = this.onDateUpdate.bind(this);
+        this.idForInp = Math.round(Math.random() * 10000);
         console.log(this.state);
     }
+
+    onDateUpdate(e) {
+        this.setState({ onDate: this.myDatePicker });
+    }
+
+    fromDateUpdate(e) {
+        this.setState({ fromDate: this.myDatePickerFirst });
+    }
+
+    updateDate(myDatePicker, on) { //true - endVacation,false- start
+        if (on) {
+            this.setState({ endVacation: myDatePicker });
+        } else {
+            this.setState({ startVacation: myDatePicker });
+        }
+    }
+
+    componentDidMount() {
+        let myDatePicker = "", myDatePickerFirst = "";
+        let updateDate = this.updateDate.bind();
+        $('#onDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
+            pick: function (date, view) {
+                myDatePicker = formatDateForInput(date.date);
+                updateDate(myDatePicker, true);
+            },
+            autoPick: true,
+            autoHide: true,
+            format: 'YYYY-mm-dd',
+            days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+            daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+            monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+        });
+        $('#fromDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
+            pick: function (date, view) {
+                myDatePickerFirst = formatDateForInput(date.date);
+                updateDate(myDatePickerFirst, false);
+            },
+            autoPick: false,
+            autoHide: true,
+            format: 'YYYY-mm-dd',
+            days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+            daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+            monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+        });
+        $('#fromDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker('setDate', new Date(this.state.startVacation));
+    }
+
     render() {
-        return null;
+        console.log("asd");
+        return this.state.status === true ? React.createElement('div', { className: "vacationDays" },
+            React.createElement('input', { id: "fromDate" + this.idForInp, "data-toggle": "datepicker",  onChange: this.fromDateUpdate, value: this.state.fromDate }),
+            React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", onChange: this.onDateUpdate, value: this.state.onDate }),
+        ) : null;
     }
 }
 
@@ -116,7 +174,7 @@ class UserEdit extends React.Component {
                 React.createElement('input', { placeholder: 'Surname', type: 'text', onChange: this.onSurnameChange, value: this.state.surname }),
                 React.createElement('input', { placeholder: 'Middlename', type: 'text', onChange: this.onMiddlenameChange, value: this.state.middlename }),
                 React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
-                React.createElement('div', { className: "vacations" },
+                React.createElement('div', { className: "vacations" }, "Все отпуска",
                     this.state.vacations.map(function (vacation) {
                         return React.createElement(Vacation, { key: Math.random() * Math.random(), vacation: vacation })
                     })
@@ -244,9 +302,9 @@ class User extends React.Component {
             return React.createElement(
                 'tr', null,
                 React.createElement('td', {}, this.state.data.surname + " " + this.state.data.name + " " + this.state.data.middlename),
-                React.createElement('td', {}, React.createElement('input', { id: "fromDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.fromDate })),
+                React.createElement('td', {}, React.createElement('input', { id: "fromDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', onChange: this.fromDateUpdate, value: this.state.fromDate })),
                 React.createElement('td', {}, Math.round(this.state.vacationDays)),
-                React.createElement('td', {}, React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", width: "55", type: 'text', onChange: this.onDateUpdate, value: this.state.onDate })),
+                React.createElement('td', {}, React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.onDate })),
                 React.createElement('td', { className: "operations" },
                     React.createElement('span', { className: "operation", onClick: this.editEmploye }, '✎'),
                     React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✘'),
