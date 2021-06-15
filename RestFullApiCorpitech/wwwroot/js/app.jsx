@@ -135,7 +135,7 @@ class User extends React.Component {
     }
 
     render() {
-        if (this.state.data != null) {
+        if (this.state.data !== null) {
             return React.createElement(
                 'tr', null,
                 React.createElement('td', {}, this.state.data.surname + " " + this.state.data.name + " " + this.state.data.middlename),
