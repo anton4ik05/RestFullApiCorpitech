@@ -31,11 +31,11 @@ namespace RestFullApiCorpitech.Models
         [Display(Name = "Дата найма")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
         [DataType(DataType.Date)]
-        public DateTime dateOfEmployment { get; set; } = DateTime.MinValue;
+        public DateTime DateOfEmployment { get; set; } = DateTime.MinValue;
 
-        public Double value { get; set; } = 0;
+        public Double Value { get; set; } = 0;
 
-        public Double days { get; set; } = 0;
+        public Double Days { get; set; } = 0;
 
         public ICollection<Vacation> Vacations { get; set; }
 
