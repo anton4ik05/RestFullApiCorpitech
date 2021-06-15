@@ -39,7 +39,7 @@ namespace RestFullApiCorpitech.Service
             Double value = 0;
             Double intersect = 0;
 
-            if !(startDate < user.DateOfEmployment || endDate < user.DateOfEmployment || startDate > endDate || startDate == endDate)
+            if (!(startDate < user.DateOfEmployment || endDate < user.DateOfEmployment || startDate > endDate || startDate == endDate))
             {
 
                 if (user.Vacations != null || user.Vacations.Any())
