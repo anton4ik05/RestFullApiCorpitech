@@ -44,7 +44,7 @@ namespace RestFullApiCorpitech.Service
                 return value;
             }
 
-            if (user.Vacations != null) { 
+            if (user.Vacations != null || user.Vacations.Any()) { 
 
                 ICollection<DateTime> allVacationDates = new List<DateTime>();
                 var vacations = user.Vacations.ToArray();
@@ -54,7 +54,6 @@ namespace RestFullApiCorpitech.Service
                     DateTime date = vacation.EndVacation;
                     allVacationDates = AllDates(vacation.StartVacation, vacation.EndVacation, allVacationDates);
                 }
-
                 
 
                 foreach (var date in allVacationDates)
@@ -66,6 +65,7 @@ namespace RestFullApiCorpitech.Service
                 }
 
             }
+
             Double days = (endDate - startDate).Days + 1 - intersect;
             value = Math.Round(Math.Round(days / 29.7) * 2.33);
 
@@ -90,17 +90,21 @@ namespace RestFullApiCorpitech.Service
             {
                 Vacations = new List<Vacation>()
             };
-            foreach (var rec in model.Vacations)
-            {
-                record.Vacations.Add(new Vacation()
-                {
-                    StartVacation = rec.startVacation,
-                    EndVacation = rec.endVacation,
-                    User = rec.user,
-                    UserId = rec.userId
-                });
 
+            if (model.Vacations == null) {
+                model.Vacations = new List<VacationEditModel>();
             }
+                foreach (var rec in model.Vacations)
+                {
+                    record.Vacations.Add(new Vacation()
+                    {
+                        StartVacation = rec.startVacation,
+                        EndVacation = rec.endVacation,
+                        User = rec.user,
+                        UserId = rec.userId
+                    });
+
+                }
             record.Middlename = model.Middlename;
             record.Name = model.Name;
             record.Surname = model.Surname;
@@ -134,7 +138,6 @@ namespace RestFullApiCorpitech.Service
             record.Name = model.Name;
             record.Surname = model.Surname;
             record.DateOfEmployment = model.dateOfEmployment;
-                //context.Update(record);
             context.SaveChanges();
         }
 
@@ -143,8 +146,12 @@ namespace RestFullApiCorpitech.Service
         {
 
             User user = context.Users.Include(x=> x.Vacations).FirstOrDefault(x => x.Id == id);
-            context.Users.Remove(user);
-            context.SaveChanges();
+            if (user != null)
+            {
+                context.Users.Remove(user!);
+                context.SaveChanges();
+            }
+            
         }
 
         public IEnumerable<User> GetUsers()
