@@ -44,7 +44,7 @@ namespace RestFullApiCorpitech.Service
                 return value;
             }
 
-            if (user.Vacations != null) { 
+            if (user.Vacations != null || user.Vacations.Any()) { 
 
                 ICollection<DateTime> allVacationDates = new List<DateTime>();
                 var vacations = user.Vacations.ToArray();
@@ -54,7 +54,6 @@ namespace RestFullApiCorpitech.Service
                     DateTime date = vacation.EndVacation;
                     allVacationDates = AllDates(vacation.StartVacation, vacation.EndVacation, allVacationDates);
                 }
-
                 
 
                 foreach (var date in allVacationDates)
@@ -66,6 +65,7 @@ namespace RestFullApiCorpitech.Service
                 }
 
             }
+
             Double days = (endDate - startDate).Days + 1 - intersect;
             value = Math.Round(Math.Round(days / 29.7) * 2.33);
 
