@@ -40,35 +40,35 @@ namespace RestFullApiCorpitech.Service
             Double value = 0;
             Double intersect = 0;
 
-            if (startDate < user.DateOfEmployment || endDate < user.DateOfEmployment || startDate > endDate || startDate == endDate)
+            if (!(startDate < user.DateOfEmployment || endDate < user.DateOfEmployment || startDate > endDate || startDate == endDate))
             {
-                return value;
-            }
 
-            if (user.Vacations != null || user.Vacations.Any()) { 
-
-                ICollection<DateTime> allVacationDates = new List<DateTime>();
-                var vacations = user.Vacations.ToArray();
-
-                foreach (var vacation in vacations)
+                if (user.Vacations != null || user.Vacations.Any())
                 {
-                    DateTime date = vacation.EndVacation;
-                    allVacationDates = AllDates(vacation.StartVacation, vacation.EndVacation, allVacationDates);
-                }
-                
 
-                foreach (var date in allVacationDates)
-                {
-                    if (Between(date, startDate, endDate))
+                    ICollection<DateTime> allVacationDates = new List<DateTime>();
+                    var vacations = user.Vacations.ToArray();
+
+                    foreach (var vacation in vacations)
                     {
-                        intersect++;
-                    };
+                        allVacationDates = AllDates(vacation.StartVacation, vacation.EndVacation, allVacationDates);
+                    }
+
+
+                    foreach (var date in allVacationDates)
+                    {
+                        if (Between(date, startDate, endDate))
+                        {
+                            intersect++;
+                        };
+                    }
+
                 }
 
-            }
+                Double days = (endDate - startDate).Days + 1 - intersect;
+                value = Math.Round(Math.Round(days / 29.7) * 2.33);
 
-            Double days = (endDate - startDate).Days + 1 - intersect;
-            value = Math.Round(Math.Round(days / 29.7) * 2.33);
+            }
 
             return value;
         }
