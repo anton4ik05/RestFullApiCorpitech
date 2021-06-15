@@ -33,7 +33,7 @@ namespace RestFullApiCorpitech.Models
         [DataType(DataType.Date)]
         public DateTime DateOfEmployment { get; set; } = DateTime.MinValue;
 
-        public ICollection<Vacation> Vacations { get; set; }
+        public ICollection<Vacation> Vacations { get; set; } = new List<Vacation>();
 
     }
 }

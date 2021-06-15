@@ -43,7 +43,7 @@ namespace RestFullApiCorpitech
                 userService.SaveUser(model);
             }
 
-            return new ObjectResult(model);
+            return new OkObjectResult(model);
         }
 
         [HttpPut]
@@ -55,7 +55,7 @@ namespace RestFullApiCorpitech
                 userService.UpdateUser(id, model);
             }
 
-            return new ObjectResult("updated");
+            return new ObjectResult(userService.GetUser(id));
     }
 
 
@@ -64,7 +64,7 @@ namespace RestFullApiCorpitech
         public IActionResult UserDelete(Guid id)
         {
             userService.DeleteUser(id);
-            return new ObjectResult("success");
+            return new OkResult();
         }
 
         

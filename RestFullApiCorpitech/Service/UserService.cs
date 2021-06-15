@@ -90,8 +90,10 @@ namespace RestFullApiCorpitech.Service
             {
                 Vacations = new List<Vacation>()
             };
-            if (model.Vacations != null)
-            {
+
+            if (model.Vacations == null) {
+                model.Vacations = new List<VacationEditModel>();
+            }
                 foreach (var rec in model.Vacations)
                 {
                     record.Vacations.Add(new Vacation()
@@ -103,8 +105,6 @@ namespace RestFullApiCorpitech.Service
                     });
 
                 }
-            }
-            
             record.Middlename = model.Middlename;
             record.Name = model.Name;
             record.Surname = model.Surname;

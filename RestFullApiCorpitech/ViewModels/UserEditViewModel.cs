@@ -24,6 +24,6 @@ namespace RestFullApiCorpitech.ViewModels
         [DataType(DataType.Date)]
         public DateTime dateOfEmployment { get; set; } = DateTime.MinValue;
 
-        public ICollection<VacationEditModel> Vacations { get; set; }
+        public ICollection<VacationEditModel> Vacations { get; set; } = new List<VacationEditModel>();
     }
 }
