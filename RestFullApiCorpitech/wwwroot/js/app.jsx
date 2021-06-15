@@ -43,7 +43,6 @@ class Vacation extends React.Component {
         this.removeVact = this.removeVact.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
         this.idForInp = Math.round(Math.random() * 10000);
-        console.log(this.state);
     }
 
     onDateUpdate(e) {
@@ -101,8 +100,8 @@ class Vacation extends React.Component {
 
     render() {
         return this.state.status === true ? React.createElement('div', { className: "vacationDays" },
-            React.createElement('input', { id: "fromDate" + this.idForInp, "data-toggle": "datepicker",  onChange: this.fromDateUpdate, value: this.state.fromDate }),
-            React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", onChange: this.onDateUpdate, value: this.state.onDate }),
+            React.createElement('input', { id: "fromDate" + this.idForInp, className:"fromVac", "data-toggle": "datepicker", onChange: this.fromDateUpdate, value: this.state.startVacation }),
+            React.createElement('input', { id: "onDate" + this.idForInp, className: "toVac", "data-toggle": "datepicker", onChange: this.onDateUpdate, value: this.state.endVacation }),
             React.createElement('div', { className:"closeVac",onClick: this.removeVact }, "✖"),
 
         ) : null;
@@ -120,8 +119,8 @@ class UserEdit extends React.Component {
         this.onMiddlenameChange = this.onMiddlenameChange.bind(this);
         this.onDateOfEmploymentChange = this.onDateOfEmploymentChange.bind(this);
         this.updateDate = this.updateDate.bind(this);
+        this.addVacation = this.addVacation.bind(this);
         this.close = this.close.bind(this);
-        console.log(this.state);
     }
     onNameChange(e) {
         this.setState({ name: e.target.value });
@@ -162,11 +161,55 @@ class UserEdit extends React.Component {
             months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
+
+        const demo = document.querySelector('#allVacations');
+        new PerfectScrollbar(demo, {
+            wheelSpeed: 0.5,
+            suppressScrollX: true,
+            useBothWheelAxes: true,
+        });
     }
 
-    onSubmit(e) {
+    addVacation() {
+        let myVacs = this.state.vacations;
+        myVacs.push({ startVacation: formatDateForInput(new Date()), endVacation: formatDateForInput(new Date()) });
+        this.setState({ vacations: myVacs });
+    }
+    putTheEdit(id, user) {
+        console.log(id);
+        console.log(JSON.stringify(user));
+        let data = { "id": id, "model": this.state.data };
 
-        console.log("asd");
+        $.ajax({
+            url: '../api/users/' + id,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: {
+                "model": JSON.stringify(user)
+            },
+            success: function (result) {
+                console.log(result);
+            },
+            error: function (result) { console.log(result); }
+        });
+        
+    }
+    onSubmit(e) {
+        e.preventDefault(); 
+        let myVacations = [];
+        for (let i = 0; i < $('#allVacations').find('.vacationDays').length; i++) {
+            let startVacation = $($('#allVacations').find('.vacationDays')[0]).find('.fromVac').val();
+            let endVacation = $($('#allVacations').find('.vacationDays')[0]).find('.toVac').val();
+            myVacations.push({ startVacation: startVacation, endVacation: endVacation });
+        }
+        let name = this.state.name.trim();
+        let surname = this.state.surname.trim();
+        let middlename = this.state.middlename.trim();
+        let dateOfEmployment = this.state.dateOfEmployment.trim();
+        if (!name || !surname || !middlename || !dateOfEmployment) {
+            return;
+        }
+        this.putTheEdit(this.state.data.id,{ name: name, surname: surname, middlename: middlename, dateOfEmployment: dateOfEmployment, vacations: myVacations });
     }
 
     render() {
@@ -179,12 +222,14 @@ class UserEdit extends React.Component {
                 React.createElement('input', { placeholder: 'Surname', type: 'text', onChange: this.onSurnameChange, value: this.state.surname }),
                 React.createElement('input', { placeholder: 'Middlename', type: 'text', onChange: this.onMiddlenameChange, value: this.state.middlename }),
                 React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
-                React.createElement('div', { className: "vacations" }, "Все отпуска",
-                    this.state.vacations.map(function (vacation) {
-                        return React.createElement(Vacation, { key: Math.random() * Math.random(), vacation: vacation })
-                    })
+                React.createElement('div', { id: "vacations", className: "vacations" }, "Все отпуска",
+                    React.createElement('div', { id: "allVacations", className:"allVacations" },
+                        this.state.vacations.map(function (vacation) {
+                              return React.createElement(Vacation, { key: Math.random() * Math.random(), vacation: vacation })
+                         })
+                    ),
+                    React.createElement('div', { onClick:this.addVacation,className: "addVac" }, "➕")
                 ),
-
                 React.createElement('button', { type: 'submit', className: 'postfix' }, 'Изменить')
             ),
         ) :  null;
@@ -375,10 +420,10 @@ class UserForm extends React.Component {
     onSubmit(e) {
 
         e.preventDefault();
-        var name = this.state.name.trim();
-        var surname = this.state.surname.trim();
-        var middlename = this.state.middlename.trim();
-        var dateOfEmployment = this.state.dateOfEmployment.trim();
+        let name = this.state.name.trim();
+        let surname = this.state.surname.trim();
+        let middlename = this.state.middlename.trim();
+        let dateOfEmployment = this.state.dateOfEmployment.trim();
         if (!name || !surname || !middlename || !dateOfEmployment) {
             return;
         }
