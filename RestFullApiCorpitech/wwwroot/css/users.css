@@ -79,8 +79,21 @@ td input {
     text-align:center;
     box-sizing: border-box;
 }
-.editBlock button {
-    width: 300px;
-    height: 30px;
-    margin: 10px auto;
-}
+    .editBlock .vacations{
+        width:300px;
+        height:200px;
+        border:1px solid #000;
+        border-radius:5px;
+        overflow:auto;
+    }
+    .editBlock button {
+        cursor: pointer;
+        width: 300px;
+        height: 30px;
+        margin: 10px auto;
+        font-weight:bolder;
+        background: #fff0b6;
+    }
+    .editBlock button:hover{
+        background:#e8e8e8;
+    }
