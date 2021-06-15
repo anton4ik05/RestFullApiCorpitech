@@ -96,9 +96,6 @@ namespace RestFullApiCorpitech.Service
                 model.Vacations = new List<VacationEditModel>();
             }
 
-        
-
-
             foreach (var rec in model.Vacations)
             {
                 record.Vacations.Add(new Vacation()
