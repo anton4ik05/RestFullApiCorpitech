@@ -156,7 +156,7 @@ namespace RestFullApiCorpitech.Service
 
         public IEnumerable<User> GetUsers()
         {
-            return context.Users.Include(x => x.Vacations.OrderBy(x=>x.StartVacation)).OrderBy(x => x.Surname).ThenBy(x => x.Name).ToList();
+            return context.Users.Include(x => x.Vacations).OrderBy(x => x.Surname).ThenBy(x=> x.Name).ToList();
         }
 
         public User GetUser(Guid id)
