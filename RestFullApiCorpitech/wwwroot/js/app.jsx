@@ -185,7 +185,7 @@ class UserEdit extends React.Component {
             type: 'PUT',
             contentType: 'application/json',
             data: {
-                "model": JSON.stringify(user)
+                data:data
             },
             success: function (result) {
                 console.log(result);
