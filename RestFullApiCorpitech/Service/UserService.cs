@@ -37,7 +37,7 @@ namespace RestFullApiCorpitech.Service
 
         {
             Double value = 0;
-            
+
             if (!(startDate < user.DateOfEmployment || endDate < user.DateOfEmployment || startDate > endDate || startDate == endDate))
             {
                 Double intersect = 0;
@@ -91,24 +91,26 @@ namespace RestFullApiCorpitech.Service
                 Vacations = new List<Vacation>()
             };
 
-            if (model.Vacations == null) {
+            if (model.Vacations == null)
+            {
                 model.Vacations = new List<VacationEditModel>();
             }
-                foreach (var rec in model.Vacations)
-                {
-                    record.Vacations.Add(new Vacation()
-                    {
-                        StartVacation = rec.startVacation,
-                        EndVacation = rec.endVacation,
-                        User = rec.user,
-                        UserId = rec.userId
-                    });
 
-                }
+            foreach (var rec in model.Vacations)
+            {
+                record.Vacations.Add(new Vacation()
+                {
+                    StartVacation = rec.startVacation,
+                    EndVacation = rec.endVacation,
+                    User = rec.user,
+                    UserId = rec.userId
+                });
+
+            }
             record.Middlename = model.Middlename;
             record.Name = model.Name;
             record.Surname = model.Surname;
-            record.DateOfEmployment = model.dateOfEmployment;
+            record.DateOfEmployment = model.DateOfEmployment;
 
             context.Users.Add(record);
             context.SaveChanges();
@@ -137,7 +139,7 @@ namespace RestFullApiCorpitech.Service
             record.Middlename = model.Middlename;
             record.Name = model.Name;
             record.Surname = model.Surname;
-            record.DateOfEmployment = model.dateOfEmployment;
+            record.DateOfEmployment = model.DateOfEmployment;
             context.SaveChanges();
         }
 
@@ -145,13 +147,13 @@ namespace RestFullApiCorpitech.Service
         public void DeleteUser(Guid id)
         {
 
-            User user = context.Users.Include(x=> x.Vacations).FirstOrDefault(x => x.Id == id);
+            User user = context.Users.Include(x => x.Vacations).FirstOrDefault(x => x.Id == id);
             if (user != null)
             {
                 context.Users.Remove(user!);
                 context.SaveChanges();
             }
-            
+
         }
 
         public IEnumerable<User> GetUsers()

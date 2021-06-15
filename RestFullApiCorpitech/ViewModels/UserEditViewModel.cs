@@ -22,7 +22,7 @@ namespace RestFullApiCorpitech.ViewModels
         [Display(Name = "Дата найма")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
         [DataType(DataType.Date)]
-        public DateTime dateOfEmployment { get; set; } = DateTime.MinValue;
+        public DateTime DateOfEmployment { get; set; } = DateTime.MinValue;
 
         public ICollection<VacationEditModel> Vacations { get; set; } = new List<VacationEditModel>();
     }
