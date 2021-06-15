@@ -12,6 +12,8 @@ using JavaScriptEngineSwitcher.ChakraCore;
 using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
 using JavaScriptEngineSwitcher.V8;
 using RestFullApiCorpitech.Service;
+using RestFullApiCorpitech.Authentication;
+using RestFullApiCorpitech.Authentication.Interfaces;
 
 namespace RestFullApiCorpitech
 {
@@ -27,6 +29,11 @@ namespace RestFullApiCorpitech
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            const string signingSecurityKey = "0d5b3235a8b403c3dab9c3f4f65c07fcalskd234n1k41230";
+            var signingKey = new SigningSymmetricKey(signingSecurityKey);
+            services.AddSingleton<IJwtSigningEncodingKey>(signingKey);
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
