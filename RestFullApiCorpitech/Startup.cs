@@ -14,7 +14,7 @@ using JavaScriptEngineSwitcher.V8;
 using RestFullApiCorpitech.Service;
 using RestFullApiCorpitech.Authentication;
 using RestFullApiCorpitech.Authentication.Interfaces;
-
+using Microsoft.AspNetCore.Authentication;
 namespace RestFullApiCorpitech
 {
     public class Startup
@@ -35,6 +35,18 @@ namespace RestFullApiCorpitech
             services.AddSingleton<IJwtSigningEncodingKey>(signingKey);
 
             services.AddControllers();
+
+            const string jwtSchemeName = "JwtBearer";
+            var signingDecodingKey = (IJwtSigningDecodingKey) signingKey;
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultAuthenticateScheme = jwtSchemeName;
+            //    options.DefaultChallengeScheme = jwtSchemeName;
+            //}).AddJwtBearer();
+            
+
+
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "RestFullApiCorpitech", Version = "v1" });
@@ -64,7 +76,9 @@ namespace RestFullApiCorpitech
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "RestFullApiCorpitech v1"));
             }
-           
+
+            app.UseAuthentication();
+
             app.UseHttpsRedirection();
             
             app.UseDefaultFiles();
