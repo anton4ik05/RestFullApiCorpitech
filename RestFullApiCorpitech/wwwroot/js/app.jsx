@@ -40,6 +40,7 @@ class Vacation extends React.Component {
         this.myDatePickerFirst = "";
         this.state = { data: props.vacation, status: true, startVacation: props.vacation.startVacation, endVacation: props.vacation.endVacation };
         this.updateDate = this.updateDate.bind(this);
+        this.removeVact = this.removeVact.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
         this.idForInp = Math.round(Math.random() * 10000);
         console.log(this.state);
@@ -94,12 +95,16 @@ class Vacation extends React.Component {
         });
         $('#fromDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker('setDate', new Date(this.state.startVacation));
     }
+    removeVact() {
+        this.setState({ status: false });
+    }
 
     render() {
-        console.log("asd");
         return this.state.status === true ? React.createElement('div', { className: "vacationDays" },
             React.createElement('input', { id: "fromDate" + this.idForInp, "data-toggle": "datepicker",  onChange: this.fromDateUpdate, value: this.state.fromDate }),
             React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", onChange: this.onDateUpdate, value: this.state.onDate }),
+            React.createElement('div', { className:"closeVac",onClick: this.removeVact }, "✖"),
+
         ) : null;
     }
 }
