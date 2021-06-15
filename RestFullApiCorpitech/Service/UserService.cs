@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.EntityFrameworkCore;
 using RestFullApiCorpitech.ViewModels;
 
@@ -38,10 +37,10 @@ namespace RestFullApiCorpitech.Service
 
         {
             Double value = 0;
-            Double intersect = 0;
-
+            
             if (!(startDate < user.DateOfEmployment || endDate < user.DateOfEmployment || startDate > endDate || startDate == endDate))
             {
+                Double intersect = 0;
 
                 if (user.Vacations != null || user.Vacations.Any())
                 {
@@ -95,22 +94,17 @@ namespace RestFullApiCorpitech.Service
             if (model.Vacations == null) {
                 model.Vacations = new List<VacationEditModel>();
             }
-
-        
-
-
-            foreach (var rec in model.Vacations)
-            {
-                record.Vacations.Add(new Vacation()
+                foreach (var rec in model.Vacations)
                 {
-                    StartVacation = rec.startVacation,
-                    EndVacation = rec.endVacation,
-                    User = rec.user,
-                    UserId = rec.userId
-                });
-            }
-            
+                    record.Vacations.Add(new Vacation()
+                    {
+                        StartVacation = rec.startVacation,
+                        EndVacation = rec.endVacation,
+                        User = rec.user,
+                        UserId = rec.userId
+                    });
 
+                }
             record.Middlename = model.Middlename;
             record.Name = model.Name;
             record.Surname = model.Surname;
@@ -162,7 +156,7 @@ namespace RestFullApiCorpitech.Service
 
         public IEnumerable<User> GetUsers()
         {
-            return context.Users.Include(x => x.Vacations.OrderBy(x=>x.StartVacation)).OrderBy(x => x.Surname).ThenBy(x => x.Name).ToList();
+            return context.Users.Include(x => x.Vacations).OrderBy(x => x.Surname).ThenBy(x=> x.Name).ToList();
         }
 
         public User GetUser(Guid id)
