@@ -141,6 +141,7 @@ namespace RestFullApiCorpitech.Service
             record.Name = model.Name;
             record.Surname = model.Surname;
             record.DateOfEmployment = model.DateOfEmployment;
+            record.vacationYear = model.vacationYear;
             context.SaveChanges();
         }
 
