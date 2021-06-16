@@ -206,6 +206,12 @@ class UserEdit extends React.Component {
             },
             error: function (result) { console.log(result); }
         });
+        this.close();
+        ReactDOM.unmountComponentAtNode(document.getElementById('content'));
+        ReactDOM.render(
+            React.createElement(UserList, null),
+            document.getElementById('content'),
+        );
     }
 
 
