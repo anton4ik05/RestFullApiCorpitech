@@ -235,7 +235,7 @@ class UserEdit extends React.Component {
         let surname = this.state.surname.trim();
         let middlename = this.state.middlename.trim();
         let dateOfEmployment = this.state.dateOfEmployment.trim();
-        let vacationYear = this.state.vacationYear.trim();
+        let vacationYear = (this.state.vacationYear+"").trim();
         if (!name || !surname || !middlename || !dateOfEmployment || !vacationYear) {
             return;
         }
@@ -248,11 +248,11 @@ class UserEdit extends React.Component {
             'div', { className: "editBlock" }, "Редактирование",
             React.createElement('div', { onClick:this.close, className: "close" }, '✖'),
             React.createElement('form', { onSubmit: this.onSubmit },
-                React.createElement('input', { placeholder: 'Surname', type: 'text', onChange: this.onSurnameChange, value: this.state.surname }),
-                React.createElement('input', { placeholder: 'Name', type: 'text', onChange: this.onNameChange, value: this.state.name }),
-                React.createElement('input', { placeholder: 'Middlename', type: 'text', onChange: this.onMiddlenameChange, value: this.state.middlename }),
-                React.createElement('input', { placeholder: ' Дней отпуска в год', type: 'text', onChange: this.onVacationYearChange, value: this.state.vacationYear }),
-                React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
+                React.createElement('input', { placeholder: 'Surname', type: 'text', autoComplete:"off", onChange: this.onSurnameChange, value: this.state.surname }),
+                React.createElement('input', { placeholder: 'Name', type: 'text', autoComplete:"off", onChange: this.onNameChange, value: this.state.name }),
+                React.createElement('input', { placeholder: 'Middlename', type: 'text', autoComplete:"off", onChange: this.onMiddlenameChange, value: this.state.middlename }),
+                React.createElement('input', { placeholder: 'Дней отпуска в год', type: 'text', autoComplete:"off", onChange: this.onVacationYearChange, value: this.state.vacationYear }),
+                React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', autoComplete:"off", onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
                 React.createElement('div', { id: "vacations", className: "vacations" }, "Все отпуска",
                     React.createElement('div', { id: "allVacations", className:"allVacations" },
                         this.state.vacations.map(function (vacation) {
@@ -377,15 +377,21 @@ class User extends React.Component {
         });
         $('#fromDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker('setDate', new Date(this.state.data.dateOfEmployment));
     }
-
+    addUser() {
+        $('body').append("<div id='edit'></div>");
+        ReactDOM.render(
+            React.createElement(UserForm, { user: this.state.data }),
+            document.getElementById('edit'),
+        );
+    }
     render() {
         if (this.state.data !== null) {
             return React.createElement(
                 'tr', null,
                 React.createElement('td', {}, this.state.data.surname + " " + this.state.data.name + " " + this.state.data.middlename),
-                React.createElement('td', {}, React.createElement('input', { id: "fromDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', onChange: this.fromDateUpdate, value: this.state.fromDate })),
+                React.createElement('td', {}, React.createElement('input', { id: "fromDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', autoComplete:"off", onChange: this.fromDateUpdate, value: this.state.fromDate })),
                 React.createElement('td', {}, Math.round(this.state.vacationDays)),
-                React.createElement('td', {}, React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', onChange: this.onDateUpdate, value: this.state.onDate })),
+                React.createElement('td', {}, React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', autoComplete:"off", onChange: this.onDateUpdate, value: this.state.onDate })),
                 React.createElement('td', { className: "operations" },
                     React.createElement('span', { className: "operation", onClick: this.editEmploye }, '✎'),
                     React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✘'),
@@ -402,12 +408,13 @@ class UserForm extends React.Component {
     constructor(props) {
         super(props);
         this.myDatePicker = "";
-        this.state = { name: "", surname: "", middlename: "", vacationYear:"28",dateOfEmployment: this.myDatePicker };
+        this.state = { status: true, name: "", surname: "", middlename: "", vacationYear: "28", dateOfEmployment: this.myDatePicker };
         this.onSubmit = this.onSubmit.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
         this.onSurnameChange = this.onSurnameChange.bind(this);
         this.onMiddlenameChange = this.onMiddlenameChange.bind(this);
         this.onDateOfEmploymentChange = this.onDateOfEmploymentChange.bind(this);
+        this.close = this.close.bind(this);
         this.updateDate = this.updateDate.bind(this);
 
     }
@@ -430,6 +437,11 @@ class UserForm extends React.Component {
     }
     updateDate(myDatePicker) {
         this.setState({ dateOfEmployment: myDatePicker });
+    }
+
+    close() {
+        this.setState({ status: false });
+        $('#edit').remove();
     }
     componentDidMount() {
         let myDatePicker = "";
@@ -463,19 +475,38 @@ class UserForm extends React.Component {
         if (!name || !surname || !middlename || !dateOfEmployment || !vacationYear) {
             return;
         }
-        this.props.onUserSubmit({ name: name, surname: surname, middlename: middlename, vacationYear:vacationYear,dateOfEmployment: dateOfEmployment, vacations: [] });
-        this.setState({ name: "", surname: "", middlename: "", vacationYear:"",dateOfEmployment: "" });
+        let user={ name: name, surname: surname, middlename: middlename, vacationYear:vacationYear,dateOfEmployment: dateOfEmployment, vacations: [] };
+        this.setState({ name: "", surname: "", middlename: "", vacationYear: "", dateOfEmployment: "" });
+        $.ajax({
+            url: '../api/users',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(user),
+            success: function (result) {
+                console.log("USER is added.");
+            },
+            error: function (result) { console.log(result); }
+        });
+         this.close();
+        ReactDOM.unmountComponentAtNode(document.getElementById('content'));
+        ReactDOM.render(
+            React.createElement(UserList, null),
+            document.getElementById('content'),
+        );
     }
 
     render() {
-        return React.createElement('form', { onSubmit: this.onSubmit },
-            React.createElement('input', { placeholder: 'Surname', type: 'text', onChange: this.onSurnameChange, value: this.state.surname }),
-            React.createElement('input', { placeholder: 'Name', type: 'text', onChange: this.onNameChange, value: this.state.name }),
-            React.createElement('input', { placeholder: 'Middlename', type: 'text', onChange: this.onMiddlenameChange, value: this.state.middlename }),
-            React.createElement('input', { placeholder: 'Дней отпуска в год', type: 'text', onChange: this.onVacationYearChange, value: this.state.vacationYear }),
-            React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
-            React.createElement('button', { type: 'submit', className: 'postfix' }, 'Добавить')
-        )
+        return this.state.status === true ? React.createElement('div', { className: "editBlock" }, "Добавление",
+            React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
+            React.createElement('form', { onSubmit: this.onSubmit },
+                React.createElement('input', { placeholder: 'Surname', type: 'text', autoComplete:"off", onChange: this.onSurnameChange, value: this.state.surname }),
+                React.createElement('input', { placeholder: 'Name', type: 'text', autoComplete:"off", onChange: this.onNameChange, value: this.state.name }),
+                React.createElement('input', { placeholder: 'Middlename', type: 'text', autoComplete:"off", onChange: this.onMiddlenameChange, value: this.state.middlename }),
+                React.createElement('input', { placeholder: 'Дней отпуска в год', type: 'text', autoComplete:"off", onChange: this.onVacationYearChange, value: this.state.vacationYear }),
+                React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', autoComplete:"off", onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
+                React.createElement('button', { type: 'submit', className: 'postfix' }, 'Добавить')
+            )
+        ) : null;
     }
 }
 
@@ -510,34 +541,18 @@ class UserList extends React.Component {
     }
 
     onAddUser(user) {
-
-        if (user) {
-            const data = new FormData();
-            data.append("Name", user.name);
-            data.append("Surname", user.surname);
-            data.append("Middlename", user.middlename);
-            data.append("dateOfEmployment", user.dateOfEmployment);
-            data.append("vacations", user.vacations);
-            fetch('../api/users', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json; charset=utf-8',
-                    'Content-Type': 'application/json;charset=UTF-8'
-                },
-                body: JSON.stringify(user),
-            }).then((response) => response.json())
-                .then((responseJson) => {
-                    console.log('Success:', JSON.stringify(responseJson));
-                    this.loadData();
-                })
-                .catch(error => console.error('Error:', error));
-        }
+        console.log("as");
+        $('body').append("<div id='edit'></div>");
+        ReactDOM.render(
+            React.createElement(UserForm, { user: this.state.data }),
+            document.getElementById('edit'),
+        );
     }
 
     render() {
 
         return React.createElement('div', {},
-            React.createElement(UserForm, { onUserSubmit: this.onAddUser }),
+            React.createElement('div', { className:"addButton",onClick: this.onAddUser }, "Добавить"),
             React.createElement('table', { className: 'usersTable' }, React.createElement('caption', {}, 'Работники'),
                 React.createElement('thead', {},
                     React.createElement('tr', {},

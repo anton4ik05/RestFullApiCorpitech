@@ -92,11 +92,16 @@ box-sizing: border-box;
     width: 300px;
     height: 30px;
     margin: 3px auto;
-    font-weight:bolder;
-    background: margin: 3px auto;;
+    font-weight: bolder;
+    background: #fff0b6;
 }
-.editBlock button:hover{
-    background:#e8e8e8;
+
+.editBlock button:hover {
+    background: #f6d67c;
+}
+
+.editBlock button:active {
+    transform: scale(0.9);
 }
 .allVacations{
     position:relative;
@@ -125,4 +130,20 @@ box-sizing: border-box;
 .vacationDays .closeVac {
     cursor: pointer;
     line-height: 50px;
+}
+.addButton {
+    width: 200px;
+    height: 30px;
+    font-weight:bold;
+    line-height:30px;
+    text-align:center;
+    background: #fff0b6;
+    border:1px solid;
+    cursor:pointer;
+}
+.addButton:hover {
+    background: #f6d67c;
+}
+.addButton:active {
+    transform:scale(0.9);
 }
