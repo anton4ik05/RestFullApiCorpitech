@@ -65,7 +65,7 @@ namespace RestFullApiCorpitech.Service
                 }
 
                 Double days = (endDate - startDate).Days + 1 - intersect;
-                value = Math.Round(Math.Round(days / 29.7) * 2.33);
+                value = Math.Round(Math.Round(days / 29.7) * (user.vacationYear/12));
 
             }
 
@@ -111,6 +111,7 @@ namespace RestFullApiCorpitech.Service
             record.Name = model.Name;
             record.Surname = model.Surname;
             record.DateOfEmployment = model.DateOfEmployment;
+            record.vacationYear = model.vacationYear;
 
             context.Users.Add(record);
             context.SaveChanges();

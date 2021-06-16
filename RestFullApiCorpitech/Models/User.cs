@@ -35,5 +35,7 @@ namespace RestFullApiCorpitech.Models
 
         public ICollection<Vacation> Vacations { get; set; } = new List<Vacation>();
 
+        public Double vacationYear { get; set; } = 28; 
+
     }
 }

@@ -50,9 +50,13 @@ namespace RestFullApiCorpitech
         [Route("/api/users/{id}")]
         public IActionResult UserEdit(Guid id, UserEditViewModel model)
         {
+            if (ModelState.IsValid)
+            {
                 userService.UpdateUser(id, model);
                 return new ObjectResult(userService.GetUser(id));
-            //return new BadRequestResult();
+            }
+
+            return new BadRequestResult();
         }
 
 
