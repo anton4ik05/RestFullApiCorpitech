@@ -70,7 +70,7 @@ namespace RestFullApiCorpitech
                 return new OkResult();
             }
 
-            return new BadRequestResult();
+            return new BadRequestObjectResult("User not found");
         }
 
         
