@@ -25,5 +25,7 @@ namespace RestFullApiCorpitech.ViewModels
         public DateTime DateOfEmployment { get; set; } = DateTime.MinValue;
 
         public ICollection<VacationEditModel> Vacations { get; set; } = new List<VacationEditModel>();
+
+        public Double vacationYear { get; set; } = 28;
     }
 }
