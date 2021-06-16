@@ -112,6 +112,8 @@ namespace RestFullApiCorpitech.Service
             record.Surname = model.Surname;
             record.DateOfEmployment = model.DateOfEmployment;
             record.vacationYear = model.vacationYear;
+            record.Login = model.Login;
+            record.Role = model.Role;
 
             context.Users.Add(record);
             context.SaveChanges();
@@ -141,6 +143,8 @@ namespace RestFullApiCorpitech.Service
             record.Name = model.Name;
             record.Surname = model.Surname;
             record.DateOfEmployment = model.DateOfEmployment;
+            record.Login = model.Login;
+            record.Role = model.Role;
             record.vacationYear = model.vacationYear;
             context.SaveChanges();
         }
@@ -166,6 +170,11 @@ namespace RestFullApiCorpitech.Service
         public User GetUser(Guid id)
         {
             return context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
+        }
+
+        public User GetUserForLogin(string login)
+        {
+            return context.Users.FirstOrDefault(x => x.Login == login);
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -13,8 +14,9 @@ using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
 using JavaScriptEngineSwitcher.V8;
 using RestFullApiCorpitech.Service;
 using RestFullApiCorpitech.Authentication;
-using RestFullApiCorpitech.Authentication.Interfaces;
-using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+
 namespace RestFullApiCorpitech
 {
     public class Startup
@@ -29,25 +31,32 @@ namespace RestFullApiCorpitech
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-
-            const string signingSecurityKey = "0d5b3235a8b403c3dab9c3f4f65c07fcalskd234n1k41230";
-            var signingKey = new SigningSymmetricKey(signingSecurityKey);
-            services.AddSingleton<IJwtSigningEncodingKey>(signingKey);
-
             services.AddControllers();
 
-            const string jwtSchemeName = "JwtBearer";
-            var signingDecodingKey = (IJwtSigningDecodingKey) signingKey;
-            //services.AddAuthentication(options =>
-            //{
-            //    options.DefaultAuthenticateScheme = jwtSchemeName;
-            //    options.DefaultChallengeScheme = jwtSchemeName;
-            //}).AddJwtBearer();
-            
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = AuthOptions.ISSUER,
+
+                        ValidateAudience = true,
+
+                        ValidAudience = AuthOptions.AUDIENCE,
+                        ValidateLifetime = true,
+
+                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+
+                        ValidateIssuerSigningKey = true
+                    };
+                });
 
 
 
-            services.AddSwaggerGen(c =>
+                services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "RestFullApiCorpitech", Version = "v1" });
             });

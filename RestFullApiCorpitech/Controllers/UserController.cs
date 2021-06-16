@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RestFullApiCorpitech.Models;
 using RestFullApiCorpitech.Service;
 using RestFullApiCorpitech.ViewModels;
 
-namespace RestFullApiCorpitech
+namespace RestFullApiCorpitech.Controllers
 {
    
     [ApiController]
     [Route("/api/users")]
-    
-    public class UserController : Controller
+    public class UserController : ControllerBase
     {
         private readonly UserService userService;
 
@@ -34,6 +32,7 @@ namespace RestFullApiCorpitech
             return new ObjectResult(userService.EvalUser(id, startDate, endDate));
         }
 
+        
         [HttpPost]
         [Route("/api/users")]
         public IActionResult UserCreate(UserEditViewModel model)

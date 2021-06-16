@@ -27,5 +27,10 @@ namespace RestFullApiCorpitech.ViewModels
         public ICollection<VacationEditModel> Vacations { get; set; } = new List<VacationEditModel>();
 
         public Double vacationYear { get; set; } = 28;
+
+        public string Login { get; set; }
+
+        public string Role { get; set; }
+
     }
 }

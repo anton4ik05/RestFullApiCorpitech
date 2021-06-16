@@ -37,5 +37,12 @@ namespace RestFullApiCorpitech.Models
 
         public Double vacationYear { get; set; } = 28; 
 
+        public string Login { get; set; }
+
+        public string Role { get; set; }
+
+
+
+
     }
 }
