@@ -196,27 +196,16 @@ class UserEdit extends React.Component {
     }
 
     putTheEdit(id, user) {
-        const data = new FormData();
-        data.append("Name", user.name);
-        data.append("Surname", user.surname);
-        data.append("Middlename", user.middlename);
-        data.append("dateOfEmployment", user.dateOfEmployment);
-        data.append("vacations", user.vacations);
-        fetch('../api/users/' + id,
-                {
-                    method: 'PUT',
-                    headers: {
-                        'Accept': 'application/json; charset=utf-8',
-                        'Content-Type': 'application/json;charset=UTF-8'
-                    },
-                    body: JSON.stringify(user),
-                }).then((response) => response.json())
-            .then((responseJson) => {
-                console.log('Success:', JSON.stringify(responseJson));
-                this.close();
-            })
-            .catch(error => console.error('Error:', error));
-
+        $.ajax({
+            url: '../api/users/' + id,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(user),
+            success: function (result) {
+                console.log(result);
+            },
+            error: function (result) { console.log(result); }
+        });
     }
 
 
