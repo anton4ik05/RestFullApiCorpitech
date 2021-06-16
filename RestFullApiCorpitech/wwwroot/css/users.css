@@ -91,9 +91,9 @@ box-sizing: border-box;
     cursor: pointer;
     width: 300px;
     height: 30px;
-    margin: 10px auto;
+    margin: 3px auto;
     font-weight:bolder;
-    background: #fff0b6;
+    background: margin: 3px auto;;
 }
 .editBlock button:hover{
     background:#e8e8e8;
