@@ -64,7 +64,7 @@ class Vacation extends React.Component {
     componentDidMount() {
         let myDatePicker = "", myDatePickerFirst = "";
         let updateDate = this.updateDate.bind();
-        $('#onDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
+        $('#endVacation' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
                 myDatePicker = formatDateForInput(date.date);
                 updateDate(myDatePicker, true);
@@ -78,7 +78,7 @@ class Vacation extends React.Component {
             months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
-        $('#fromDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
+        $('#startVacation' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
                 myDatePickerFirst = formatDateForInput(date.date);
                 updateDate(myDatePickerFirst, false);
@@ -92,7 +92,7 @@ class Vacation extends React.Component {
             months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
-        $('#fromDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker('setDate', new Date(this.state.startVacation));
+        $('#startVacation' + this.idForInp + '[data-toggle="datepicker"]').datepicker('setDate', new Date(this.state.startVacation));
     }
     removeVact() {
         this.setState({ status: false });
@@ -100,8 +100,8 @@ class Vacation extends React.Component {
 
     render() {
         return this.state.status === true ? React.createElement('div', { className: "vacationDays" },
-            React.createElement('input', { id: "fromDate" + this.idForInp, className:"fromVac", "data-toggle": "datepicker", onChange: this.fromDateUpdate, value: this.state.startVacation }),
-            React.createElement('input', { id: "onDate" + this.idForInp, className: "toVac", "data-toggle": "datepicker", onChange: this.onDateUpdate, value: this.state.endVacation }),
+            React.createElement('input', { id: "startVacation" + this.idForInp, className:"fromVac", "data-toggle": "datepicker", onChange: this.fromDateUpdate, value: this.state.startVacation }),
+            React.createElement('input', { id: "endVacation" + this.idForInp, className: "toVac", "data-toggle": "datepicker", onChange: this.onDateUpdate, value: this.state.endVacation }),
             React.createElement('div', { className:"closeVac",onClick: this.removeVact }, "✖"),
 
         ) : null;
@@ -227,8 +227,8 @@ class UserEdit extends React.Component {
         e.preventDefault(); 
         let myVacations = [];
         for (let i = 0; i < $('#allVacations').find('.vacationDays').length; i++) {
-            let startVacation = $($('#allVacations').find('.vacationDays')[0]).find('.fromVac').val();
-            let endVacation = $($('#allVacations').find('.vacationDays')[0]).find('.toVac').val();
+            let startVacation = $($('#allVacations').find('.vacationDays')[i]).find('.fromVac').val();
+            let endVacation = $($('#allVacations').find('.vacationDays')[i]).find('.toVac').val();
             myVacations.push({ startVacation: startVacation, endVacation: endVacation });
         }
         let name = this.state.name.trim();
