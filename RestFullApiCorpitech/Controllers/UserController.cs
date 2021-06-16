@@ -64,8 +64,13 @@ namespace RestFullApiCorpitech
         [Route("/api/users/del")]
         public IActionResult UserDelete(Guid id)
         {
-            userService.DeleteUser(id);
-            return new OkResult();
+            if (userService.GetUser(id) != null)
+            {
+                userService.DeleteUser(id);
+                return new OkResult();
+            }
+
+            return new BadRequestResult();
         }
 
         
