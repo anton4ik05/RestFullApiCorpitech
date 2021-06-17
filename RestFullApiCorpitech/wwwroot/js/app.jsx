@@ -301,12 +301,13 @@ class User extends React.Component {
         super(props);
         this.myDatePicker = "";
         this.myDatePickerFirst = "";
-        this.state = { data: props.user, vacationDays: 0, fromDate: formatDateForInput(new Date(props.user.dateOfEmployment)), onDate: formatDateForInput(new Date()) };
+        this.state = { data: props.user, vacationDays: 0,days:"", fromDate: formatDateForInput(new Date(props.user.dateOfEmployment)), onDate: formatDateForInput(new Date()) };
         this.updateDate = this.updateDate.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
         this.deleteEmploye = this.deleteEmploye.bind(this);
         this.onElementRemove = this.onElementRemove.bind(this);
         this.editEmploye = this.editEmploye.bind(this);
+        this.collapse = this.collapse.bind(this);
         this.fromDateUpdate = this.fromDateUpdate.bind(this);
         this.idForInp = Math.round(Math.random() * 10000);
     }
@@ -361,6 +362,17 @@ class User extends React.Component {
 
     }
 
+    collapse(e) {
+        console.log(e.target);
+        e.target.classList.toggle("active");
+        let content = e.target.nextElementSibling;
+        if (content.style.maxHeight) {
+            content.style.maxHeight = null;
+        } else {
+            content.style.maxHeight = content.scrollHeight + "px";
+        }
+    }
+
     updateDate(myDatePicker, on) { //true - onDate,false- fromDate
         if (on) {
             this.setState({ onDate: myDatePicker });
@@ -403,6 +415,16 @@ class User extends React.Component {
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
         $('#fromDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker('setDate', new Date(this.state.data.dateOfEmployment));
+        let days=0;
+        $.ajax({
+            url: '../api/users/'+this.state.data.id+'/days',
+            success: function (result) {
+                days = result;
+            },
+            error: function (result) { console.log(result); }
+        });
+        this.setState({ days: days });
+
     }
     addUser() {
         $('body').append("<div id='edit'></div>");
@@ -416,8 +438,11 @@ class User extends React.Component {
             return React.createElement(
                 'tr', null,
                 React.createElement('td', {}, this.state.data.surname + " " + this.state.data.name + " " + this.state.data.middlename),
-                React.createElement('td', {}, React.createElement('input', { id: "fromDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', autoComplete:"off", onChange: this.fromDateUpdate, value: this.state.fromDate })),
-                React.createElement('td', {}, Math.round(this.state.vacationDays)),
+                React.createElement('td', {}, React.createElement('input', { id: "fromDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', autoComplete: "off", onChange: this.fromDateUpdate, value: this.state.fromDate })),
+                React.createElement('td', { className: "coll" },
+                    React.createElement('div', { id: "collapsible", onClick: this.collapse, className: "collapsible" }, Math.round(this.state.vacationDays)),
+                    React.createElement('div', { className: "contentColl" }, Math.round(this.state.vacationDays) + '=' + "Math.Round(Math.Round(" + this.state.days + " / 29.7) * (" + this.state.data.vacationYear + " / 12))")
+                ),
                 React.createElement('td', {}, React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', autoComplete:"off", onChange: this.onDateUpdate, value: this.state.onDate })),
                 React.createElement('td', { className: "operations" },
                     React.createElement('span', { className: "operation", onClick: this.editEmploye }, '✎'),
