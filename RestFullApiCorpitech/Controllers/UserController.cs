@@ -28,7 +28,6 @@ namespace RestFullApiCorpitech.Controllers
         [Route("/api/users/{id}")]
         public IActionResult Get(Guid id, DateTime startDate, DateTime endDate)
         {
-            
             return new ObjectResult(userService.EvalUser(id, startDate, endDate));
         }
 
@@ -36,7 +35,6 @@ namespace RestFullApiCorpitech.Controllers
         [Route("/api/users/{id}/days")]
         public IActionResult GetDays(Guid id, DateTime startDate, DateTime endDate)
         {
-
             return new ObjectResult(userService.EvalUserDays(id, startDate, endDate));
         }
 

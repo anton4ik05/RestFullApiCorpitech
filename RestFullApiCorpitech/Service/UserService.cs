@@ -216,7 +216,7 @@ namespace RestFullApiCorpitech.Service
             return context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
         }
 
-        public User GetUserForLogin(string login)
+        public User GetUserByLogin(string login)
         {
             return context.Users.FirstOrDefault(x => x.Login == login);
         }
