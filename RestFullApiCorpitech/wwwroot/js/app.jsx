@@ -210,15 +210,15 @@ class UserEdit extends React.Component {
             data: JSON.stringify(user),
             success: function (result) {
                 console.log("edit is sucs.");
+                ReactDOM.unmountComponentAtNode(document.getElementById('content'));
+                ReactDOM.render(
+                    React.createElement(UserList, null),
+                    document.getElementById('content'),
+                );
             },
             error: function (result) { console.log(result); }
         });
         this.close();
-        ReactDOM.unmountComponentAtNode(document.getElementById('content'));
-        ReactDOM.render(
-            React.createElement(UserList, null),
-            document.getElementById('content'),
-        );
     }
 
 
@@ -484,15 +484,16 @@ class UserForm extends React.Component {
             data: JSON.stringify(user),
             success: function (result) {
                 console.log("USER is added.");
+                ReactDOM.unmountComponentAtNode(document.getElementById('content'));
+                ReactDOM.render(
+                    React.createElement(UserList, null),
+                    document.getElementById('content'),
+                );
             },
             error: function (result) { console.log(result); }
         });
          this.close();
-        ReactDOM.unmountComponentAtNode(document.getElementById('content'));
-        ReactDOM.render(
-            React.createElement(UserList, null),
-            document.getElementById('content'),
-        );
+        
     }
 
     render() {
