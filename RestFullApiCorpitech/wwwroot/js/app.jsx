@@ -445,7 +445,7 @@ class User extends React.Component {
                 React.createElement('td', {}, React.createElement('input', { id: "fromDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', autoComplete: "off", onChange: this.fromDateUpdate, value: this.state.fromDate })),
                 React.createElement('td', { className: "coll" },
                     React.createElement('div', { id: "collapsible", onClick: this.collapse, className: "collapsible" }, Math.round(this.state.vacationDays)),
-                    React.createElement('div', { className: "contentColl" }, Math.round(this.state.vacationDays) + '=' + "Math.Round(Math.Round(" + this.state.days + " / 29.7) * (" + this.state.data.vacationYear + " / 12))")
+                    React.createElement('div', { className: "contentColl" }, Math.round(this.state.vacationDays) + '=' + "(" + this.state.days + " / 29.7) * (" + this.state.data.vacationYear + " / 12)")
                 ),
                 React.createElement('td', {}, React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', autoComplete:"off", onChange: this.onDateUpdate, value: this.state.onDate })),
                 React.createElement('td', { className: "operations" },
