@@ -25,7 +25,13 @@ function formatDateForInput(date) {
 
     return yy + '-' + mm + '-' + dd;
 }
-
+function removeItemOnce(arr, value) {
+    var index = arr.indexOf(value);
+    if (index > -1) {
+        arr.splice(index, 1);
+    }
+    return arr;
+}
 function objToQueryString(obj) {
     const keyValuePairs = [];
     for (const key in obj) {
@@ -38,19 +44,28 @@ class Vacation extends React.Component {
         super(props);
         this.myDatePicker = "";
         this.myDatePickerFirst = "";
-        this.state = { data: props.vacation, status: true, startVacation: props.vacation.startVacation, endVacation: props.vacation.endVacation };
+        this.state = { data: props.vacation, status: true, startVacation: props.vacation.startVacation, endVacation: props.vacation.endVacation, quantityDays: Math.floor((new Date(props.vacation.endVacation).getTime() - new Date(props.vacation.startVacation).getTime()) / (1000 * 60 * 60 * 24))};
         this.updateDate = this.updateDate.bind(this);
+        this.quantityDaysUpdate = this.quantityDaysUpdate.bind(this);
         this.removeVact = this.removeVact.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
         this.idForInp = Math.round(Math.random() * 10000);
     }
 
     onDateUpdate(e) {
-        this.setState({ onDate: this.myDatePicker });
+        this.setState({ endVacation: this.myDatePicker });
+        this.quantityDaysUpdate();
     }
 
     fromDateUpdate(e) {
-        this.setState({ fromDate: this.myDatePickerFirst });
+        this.setState({ startVacation: this.myDatePickerFirst });
+        this.quantityDaysUpdate();
+    }
+
+    quantityDaysUpdate() {
+        let end = new Date(this.state.endVacation), start = new Date(this.state.startVacation);
+        let days = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+        this.setState({ quantityDays: days });
     }
 
     updateDate(myDatePicker, on) { //true - endVacation,false- start
@@ -59,6 +74,7 @@ class Vacation extends React.Component {
         } else {
             this.setState({ startVacation: myDatePicker });
         }
+        this.quantityDaysUpdate();
     }
 
     componentDidMount() {
@@ -102,9 +118,11 @@ class Vacation extends React.Component {
         return this.state.status === true ? React.createElement('div', { className: "vacationDays" },
             React.createElement('input', { id: "startVacation" + this.idForInp, className:"fromVac", "data-toggle": "datepicker", onChange: this.fromDateUpdate, value: this.state.startVacation }),
             React.createElement('input', { id: "endVacation" + this.idForInp, className: "toVac", "data-toggle": "datepicker", onChange: this.onDateUpdate, value: this.state.endVacation }),
+            React.createElement('input', { id: "quantityDays" + this.idForInp, className: "quanDays", onChange: this.quantityDaysUpdate,value: this.state.quantityDays }),
             React.createElement('div', { className:"closeVac",onClick: this.removeVact }, "✖"),
 
         ) : null;
+        return null;
     }
 }
 
@@ -129,7 +147,8 @@ class UserEdit extends React.Component {
         this.onVacationYearChange = this.onVacationYearChange.bind(this);
         this.onDateOfEmploymentChange = this.onDateOfEmploymentChange.bind(this);
         this.updateDate = this.updateDate.bind(this);
-        this.addVacation = this.addVacation.bind(this);
+        this.onVacationsChange = this.onVacationsChange.bind();
+        this.addVacation = this.addVacation.bind(this); 
         this.close = this.close.bind(this);
     }
 
@@ -147,7 +166,9 @@ class UserEdit extends React.Component {
     }
     onVacationYearChange(e) {
         this.setState({ vacationYear: e.target.value });
-
+    }
+    onVacationsChange(vacts) {
+        this.setState({ vacations: vacts });
     }
 
     onDateOfEmploymentChange(e) {
@@ -243,20 +264,26 @@ class UserEdit extends React.Component {
     }
 
     render() {
-
-        return this.state.status === true ?  React.createElement(
+        let onVacationsChange = this.onVacationsChange.bind();
+        let vacts = this.state.vacations;
+        return this.state.status === true ? React.createElement(
             'div', { className: "editBlock" }, "Редактирование",
-            React.createElement('div', { onClick:this.close, className: "close" }, '✖'),
+            React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
             React.createElement('form', { onSubmit: this.onSubmit },
-                React.createElement('input', { placeholder: 'Surname', type: 'text', autoComplete:"off", onChange: this.onSurnameChange, value: this.state.surname }),
-                React.createElement('input', { placeholder: 'Name', type: 'text', autoComplete:"off", onChange: this.onNameChange, value: this.state.name }),
-                React.createElement('input', { placeholder: 'Middlename', type: 'text', autoComplete:"off", onChange: this.onMiddlenameChange, value: this.state.middlename }),
-                React.createElement('input', { placeholder: 'Дней отпуска в год', type: 'text', autoComplete:"off", onChange: this.onVacationYearChange, value: this.state.vacationYear }),
-                React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', autoComplete:"off", onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
+                React.createElement('input', { placeholder: 'Surname', type: 'text', autoComplete: "off", onChange: this.onSurnameChange, value: this.state.surname }),
+                React.createElement('input', { placeholder: 'Name', type: 'text', autoComplete: "off", onChange: this.onNameChange, value: this.state.name }),
+                React.createElement('input', { placeholder: 'Middlename', type: 'text', autoComplete: "off", onChange: this.onMiddlenameChange, value: this.state.middlename }),
+                React.createElement('input', { placeholder: 'Дней отпуска в год', type: 'text', autoComplete: "off", onChange: this.onVacationYearChange, value: this.state.vacationYear }),
+                React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', autoComplete: "off", onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
                 React.createElement('div', { id: "vacations", className: "vacations" }, "Все отпуска",
-                    React.createElement('div', { id: "allVacations", className:"allVacations" },
+                    React.createElement('div', { id: "allVacations", className: "allVacations" },
                         this.state.vacations.map(function (vacation) {
-                              return React.createElement(Vacation, { key: Math.random() * Math.random(), vacation: vacation })
+                            console.log("check");
+                            if (React.createElement(Vacation, { key: Math.random() * Math.random(), vacation: vacation }) === null) {
+                               
+                                onVacationsChange(removeItemOnce(vacts, vacation));
+                            }
+                            return React.createElement(Vacation, { key: Math.random() * Math.random(), vacation: vacation });
                          })
                     ),
                     React.createElement('div', { onClick:this.addVacation,className: "addVac" }, "➕")

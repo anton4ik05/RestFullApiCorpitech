@@ -119,14 +119,18 @@ box-sizing: border-box;
     border-top: 1px solid;
 }
 .vacationDays input {
-    width: 130px;
+    width: 115px;
     margin: 10px 2px;
 }
-.vacations .addVac {
-    font-size: 15px;
-    cursor: pointer;
-    margin: 5px;
-}
+    .vacationDays .quanDays {
+        width:40px;
+        margin: 10px 2px;
+    }
+    .vacations .addVac {
+        font-size: 15px;
+        cursor: pointer;
+        margin: 5px;
+    }
 .vacationDays .closeVac {
     cursor: pointer;
     line-height: 50px;
