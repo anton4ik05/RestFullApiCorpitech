@@ -64,7 +64,10 @@ class Vacation extends React.Component {
 
     quantityDaysUpdate() {
         let end = new Date(this.state.endVacation), start = new Date(this.state.startVacation);
-        let days = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+        let days = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        if (days < 0) {
+            days = 0;
+        }
         this.setState({ quantityDays: days });
     }
 
@@ -437,6 +440,7 @@ class UserForm extends React.Component {
         this.onNameChange = this.onNameChange.bind(this);
         this.onSurnameChange = this.onSurnameChange.bind(this);
         this.onMiddlenameChange = this.onMiddlenameChange.bind(this);
+        this.onVacationYearChange = this.onVacationYearChange.bind(this);
         this.onDateOfEmploymentChange = this.onDateOfEmploymentChange.bind(this);
         this.close = this.close.bind(this);
         this.updateDate = this.updateDate.bind(this);
