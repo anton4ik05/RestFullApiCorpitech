@@ -32,7 +32,14 @@ namespace RestFullApiCorpitech.Controllers
             return new ObjectResult(userService.EvalUser(id, startDate, endDate));
         }
 
-        
+        [HttpGet]
+        [Route("/api/users/{id}/days")]
+        public IActionResult GetDays(Guid id, DateTime startDate, DateTime endDate)
+        {
+
+            return new ObjectResult(userService.EvalUserDays(id, startDate, endDate));
+        }
+
         [HttpPost]
         [Route("/api/users")]
         public IActionResult UserCreate(UserEditViewModel model)

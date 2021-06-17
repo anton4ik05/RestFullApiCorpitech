@@ -36,7 +36,6 @@ namespace RestFullApiCorpitech
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    options.RequireHttpsMetadata = false;
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -47,10 +46,11 @@ namespace RestFullApiCorpitech
 
                         ValidAudience = AuthOptions.AUDIENCE,
                         ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
 
-                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey()
 
-                        ValidateIssuerSigningKey = true
+                        
                     };
                 });
 
