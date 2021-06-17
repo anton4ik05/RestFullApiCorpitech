@@ -1,92 +1,109 @@
 ﻿body {
-background:#e8e8e8
+    background: #e8e8e8
 }
+
 .usersTable {
-border-collapse: collapse;
-width: 900px;
-margin: auto;
-text-align: center;
+    border-collapse: collapse;
+    width: 900px;
+    margin: auto;
+    text-align: center;
 }
+
 caption {
-border: 2px solid #000;
+    border: 2px solid #000;
 }
-thead{
-background:#fff0b6
+
+thead {
+    background: #fff0b6
 }
+
 th {
-border: 2px solid #000;
+    border: 2px solid #000;
 }
+
 td {
-border: 2px solid #000;
+    border: 2px solid #000;
 }
-td input {
-width: 100%;
-text-align: center;
-padding: 0;
-box-sizing: border-box;
+
+    td input {
+        width: 100%;
+        text-align: center;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+.operations {
+    margin: auto;
+    width: 30px;
 }
-.operations{
-margin:auto;
-width:30px;
-}
+
 .operation {
-user-select:none;
-font-weight: bold;
-cursor: pointer;
-margin:5px 0;
+    user-select: none;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 5px 0;
 }
-.operation:hover{
-color:#808080;
-}
-.operation:active {
-font-weight: 200;
-}
+
+    .operation:hover {
+        color: #808080;
+    }
+
+    .operation:active {
+        font-weight: 200;
+    }
+
 #edit {
-width: 100%;
-height: 100%;
-left: 0;
-top: 0;
-position: absolute;
-background: rgb(0 0 0 / 0.52);
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    position: absolute;
+    background: rgb(0 0 0 / 0.52);
 }
+
 .editBlock {
-position: relative;
-width: 500px;
-height: 500px;
-top: 50px;
-border-radius:20px;
-background: #fff;
-padding:10px;
-margin: auto;
+    position: relative;
+    width: 500px;
+    height: 500px;
+    top: 50px;
+    border-radius: 20px;
+    background: #fff;
+    padding: 10px;
+    margin: auto;
 }
+
 .editBlock form {
-width:300px;
-margin:auto;
+    width: 300px;
+    margin: auto;
 }
-.editBlock .close{
-position:absolute;
-right:15px;
-top:15px;
-cursor:pointer;
-font-size:15px;
-font-weight:bold;
-color:#000;
+
+.editBlock .close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    color: #000;
 }
+
 .editBlock input {
-width: 300px;
-margin: 10px auto;
-height:30px;
-text-align:center;
-box-sizing: border-box;
+    width: 300px;
+    margin: 10px auto;
+    height: 30px;
+    text-align: center;
+    box-sizing: border-box;
 }
-.editBlock .vacations{
-    position:relative;
-    width:300px;
-    height:200px;
-    border:1px solid #000;
-    border-radius:5px;
-    overflow:hidden;
+
+.editBlock .vacations {
+    position: relative;
+    width: 300px;
+    height: 200px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    overflow: hidden;
 }
+
 .editBlock button {
     cursor: pointer;
     width: 300px;
@@ -96,58 +113,68 @@ box-sizing: border-box;
     background: #fff0b6;
 }
 
-.editBlock button:hover {
-    background: #f6d67c;
+    .editBlock button:hover {
+        background: #f6d67c;
+    }
+
+    .editBlock button:active {
+        transform: scale(0.9);
+    }
+
+.allVacations {
+    position: relative;
+    height: 150px;
+    border-bottom: 1px solid;
 }
 
-.editBlock button:active {
-    transform: scale(0.9);
-}
-.allVacations{
-    position:relative;
-    height:150px;
-        border-bottom: 1px solid;
-}
 .vacations {
     font-weight: bold;
     text-align: center;
 }
+
 .vacationDays {
     display: flex;
     width: 300px;
     border-bottom: 1px solid;
     border-top: 1px solid;
 }
+
 .vacationDays input {
     width: 115px;
     margin: 10px 2px;
 }
-    .vacationDays .quanDays {
-        width:40px;
-        margin: 10px 2px;
-    }
-    .vacations .addVac {
-        font-size: 15px;
-        cursor: pointer;
-        margin: 5px;
-    }
+
+.vacationDays .quanDays {
+    width: 40px;
+    margin: 10px 2px;
+}
+
+.vacations .addVac {
+    font-size: 15px;
+    cursor: pointer;
+    margin: 5px;
+}
+
 .vacationDays .closeVac {
     cursor: pointer;
     line-height: 50px;
 }
+
 .addButton {
     width: 200px;
     height: 30px;
-    font-weight:bold;
-    line-height:30px;
-    text-align:center;
+    font-weight: bold;
+    line-height: 30px;
+    text-align: center;
     background: #fff0b6;
-    border:1px solid;
-    cursor:pointer;
+    border: 1px solid;
+    cursor: pointer;
 }
+
 .addButton:hover {
     background: #f6d67c;
 }
+
 .addButton:active {
-    transform:scale(0.9);
+    transform: scale(0.9);
 }
