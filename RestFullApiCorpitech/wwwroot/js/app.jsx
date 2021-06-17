@@ -307,7 +307,8 @@ class User extends React.Component {
         this.deleteEmploye = this.deleteEmploye.bind(this);
         this.onElementRemove = this.onElementRemove.bind(this);
         this.editEmploye = this.editEmploye.bind(this);
-        this.collapse = this.collapse.bind(this);
+        this.updateFormula = this.updateFormula.bind(this);
+        this.collapse = this.collapse.bind(this); 
         this.fromDateUpdate = this.fromDateUpdate.bind(this);
         this.idForInp = Math.round(Math.random() * 10000);
     }
@@ -379,6 +380,7 @@ class User extends React.Component {
             this.setState({ fromDate: myDatePicker });
         }
         this.evalVacation();
+        this.updateFormula();
     }
 
     componentDidMount() {
@@ -414,6 +416,9 @@ class User extends React.Component {
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
         $('#fromDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker('setDate', new Date(this.state.data.dateOfEmployment));
+        this.updateFormula();
+    }
+    updateFormula() {
         let days = 0;
         let state = this.setState.bind(this);
         $.ajax({

@@ -56,7 +56,7 @@ namespace RestFullApiCorpitech.Controllers
 
         private ClaimsIdentity GetIdentity(string username)
         {
-            User user = userService.GetUserForLogin(username);
+            User user = userService.GetUserByLogin(username);
 
             if (user != null)
             {
