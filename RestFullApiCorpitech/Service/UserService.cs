@@ -33,6 +33,12 @@ namespace RestFullApiCorpitech.Service
 
         }
 
+        public Double EvalUserDays(Guid id, DateTime startDate, DateTime endDate)
+        {
+            return EvalDays(GetUser(id), startDate, endDate);
+
+        }
+
         public Double Eval(User user, DateTime startDate, DateTime endDate)
 
         {
@@ -70,6 +76,44 @@ namespace RestFullApiCorpitech.Service
             }
 
             return value;
+        }
+
+        public Double EvalDays(User user, DateTime startDate, DateTime endDate)
+
+        {
+            Double days = 0;
+
+            if (!(startDate < user.DateOfEmployment || endDate < user.DateOfEmployment || startDate > endDate || startDate == endDate))
+            {
+                Double intersect = 0;
+
+                if (user.Vacations != null || user.Vacations.Any())
+                {
+
+                    ICollection<DateTime> allVacationDates = new List<DateTime>();
+                    var vacations = user.Vacations.ToArray();
+
+                    foreach (var vacation in vacations)
+                    {
+                        allVacationDates = AllDates(vacation.StartVacation, vacation.EndVacation, allVacationDates);
+                    }
+
+
+                    foreach (var date in allVacationDates)
+                    {
+                        if (Between(date, startDate, endDate))
+                        {
+                            intersect++;
+                        };
+                    }
+
+                }
+
+                days = (endDate - startDate).Days + 1 - intersect;
+
+            }
+
+            return days;
         }
 
         private static ICollection<DateTime> AllDates(DateTime startDate, DateTime endDate, ICollection<DateTime> allDates)
