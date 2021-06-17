@@ -178,3 +178,26 @@ td {
 .addButton:active {
     transform: scale(0.9);
 }
+.coll {
+    cursor: pointer;
+    overflow: hidden;
+    width:250px;
+}
+.contentColl {
+    max-height: 0;
+    word-break: break-all;
+}
+.collapsible {
+    width: 100%;
+}
+.active, .collapsible:hover {
+    background-color: #f1eeee;
+}
+
+.content {
+    padding: 0 18px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+    background-color: #f1f1f1;
+}
