@@ -363,7 +363,6 @@ class User extends React.Component {
     }
 
     collapse(e) {
-        console.log(e.target);
         e.target.classList.toggle("active");
         let content = e.target.nextElementSibling;
         if (content.style.maxHeight) {
@@ -415,16 +414,16 @@ class User extends React.Component {
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
         $('#fromDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker('setDate', new Date(this.state.data.dateOfEmployment));
-        let days=0;
+        let days = 0;
+        let state = this.setState.bind(this);
         $.ajax({
-            url: '../api/users/'+this.state.data.id+'/days',
+            url: '../api/users/' + this.state.data.id + '/days?startDate=' + this.state.fromDate + '&endDate=' + this.state.onDate,
             success: function (result) {
                 days = result;
+                state({ days: days });
             },
             error: function (result) { console.log(result); }
         });
-        this.setState({ days: days });
-
     }
     addUser() {
         $('body').append("<div id='edit'></div>");
