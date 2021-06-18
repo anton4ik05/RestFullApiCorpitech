@@ -63,7 +63,6 @@ namespace RestFullApiCorpitech.Controllers
             return new BadRequestResult();
         }
 
-
         [HttpDelete]
         [Route("/api/users/del")]
         public IActionResult UserDelete(Guid id)
@@ -77,6 +76,5 @@ namespace RestFullApiCorpitech.Controllers
             return new BadRequestObjectResult("User not found");
         }
 
-        
     }
 }
