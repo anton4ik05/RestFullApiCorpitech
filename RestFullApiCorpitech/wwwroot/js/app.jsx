@@ -369,7 +369,7 @@ class User extends React.Component {
         if (content.style.maxHeight) {
             content.style.maxHeight = null;
         } else {
-            content.style.maxHeight = content.scrollHeight + "px";
+            content.style.maxHeight = 30 + "px";
         }
     }
 
@@ -440,15 +440,15 @@ class User extends React.Component {
     render() {
         if (this.state.data !== null) {
             return React.createElement(
-                'tr', null,
-                React.createElement('td', {}, this.state.data.surname + " " + this.state.data.name + " " + this.state.data.middlename),
-                React.createElement('td', {}, React.createElement('input', { id: "fromDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', autoComplete: "off", onChange: this.fromDateUpdate, value: this.state.fromDate })),
-                React.createElement('td', { className: "coll" },
+                'div', { className: "userData" },
+                React.createElement('div', { className:"userDataSolo" }, this.state.data.surname + " " + this.state.data.name + " " + this.state.data.middlename),
+                React.createElement('div', { className: "userDataSolo" }, React.createElement('input', { id: "fromDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', autoComplete: "off", onChange: this.fromDateUpdate, value: this.state.fromDate })),
+                React.createElement('div', { className: "userDataSolo coll" },
                     React.createElement('div', { id: "collapsible", onClick: this.collapse, className: "collapsible" }, Math.round(this.state.vacationDays)),
                     React.createElement('div', { className: "contentColl" }, Math.round(this.state.vacationDays) + '=' + "(" + this.state.days + " / 29.7) * (" + this.state.data.vacationYear + " / 12)")
                 ),
-                React.createElement('td', {}, React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', autoComplete:"off", onChange: this.onDateUpdate, value: this.state.onDate })),
-                React.createElement('td', { className: "operations" },
+                React.createElement('div', { className: "userDataSolo" }, React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', autoComplete:"off", onChange: this.onDateUpdate, value: this.state.onDate })),
+                React.createElement('div', { className: "userDataSolo operations" },
                     React.createElement('span', { className: "operation", onClick: this.editEmploye }, '✎'),
                     React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✘'),
                 )
@@ -610,15 +610,15 @@ class UserList extends React.Component {
     render() {
 
         return React.createElement('div', {},
-            React.createElement('div', { className:"addButton",onClick: this.onAddUser }, "Добавить"),
-            React.createElement('table', { className: 'usersTable' }, React.createElement('caption', {}, 'Работники'),
-                React.createElement('thead', {},
-                    React.createElement('tr', {},
-                        React.createElement('th', {}, "ФИО"),
-                        React.createElement('th', {}, "Начальная дата"),
-                        React.createElement('th', {}, "Дней Отпуска"),
-                        React.createElement('th', {}, "Конечная дата"))),
-                React.createElement('tbody', {},
+            React.createElement('div', { className: "addButton", onClick: this.onAddUser }, "Добавить"),
+            React.createElement('div', { className: 'usersTable' },
+                React.createElement('div', {},
+                    React.createElement('div', { className:"userHead" },
+                        React.createElement('div', { className: "userDataSolo head" }, "ФИО"),
+                        React.createElement('div', { className: "userDataSolo head" }, "Начальная дата"),
+                        React.createElement('div', { className: "userDataSolo head" }, "Дней Отпуска"),
+                        React.createElement('div', { className: "userDataSolo head" }, "Конечная дата"))),
+                React.createElement('div', { className:"allUsers" },
                     this.state.users.map(function (user) {
                         return React.createElement(User, { key: Math.random() * Math.random(), user: user })
                     })
