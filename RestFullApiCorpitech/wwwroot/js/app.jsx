@@ -140,6 +140,8 @@ class UserEdit extends React.Component {
             name: props.user.name,
             surname: props.user.surname,
             middlename: props.user.middlename,
+            login: props.user.login,
+            role: props.user.role,
             dateOfEmployment: props.user.dateOfEmployment,
             vacations: props.user.vacations,
             vacationYear: props.user.vacationYear
@@ -150,6 +152,8 @@ class UserEdit extends React.Component {
         this.onMiddlenameChange = this.onMiddlenameChange.bind(this);
         this.onVacationYearChange = this.onVacationYearChange.bind(this);
         this.onDateOfEmploymentChange = this.onDateOfEmploymentChange.bind(this);
+        this.onLoginChange = this.onLoginChange.bind(this);
+        this.onRoleChange = this.onRoleChange.bind(this);
         this.updateDate = this.updateDate.bind(this);
         this.onVacationsChange = this.onVacationsChange.bind(this);
         this.addVacation = this.addVacation.bind(this); 
@@ -175,6 +179,13 @@ class UserEdit extends React.Component {
         let myVacs = this.state.vacations;
         myVacs.splice(index, 1);
         this.setState({ vacations: myVacs });
+    }
+
+    onLoginChange(e) {
+        this.setState({ login: e.target.value });
+    }
+    onRoleChange(e) {
+        this.setState({ role: e.target.value });
     }
 
     onDateOfEmploymentChange(e) {
@@ -261,11 +272,13 @@ class UserEdit extends React.Component {
         let surname = this.state.surname.trim();
         let middlename = this.state.middlename.trim();
         let dateOfEmployment = this.state.dateOfEmployment.trim();
-        let vacationYear = (this.state.vacationYear+"").trim();
-        if (!name || !surname || !middlename || !dateOfEmployment || !vacationYear) {
+        let vacationYear = (this.state.vacationYear + "").trim();
+        let login = this.state.login.trim();
+        let role = this.state.role.trim();
+        if (!name || !surname || !middlename || !dateOfEmployment || !vacationYear || !login||!role) {
             return;
         }
-        this.putTheEdit(this.state.data.id, { name: name, surname: surname, middlename: middlename, vacationYear:vacationYear,dateOfEmployment: dateOfEmployment, vacations: myVacations });
+        this.putTheEdit(this.state.data.id, { name: name, surname: surname, middlename: middlename, vacationYear:vacationYear,login:login,role:role,dateOfEmployment: dateOfEmployment, vacations: myVacations });
     }
 
     render() {
@@ -278,6 +291,10 @@ class UserEdit extends React.Component {
                 React.createElement('input', { placeholder: 'Surname', type: 'text', autoComplete: "off", onChange: this.onSurnameChange, value: this.state.surname }),
                 React.createElement('input', { placeholder: 'Name', type: 'text', autoComplete: "off", onChange: this.onNameChange, value: this.state.name }),
                 React.createElement('input', { placeholder: 'Middlename', type: 'text', autoComplete: "off", onChange: this.onMiddlenameChange, value: this.state.middlename }),
+                React.createElement('input', { placeholder: 'Login', type: 'text', autoComplete: "off", onChange: this.onLoginChange, value: this.state.login }),
+                React.createElement('select', { className: "form-inp", placeholder: 'Role', type: 'text', autoComplete: "off", onChange: this.onRoleChange, value: this.state.role },
+                    React.createElement("option", { value: "moderator" }, "Moder"),
+                    React.createElement("option", { value: "user" }, "User")),
                 React.createElement('input', { placeholder: 'Дней отпуска в год', type: 'Number', autoComplete: "off", onChange: this.onVacationYearChange, value: this.state.vacationYear }),
                 React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', autoComplete: "off", onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
                 React.createElement('div', { id: "vacations", className: "vacations" }, "Все отпуска",
@@ -464,7 +481,7 @@ class UserForm extends React.Component {
     constructor(props) {
         super(props);
         this.myDatePicker = "";
-        this.state = { status: true, name: "", surname: "", middlename: "", login:"",role:"admin",vacationYear: "28", dateOfEmployment: this.myDatePicker };
+        this.state = { status: true, name: "", surname: "", middlename: "", login:"",role:"moderator",vacationYear: "28", dateOfEmployment: this.myDatePicker };
         this.onSubmit = this.onSubmit.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
         this.onSurnameChange = this.onSurnameChange.bind(this);
@@ -543,7 +560,7 @@ class UserForm extends React.Component {
             return;
         }
         let user={ name: name, surname: surname, middlename: middlename, vacationYear:vacationYear,login:login,role:role,dateOfEmployment: dateOfEmployment, vacations: [] };
-        this.setState({ name: "", surname: "", middlename: "", login:"",role:"admin",vacationYear: "", dateOfEmployment: "" });
+        this.setState({ name: "", surname: "", middlename: "", login:"",role:"",vacationYear: "", dateOfEmployment: "" });
         $.ajax({
             url: '../api/users',
             type: 'POST',
@@ -572,7 +589,6 @@ class UserForm extends React.Component {
                 React.createElement('input', { placeholder: 'Middlename', type: 'text', autoComplete: "off", onChange: this.onMiddlenameChange, value: this.state.middlename }),
                 React.createElement('input', { placeholder: 'Login', type: 'text', autoComplete: "off", onChange: this.onLoginChange, value: this.state.login }),
                 React.createElement('select', { className: "form-inp", placeholder: 'Role', type: 'text', autoComplete: "off", onChange: this.onRoleChange, value: this.state.role },
-                    React.createElement("option", { value: "admin" }, "Admin"),
                     React.createElement("option", { value: "moderator" }, "Moder"),
                     React.createElement("option", { value: "user" }, "User")),
                 React.createElement('input', { placeholder: 'Дней отпуска в год', type: 'Number', autoComplete:"off", onChange: this.onVacationYearChange, value: this.state.vacationYear }),
