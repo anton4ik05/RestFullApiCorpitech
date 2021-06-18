@@ -24,7 +24,6 @@ namespace RestFullApiCorpitech.Service
             {
                 Eval(user, startDate, endDate);
             }
-
         }
 
         public Double EvalUser(Guid id, DateTime startDate, DateTime endDate)
@@ -59,7 +58,6 @@ namespace RestFullApiCorpitech.Service
                         allVacationDates = AllDates(vacation.StartVacation, vacation.EndVacation, allVacationDates);
                     }
 
-
                     foreach (var date in allVacationDates)
                     {
                         if (Between(date, startDate, endDate))
@@ -72,7 +70,6 @@ namespace RestFullApiCorpitech.Service
 
                 Double days = (endDate - startDate).Days + 1 - intersect;
                 value = Math.Round(Math.Round(days / 29.7) * (user.vacationYear/12));
-
             }
 
             return value;
@@ -106,13 +103,10 @@ namespace RestFullApiCorpitech.Service
                             intersect++;
                         };
                     }
-
                 }
 
                 days = (endDate - startDate).Days + 1 - intersect;
-
             }
-
             return days;
         }
 
@@ -149,8 +143,8 @@ namespace RestFullApiCorpitech.Service
                     User = rec.user,
                     UserId = rec.userId
                 });
-
             }
+
             record.Middlename = model.Middlename;
             record.Name = model.Name;
             record.Surname = model.Surname;
@@ -180,7 +174,6 @@ namespace RestFullApiCorpitech.Service
                     User = rec.user,
                     UserId = rec.userId
                 });
-
             }
 
             record.Middlename = model.Middlename;
@@ -192,8 +185,7 @@ namespace RestFullApiCorpitech.Service
             record.vacationYear = model.vacationYear;
             context.SaveChanges();
         }
-
-
+        
         public void DeleteUser(Guid id)
         {
 
@@ -203,7 +195,6 @@ namespace RestFullApiCorpitech.Service
                 context.Users.Remove(user!);
                 context.SaveChanges();
             }
-
         }
 
         public IEnumerable<User> GetUsers()
