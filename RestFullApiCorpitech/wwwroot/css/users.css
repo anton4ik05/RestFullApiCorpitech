@@ -233,3 +233,10 @@ td {
     color: aliceblue;
     font-weight: 700;
 }
+.form-inp {
+    width: 300px;
+    margin: 10px auto;
+    height: 30px;
+    text-align: center;
+    box-sizing: border-box;
+}
