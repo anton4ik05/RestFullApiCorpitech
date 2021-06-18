@@ -464,11 +464,15 @@ class UserForm extends React.Component {
     constructor(props) {
         super(props);
         this.myDatePicker = "";
-        this.state = { status: true, name: "", surname: "", middlename: "", vacationYear: "28", dateOfEmployment: this.myDatePicker };
+        this.state = { status: true, name: "", surname: "", middlename: "", login:"",role:"admin",vacationYear: "28", dateOfEmployment: this.myDatePicker };
         this.onSubmit = this.onSubmit.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
         this.onSurnameChange = this.onSurnameChange.bind(this);
         this.onMiddlenameChange = this.onMiddlenameChange.bind(this);
+
+        this.onLoginChange = this.onLoginChange.bind(this);
+        this.onRoleChange = this.onRoleChange.bind(this);
+
         this.onVacationYearChange = this.onVacationYearChange.bind(this);
         this.onDateOfEmploymentChange = this.onDateOfEmploymentChange.bind(this);
         this.close = this.close.bind(this);
@@ -483,11 +487,15 @@ class UserForm extends React.Component {
     }
     onMiddlenameChange(e) {
         this.setState({ middlename: e.target.value });
-
     }
     onVacationYearChange(e) {
         this.setState({ vacationYear: e.target.value });
-
+    }
+    onLoginChange(e) {
+        this.setState({ login: e.target.value });
+    }
+    onRoleChange(e) {
+        this.setState({ role: e.target.value });
     }
     onDateOfEmploymentChange(e) {
         this.setState({ dateOfEmployment: e.target.textContent });
@@ -529,11 +537,13 @@ class UserForm extends React.Component {
         let middlename = this.state.middlename.trim();
         let dateOfEmployment = this.state.dateOfEmployment.trim();
         let vacationYear = this.state.vacationYear.trim();
-        if (!name || !surname || !middlename || !dateOfEmployment || !vacationYear) {
+        let login = this.state.login.trim();
+        let role = this.state.role.trim();
+        if (!name || !surname || !middlename || !dateOfEmployment || !vacationYear || !login||!role) {
             return;
         }
-        let user={ name: name, surname: surname, middlename: middlename, vacationYear:vacationYear,dateOfEmployment: dateOfEmployment, vacations: [] };
-        this.setState({ name: "", surname: "", middlename: "", vacationYear: "", dateOfEmployment: "" });
+        let user={ name: name, surname: surname, middlename: middlename, vacationYear:vacationYear,login:login,role:role,dateOfEmployment: dateOfEmployment, vacations: [] };
+        this.setState({ name: "", surname: "", middlename: "", login:"",role:"admin",vacationYear: "", dateOfEmployment: "" });
         $.ajax({
             url: '../api/users',
             type: 'POST',
@@ -557,9 +567,14 @@ class UserForm extends React.Component {
         return this.state.status === true ? React.createElement('div', { className: "editBlock" }, "Добавление",
             React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
             React.createElement('form', { onSubmit: this.onSubmit },
-                React.createElement('input', { placeholder: 'Surname', type: 'text', autoComplete:"off", onChange: this.onSurnameChange, value: this.state.surname }),
-                React.createElement('input', { placeholder: 'Name', type: 'text', autoComplete:"off", onChange: this.onNameChange, value: this.state.name }),
-                React.createElement('input', { placeholder: 'Middlename', type: 'text', autoComplete:"off", onChange: this.onMiddlenameChange, value: this.state.middlename }),
+                React.createElement('input', { placeholder: 'Surname', type: 'text', autoComplete: "off", onChange: this.onSurnameChange, value: this.state.surname }),
+                React.createElement('input', { placeholder: 'Name', type: 'text', autoComplete: "off", onChange: this.onNameChange, value: this.state.name }),
+                React.createElement('input', { placeholder: 'Middlename', type: 'text', autoComplete: "off", onChange: this.onMiddlenameChange, value: this.state.middlename }),
+                React.createElement('input', { placeholder: 'Login', type: 'text', autoComplete: "off", onChange: this.onLoginChange, value: this.state.login }),
+                React.createElement('select', { className: "form-inp", placeholder: 'Role', type: 'text', autoComplete: "off", onChange: this.onRoleChange, value: this.state.role },
+                    React.createElement("option", { value: "admin" }, "Admin"),
+                    React.createElement("option", { value: "moderator" }, "Moder"),
+                    React.createElement("option", { value: "user" }, "User")),
                 React.createElement('input', { placeholder: 'Дней отпуска в год', type: 'Number', autoComplete:"off", onChange: this.onVacationYearChange, value: this.state.vacationYear }),
                 React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', autoComplete:"off", onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
                 React.createElement('button', { type: 'submit', className: 'postfix' }, 'Добавить')
