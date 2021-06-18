@@ -313,6 +313,12 @@ class UserEdit extends React.Component {
     }
 }
 
+class UserVacationDetails extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+}
+
 class User extends React.Component {
     constructor(props) {
         super(props);
@@ -534,7 +540,6 @@ class UserForm extends React.Component {
                 myDatePicker = formatDateForInput(date.date);
                 updateDate(myDatePicker);
             },
-
             autoHide: true,
             autoPick: true,
             format: 'YYYY-mm-dd',
