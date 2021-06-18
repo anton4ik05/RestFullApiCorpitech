@@ -472,6 +472,7 @@ class User extends React.Component {
                 ),
                 React.createElement('div', { className: "userDataSolo" }, React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', autoComplete:"off", onChange: this.onDateUpdate, value: this.state.onDate })),
                 React.createElement('div', { className: "userDataSolo operations" },
+                    React.createElement('span', { className: "operation", onClick: this.editEmploye }, '!'),
                     React.createElement('span', { className: "operation", onClick: this.editEmploye }, '✎'),
                     React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✘'),
                 )
