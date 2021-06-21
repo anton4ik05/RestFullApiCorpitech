@@ -71,13 +71,14 @@ class Vacation extends React.Component {
         super(props);
         this.myDatePicker = "";
         this.myDatePickerFirst = "";
+        console.log(props);
         this.datePickerForDocTime = "";
         this.state = {
             data: props.vacation,
             status: true,
             counterVac: 0,
             numOfDoc: props.vacation.orderNumber,
-            dateOfDoc: props.vacation.or,
+            dateOfDoc: props.vacation.dateOrder,
             startVacation: props.vacation.startVacation,
             endVacation: props.vacation.endVacation,
             quantityDays: Math.floor((new Date(props.vacation.endVacation).getTime() - new Date(props.vacation.startVacation).getTime()) / (1000 * 60 * 60 * 24)) + 1
