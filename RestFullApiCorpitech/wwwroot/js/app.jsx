@@ -45,12 +45,10 @@ class VacationInDetail extends React.Component {
         this.state = { data: props.vacation, status: true, startVacation: props.vacation.startVacation, endVacation: props.vacation.endVacation, quantityDays: Math.floor((new Date(props.vacation.endVacation).getTime() - new Date(props.vacation.startVacation).getTime()) / (1000 * 60 * 60 * 24))+1 };
         this.idForInp = Math.round(Math.random() * 10000);
     }
-
     render() {
-        console.log(this.state);
         return this.state.status === true ? React.createElement('div', { className: "infoVacationsBody" },
             React.createElement('div', {}, this.state.quantityDays),
-            React.createElement('div', { className: "date" }, 'Промежуток'),
+            React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.startWorkYear)) + ' - ' + formatDateForInput(new Date(this.state.data.endWorkYear))),
             React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.startVacation))),
             React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.endVacation))),
             React.createElement('div', {}, 'Номер'),
@@ -180,8 +178,6 @@ class Vacation extends React.Component {
         } else {
             this.setState({ counterVac: this.state.counterVac + 1 });
         }
-        
-        
     }
     removeVact() {
         this.setState({ status: false });
@@ -401,14 +397,19 @@ class UserVacationDetails extends React.Component {
             data: props.user,
             id: props.user.id,
             status: true,
-            vacations: props.user.vacations,
+            vacations: [],
         };
-        console.log(this.state);
-        this.vacationsLoad = this.vacationsLoad.bind(this);
         this.close = this.close.bind(this);
     }
-    vacationsLoad() {
-        console.log('asd');
+    componentDidMount() {
+        let state = this.setState.bind(this);
+        $.ajax({
+            url: '../api/users/getVacations?id=' + this.state.id,
+            success: function (result) {
+                state({ vacations: result });
+            },
+            error: function (result) { console.log(result); }
+        });
     }
     close() {
         this.setState({ status: false });
