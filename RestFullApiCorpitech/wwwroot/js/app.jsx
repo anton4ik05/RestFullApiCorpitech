@@ -42,17 +42,18 @@ function objToQueryString(obj) {
 class VacationInDetail extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { data: props.vacation, status: true, startVacation: props.vacation.startVacation, endVacation: props.vacation.endVacation, quantityDays: Math.floor((new Date(props.vacation.endVacation).getTime() - new Date(props.vacation.startVacation).getTime()) / (1000 * 60 * 60 * 24))+1 };
+        this.state = { data: props.vacation, vacationsForView: props.vacationsForView,status: true, startVacation: props.vacation.startVacation, endVacation: props.vacation.endVacation, quantityDays: Math.floor((new Date(props.vacation.endVacation).getTime() - new Date(props.vacation.startVacation).getTime()) / (1000 * 60 * 60 * 24))+1 };
         this.idForInp = Math.round(Math.random() * 10000);
     }
     render() {
+        console.log(this.state);
         return this.state.status === true ? React.createElement('div', { className: "infoVacationsBody" },
             React.createElement('div', {}, this.state.quantityDays),
-            React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.startWorkYear)) + ' - ' + formatDateForInput(new Date(this.state.data.endWorkYear))),
-            React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.startVacation))),
-            React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.endVacation))),
-            React.createElement('div', {}, 'Номер'),
-            React.createElement('div', { className: "date" }, 'Дата'),
+            React.createElement('div', { className: "date" }, formatDate(new Date(this.state.data.startWorkYear)) + ' - ' + formatDateForInput(new Date(this.state.data.endWorkYear))),
+            React.createElement('div', { className: "date" }, formatDate(new Date(this.state.data.startVacation))),
+            React.createElement('div', { className: "date" }, formatDate(new Date(this.state.data.endVacation))),
+            React.createElement('div', {}, this.state.data.orderNumber),
+            React.createElement('div', { className: "date" }, formatDate(new Date(this.state.data.dateOrder))),
         ) : null;
         return null;
     }
@@ -67,8 +68,8 @@ class Vacation extends React.Component {
             data: props.vacation,
             status: true,
             counterVac: 0,
-            numOfDoc: "",
-            dateOfDoc: "",
+            numOfDoc: props.vacation.orderNumber,
+            dateOfDoc: props.vacation.dateOrder,
             startVacation: props.vacation.startVacation,
             endVacation: props.vacation.endVacation,
             quantityDays: Math.floor((new Date(props.vacation.endVacation).getTime() - new Date(props.vacation.startVacation).getTime()) / (1000 * 60 * 60 * 24)) + 1
@@ -189,8 +190,8 @@ class Vacation extends React.Component {
             React.createElement('input', { id: "startVacation" + this.idForInp, className: "fromVac", "data-toggle": "datepicker", onChange: this.fromDateUpdate, value: this.state.startVacation }),
             React.createElement('input', { id: "endVacation" + this.idForInp, className: "toVac", "data-toggle": "datepicker", onChange: this.onDateUpdate, value: this.state.endVacation }),
             React.createElement('input', { id: "quantityDays" + this.idForInp, className: "quanDays", onChange: this.quantityDaysUpdate, value: this.state.quantityDays }),
-            React.createElement('input', { id: "numOfDoc" + this.idForInp, placeholder:"Номер",className: "quanDays", onChange: this.numOfDocChange, value: this.state.numOfDoc }),
-            React.createElement('input', { id: "dateOfDoc" + this.idForInp, "data-toggle": "datepicker", onChange: this.dateOfDocChange, value: this.state.dateOfDoc }),
+            React.createElement('input', { id: "numOfDoc" + this.idForInp, placeholder: "Номер", className: "numOfDoc", onChange: this.numOfDocChange, value: this.state.numOfDoc }),
+            React.createElement('input', { id: "dateOfDoc" + this.idForInp, className: "dateOfDoc", "data-toggle": "datepicker", onChange: this.dateOfDocChange, value: this.state.dateOfDoc }),
             React.createElement('div', { className: "closeVac", onClick: this.removeVact }, "✖"),
 
         ) : null;
@@ -342,7 +343,9 @@ class UserEdit extends React.Component {
         for (let i = 0; i < $('#allVacations').find('.vacationDays').length; i++) {
             let startVacation = $($('#allVacations').find('.vacationDays')[i]).find('.fromVac').val();
             let endVacation = $($('#allVacations').find('.vacationDays')[i]).find('.toVac').val();
-            myVacations.push({ startVacation: startVacation, endVacation: endVacation });
+            let orderNumber = $($('#allVacations').find('.vacationDays')[i]).find('.numOfDoc').val();
+            let dateOrder = $($('#allVacations').find('.vacationDays')[i]).find('.dateOfDoc').val();
+            myVacations.push({ dateOrder: dateOrder, orderNumber: orderNumber, startVacation: startVacation, endVacation: endVacation });
         }
         let name = this.state.name.trim();
         let surname = this.state.surname.trim();
@@ -397,7 +400,8 @@ class UserVacationDetails extends React.Component {
             data: props.user,
             id: props.user.id,
             status: true,
-            vacations: [],
+            vacationsForView:[],
+            vacations: props.user.vacations,
         };
         this.close = this.close.bind(this);
     }
@@ -406,7 +410,7 @@ class UserVacationDetails extends React.Component {
         $.ajax({
             url: '../api/users/getVacations?id=' + this.state.id,
             success: function (result) {
-                state({ vacations: result });
+                state({ vacationsForView: result });
             },
             error: function (result) { console.log(result); }
         });
@@ -417,7 +421,7 @@ class UserVacationDetails extends React.Component {
     }
 
     render() {
-        
+        let vacationsForView = this.state.vacationsForView;
         return this.state.status === true ? React.createElement(
             'div', { className: "infoBlock" }, "Отпуска",
             React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
@@ -431,7 +435,7 @@ class UserVacationDetails extends React.Component {
                     React.createElement('div', {}, 'Дата'),
                 ),
                 this.state.vacations.map(function (vacation, index) {
-                    return React.createElement(VacationInDetail, { key: Math.random() * Math.random(), vacation: vacation, index: index });
+                    return React.createElement(VacationInDetail, { key: Math.random() * Math.random(), vacationsForView:vacationsForView,vacation: vacation, index: index });
                 })
             ),
         ) : null;
