@@ -28,5 +28,9 @@ namespace RestFullApiCorpitech.Models
         [JsonIgnore]
         public Guid UserId { get; set; }
 
+        public string OrderNumber { get; set; }
+
+        public DateTime DateOrder { get; set; }
+
     }
 }
