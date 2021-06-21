@@ -233,6 +233,7 @@ namespace RestFullApiCorpitech.Service
                     {
                         info.Add(new InfoVacation
                         {
+                            Id = userVacation.Id,
                             Days = daysVacation,
                             StartWorkYear = StartWorkYear,
                             EndWorkYear = EndWorkYear,
@@ -246,6 +247,7 @@ namespace RestFullApiCorpitech.Service
 
                         info.Add(new InfoVacation
                         {
+                            Id = userVacation.Id,
                             Days = daysVacation - notdays,
                             StartWorkYear = StartWorkYear,
                             EndWorkYear = EndWorkYear,
@@ -260,6 +262,7 @@ namespace RestFullApiCorpitech.Service
 
                         info.Add(new InfoVacation
                         {
+                            Id = userVacation.Id,
                             Days = notdays,
                             StartWorkYear = StartWorkYear,
                             EndWorkYear = EndWorkYear,
@@ -269,11 +272,8 @@ namespace RestFullApiCorpitech.Service
                     }
                 }
                 return info;
-
             }
-
             return null;
-
         }
 
         public User GetUser(Guid id)
@@ -288,6 +288,7 @@ namespace RestFullApiCorpitech.Service
 
         public class InfoVacation
         {
+            public Guid Id { get; set; }
             public double Days { get; set; }
 
             public DateTime StartWorkYear { get; set; }

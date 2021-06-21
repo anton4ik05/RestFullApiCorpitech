@@ -42,6 +42,7 @@ namespace RestFullApiCorpitech.Controllers
         [Route("/api/users/getVacations")]
         public IActionResult GetVacations(Guid id)
         {
+
             return new ObjectResult(userService.GetVacations(id));
         }
 
