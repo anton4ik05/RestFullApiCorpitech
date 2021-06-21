@@ -143,7 +143,9 @@ namespace RestFullApiCorpitech.Service
                     StartVacation = rec.startVacation,
                     EndVacation = rec.endVacation,
                     User = rec.user,
-                    UserId = rec.userId
+                    UserId = rec.userId,
+                    OrderNumber = rec.OrderNumber,
+                    DateOrder = rec.DateOrder
                 });
             }
 
@@ -174,7 +176,9 @@ namespace RestFullApiCorpitech.Service
                     StartVacation = rec.startVacation,
                     EndVacation = rec.endVacation,
                     User = rec.user,
-                    UserId = rec.userId
+                    UserId = rec.userId,
+                    OrderNumber = rec.OrderNumber,
+                    DateOrder = rec.DateOrder
                 });
             }
 
@@ -207,61 +211,69 @@ namespace RestFullApiCorpitech.Service
         public ICollection<InfoVacation> GetVacations(Guid id)
         {
             var user = GetUser(id);
-            var userVacations = user.Vacations;
 
-            ICollection<InfoVacation> info = new List<InfoVacation>();
-            double days = 0;
-            double maxDays = user.vacationYear;
-
-            DateTime StartWorkYear = user.DateOfEmployment;
-            DateTime EndWorkYear = user.DateOfEmployment.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-           
-
-            foreach (var userVacation in userVacations)
+            if (user != null)
             {
-                double daysVacation = (userVacation.EndVacation - userVacation.StartVacation).Days + 1;
-                days += daysVacation;
+                var userVacations = user.Vacations;
 
-                if (days <= maxDays)
+                ICollection<InfoVacation> info = new List<InfoVacation>();
+                double days = 0;
+                double maxDays = user.vacationYear;
+
+                DateTime StartWorkYear = user.DateOfEmployment;
+                DateTime EndWorkYear = user.DateOfEmployment.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+
+
+                foreach (var userVacation in userVacations)
                 {
-                    info.Add(new InfoVacation
+                    double daysVacation = (userVacation.EndVacation - userVacation.StartVacation).Days + 1;
+                    days += daysVacation;
+
+                    if (days <= maxDays)
                     {
-                        Days = daysVacation,
-                        StartWorkYear = StartWorkYear,
-                        EndWorkYear = EndWorkYear,
-                        StartVacation = userVacation.StartVacation,
-                        EndVacation = userVacation.EndVacation
-                    });
+                        info.Add(new InfoVacation
+                        {
+                            Days = daysVacation,
+                            StartWorkYear = StartWorkYear,
+                            EndWorkYear = EndWorkYear,
+                            StartVacation = userVacation.StartVacation,
+                            EndVacation = userVacation.EndVacation
+                        });
+                    }
+                    else
+                    {
+                        double notdays = days - maxDays;
+
+                        info.Add(new InfoVacation
+                        {
+                            Days = daysVacation - notdays,
+                            StartWorkYear = StartWorkYear,
+                            EndWorkYear = EndWorkYear,
+                            StartVacation = userVacation.StartVacation,
+                            EndVacation = userVacation.StartVacation + new TimeSpan(Convert.ToInt32(daysVacation - notdays - 1), 0, 0, 0)
+                        });
+
+                        maxDays *= 2;
+
+                        StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
+                        EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+
+                        info.Add(new InfoVacation
+                        {
+                            Days = notdays,
+                            StartWorkYear = StartWorkYear,
+                            EndWorkYear = EndWorkYear,
+                            StartVacation = userVacation.EndVacation - new TimeSpan(Convert.ToInt32(notdays - 1), 0, 0, 0),
+                            EndVacation = userVacation.EndVacation
+                        });
+                    }
                 }
-                else
-                {
-                    double notdays = days- maxDays;
+                return info;
 
-                    info.Add(new InfoVacation
-                    {
-                        Days = daysVacation-notdays,
-                        StartWorkYear = StartWorkYear,
-                        EndWorkYear = EndWorkYear,
-                        StartVacation = userVacation.StartVacation,
-                        EndVacation = userVacation.StartVacation + new TimeSpan(Convert.ToInt32(daysVacation - notdays-1), 0,0,0)
-                    });
-
-                    maxDays *= 2;
-
-                    StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
-                    EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-
-                    info.Add(new InfoVacation
-                    {
-                        Days = notdays,
-                        StartWorkYear = StartWorkYear,
-                        EndWorkYear = EndWorkYear,
-                        StartVacation = userVacation.EndVacation - new TimeSpan(Convert.ToInt32(notdays-1),0,0,0),
-                        EndVacation = userVacation.EndVacation
-                    });
-                }
             }
-            return info;
+
+            return null;
+
         }
 
         public User GetUser(Guid id)
@@ -288,9 +300,5 @@ namespace RestFullApiCorpitech.Service
 
 
         }
-
-
-
-
     }
 }
