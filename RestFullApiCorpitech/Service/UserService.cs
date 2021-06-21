@@ -213,11 +213,9 @@ namespace RestFullApiCorpitech.Service
             double days = 0;
             double maxDays = user.vacationYear;
 
-            WorkYear workYear = new WorkYear
-            {
-                StartWorkYear = user.DateOfEmployment,
-                EndWorkYear = user.DateOfEmployment.AddYears(1) - new TimeSpan(1,0,0,0)
-            };
+            DateTime StartWorkYear = user.DateOfEmployment;
+            DateTime EndWorkYear = user.DateOfEmployment.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+           
 
             foreach (var userVacation in userVacations)
             {
@@ -229,8 +227,8 @@ namespace RestFullApiCorpitech.Service
                     info.Add(new InfoVacation
                     {
                         Days = daysVacation,
-                        StartWorkYear = workYear.StartWorkYear,
-                        EndWorkYear = workYear.EndWorkYear,
+                        StartWorkYear = StartWorkYear,
+                        EndWorkYear = EndWorkYear,
                         StartVacation = userVacation.StartVacation,
                         EndVacation = userVacation.EndVacation
                     });
@@ -242,22 +240,22 @@ namespace RestFullApiCorpitech.Service
                     info.Add(new InfoVacation
                     {
                         Days = daysVacation-notdays,
-                        StartWorkYear = workYear.StartWorkYear,
-                        EndWorkYear = workYear.EndWorkYear,
+                        StartWorkYear = StartWorkYear,
+                        EndWorkYear = EndWorkYear,
                         StartVacation = userVacation.StartVacation,
                         EndVacation = userVacation.StartVacation + new TimeSpan(Convert.ToInt32(daysVacation - notdays-1), 0,0,0)
                     });
 
                     maxDays *= 2;
 
-                    workYear.StartWorkYear = workYear.EndWorkYear + new TimeSpan(1, 0, 0, 0);
-                    workYear.EndWorkYear = workYear.StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+                    StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
+                    EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
 
                     info.Add(new InfoVacation
                     {
                         Days = notdays,
-                        StartWorkYear = workYear.StartWorkYear,
-                        EndWorkYear = workYear.EndWorkYear,
+                        StartWorkYear = StartWorkYear,
+                        EndWorkYear = EndWorkYear,
                         StartVacation = userVacation.EndVacation - new TimeSpan(Convert.ToInt32(notdays-1),0,0,0),
                         EndVacation = userVacation.EndVacation
                     });
@@ -291,13 +289,6 @@ namespace RestFullApiCorpitech.Service
 
         }
 
-        public class WorkYear
-        {
-            public DateTime StartWorkYear { get; set; }
-
-            public DateTime EndWorkYear { get; set; }
-
-        }
 
 
 
