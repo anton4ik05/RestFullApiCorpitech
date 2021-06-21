@@ -70,7 +70,6 @@ namespace RestFullApiCorpitech.Controllers
                     ClaimsIdentity.DefaultRoleClaimType);
 
                 return claimsIdentity;
-
             }
 
             return null;

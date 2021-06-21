@@ -38,6 +38,13 @@ namespace RestFullApiCorpitech.Controllers
             return new ObjectResult(userService.EvalUserDays(id, startDate, endDate));
         }
 
+        [HttpGet]
+        [Route("/api/users/getVacations")]
+        public IActionResult GetVacations(Guid id)
+        {
+            return new ObjectResult(userService.GetVacations(id));
+        }
+
         [HttpPost]
         [Route("/api/users")]
         public IActionResult UserCreate(UserEditViewModel model)
@@ -63,7 +70,6 @@ namespace RestFullApiCorpitech.Controllers
             return new BadRequestResult();
         }
 
-
         [HttpDelete]
         [Route("/api/users/del")]
         public IActionResult UserDelete(Guid id)
@@ -77,6 +83,5 @@ namespace RestFullApiCorpitech.Controllers
             return new BadRequestObjectResult("User not found");
         }
 
-        
     }
 }

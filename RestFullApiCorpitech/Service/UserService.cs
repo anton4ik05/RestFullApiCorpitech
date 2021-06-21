@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RestFullApiCorpitech.ViewModels;
 
 namespace RestFullApiCorpitech.Service
@@ -202,6 +204,66 @@ namespace RestFullApiCorpitech.Service
             return context.Users.Include(x => x.Vacations.OrderBy(x => x.StartVacation)).OrderBy(x => x.Surname).ThenBy(x => x.Name).ToList();
         }
 
+        public ICollection<InfoVacation> GetVacations(Guid id)
+        {
+            var user = GetUser(id);
+            var userVacations = user.Vacations;
+
+            ICollection<InfoVacation> info = new List<InfoVacation>();
+            double days = 0;
+            double maxDays = user.vacationYear;
+
+            DateTime StartWorkYear = user.DateOfEmployment;
+            DateTime EndWorkYear = user.DateOfEmployment.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+           
+
+            foreach (var userVacation in userVacations)
+            {
+                double daysVacation = (userVacation.EndVacation - userVacation.StartVacation).Days + 1;
+                days += daysVacation;
+
+                if (days <= maxDays)
+                {
+                    info.Add(new InfoVacation
+                    {
+                        Days = daysVacation,
+                        StartWorkYear = StartWorkYear,
+                        EndWorkYear = EndWorkYear,
+                        StartVacation = userVacation.StartVacation,
+                        EndVacation = userVacation.EndVacation
+                    });
+                }
+                else
+                {
+                    double notdays = days- maxDays;
+
+                    info.Add(new InfoVacation
+                    {
+                        Days = daysVacation-notdays,
+                        StartWorkYear = StartWorkYear,
+                        EndWorkYear = EndWorkYear,
+                        StartVacation = userVacation.StartVacation,
+                        EndVacation = userVacation.StartVacation + new TimeSpan(Convert.ToInt32(daysVacation - notdays-1), 0,0,0)
+                    });
+
+                    maxDays *= 2;
+
+                    StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
+                    EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+
+                    info.Add(new InfoVacation
+                    {
+                        Days = notdays,
+                        StartWorkYear = StartWorkYear,
+                        EndWorkYear = EndWorkYear,
+                        StartVacation = userVacation.EndVacation - new TimeSpan(Convert.ToInt32(notdays-1),0,0,0),
+                        EndVacation = userVacation.EndVacation
+                    });
+                }
+            }
+            return info;
+        }
+
         public User GetUser(Guid id)
         {
             return context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
@@ -211,5 +273,24 @@ namespace RestFullApiCorpitech.Service
         {
             return context.Users.FirstOrDefault(x => x.Login == login);
         }
+
+        public class InfoVacation
+        {
+            public double Days { get; set; }
+
+            public DateTime StartWorkYear { get; set; }
+
+            public DateTime EndWorkYear { get; set; }
+
+            public DateTime StartVacation { get; set; }
+
+            public DateTime EndVacation { get; set; }
+
+
+        }
+
+
+
+
     }
 }

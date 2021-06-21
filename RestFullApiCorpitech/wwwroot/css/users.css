@@ -44,13 +44,13 @@ td {
     margin: 5px 0;
 }
 
-    .operation:hover {
-        color: #808080;
-    }
+.operation:hover {
+    color: #808080;
+}
 
-    .operation:active {
-        font-weight: 200;
-    }
+.operation:active {
+    font-weight: 200;
+}
 
 #edit {
     width: 100%;
@@ -112,13 +112,13 @@ td {
     background: #fff0b6;
 }
 
-    .editBlock button:hover {
-        background: #f6d67c;
-    }
+.editBlock button:hover {
+    background: #f6d67c;
+}
 
-    .editBlock button:active {
-        transform: scale(0.9);
-    }
+.editBlock button:active {
+    transform: scale(0.9);
+}
 
 .allVacations {
     position: relative;

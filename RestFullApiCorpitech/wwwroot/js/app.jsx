@@ -313,6 +313,12 @@ class UserEdit extends React.Component {
     }
 }
 
+class UserVacationDetails extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+}
+
 class User extends React.Component {
     constructor(props) {
         super(props);
@@ -466,6 +472,7 @@ class User extends React.Component {
                 ),
                 React.createElement('div', { className: "userDataSolo" }, React.createElement('input', { id: "onDate" + this.idForInp, "data-toggle": "datepicker", type: 'text', autoComplete:"off", onChange: this.onDateUpdate, value: this.state.onDate })),
                 React.createElement('div', { className: "userDataSolo operations" },
+                    React.createElement('span', { className: "operation", onClick: this.editEmploye }, '!'),
                     React.createElement('span', { className: "operation", onClick: this.editEmploye }, '✎'),
                     React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✘'),
                 )
@@ -534,7 +541,6 @@ class UserForm extends React.Component {
                 myDatePicker = formatDateForInput(date.date);
                 updateDate(myDatePicker);
             },
-
             autoHide: true,
             autoPick: true,
             format: 'YYYY-mm-dd',
