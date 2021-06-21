@@ -42,14 +42,23 @@ function objToQueryString(obj) {
 class VacationInDetail extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { data: props.vacation, vacationsForView: props.vacationsForView,status: true, startVacation: props.vacation.startVacation, endVacation: props.vacation.endVacation, quantityDays: Math.floor((new Date(props.vacation.endVacation).getTime() - new Date(props.vacation.startVacation).getTime()) / (1000 * 60 * 60 * 24))+1 };
+        this.state = { data: props.vacation, vacationsForView: props.vacationsForView, startWorkYear: "", endWorkYear:"", status: true, startVacation: props.vacation.startVacation, endVacation: props.vacation.endVacation, quantityDays: Math.floor((new Date(props.vacation.endVacation).getTime() - new Date(props.vacation.startVacation).getTime()) / (1000 * 60 * 60 * 24)) + 1 };
         this.idForInp = Math.round(Math.random() * 10000);
+    }
+    componentDidMount() {
+        let vacsInfo = this.state.vacationsForView.find(obj => {
+            return obj.id == this.state.data.id;
+        });
+        if (vacsInfo) {
+            this.setState({ startWorkYear: vacsInfo.startWorkYear, endWorkYear: vacsInfo.endWorkYear});
+        }
+        
     }
     render() {
         console.log(this.state);
         return this.state.status === true ? React.createElement('div', { className: "infoVacationsBody" },
             React.createElement('div', {}, this.state.quantityDays),
-            React.createElement('div', { className: "date" }, formatDate(new Date(this.state.data.startWorkYear)) + ' - ' + formatDateForInput(new Date(this.state.data.endWorkYear))),
+            React.createElement('div', { className: "date" }, formatDate(new Date(this.state.startWorkYear)) + ' - ' + formatDate(new Date(this.state.endWorkYear))),
             React.createElement('div', { className: "date" }, formatDate(new Date(this.state.data.startVacation))),
             React.createElement('div', { className: "date" }, formatDate(new Date(this.state.data.endVacation))),
             React.createElement('div', {}, this.state.data.orderNumber),
