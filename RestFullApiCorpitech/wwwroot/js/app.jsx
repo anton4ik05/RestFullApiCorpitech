@@ -69,7 +69,7 @@ class Vacation extends React.Component {
             status: true,
             counterVac: 0,
             numOfDoc: props.vacation.orderNumber,
-            dateOfDoc: props.vacation.dateOrder,
+            dateOfDoc: props.vacation.or,
             startVacation: props.vacation.startVacation,
             endVacation: props.vacation.endVacation,
             quantityDays: Math.floor((new Date(props.vacation.endVacation).getTime() - new Date(props.vacation.startVacation).getTime()) / (1000 * 60 * 60 * 24)) + 1
