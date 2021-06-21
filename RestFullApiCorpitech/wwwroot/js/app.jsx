@@ -764,7 +764,6 @@ class UserList extends React.Component {
     }
 
     onAddUser(user) {
-        console.log("as");
         $('body').append("<div id='edit'></div>");
         ReactDOM.render(
             React.createElement(UserForm, { user: this.state.data }),
