@@ -143,7 +143,9 @@ namespace RestFullApiCorpitech.Service
                     StartVacation = rec.startVacation,
                     EndVacation = rec.endVacation,
                     User = rec.user,
-                    UserId = rec.userId
+                    UserId = rec.userId,
+                    OrderNumber = rec.OrderNumber,
+                    DateOrder = rec.DateOrder
                 });
             }
 
@@ -174,7 +176,9 @@ namespace RestFullApiCorpitech.Service
                     StartVacation = rec.startVacation,
                     EndVacation = rec.endVacation,
                     User = rec.user,
-                    UserId = rec.userId
+                    UserId = rec.userId,
+                    OrderNumber = rec.OrderNumber,
+                    DateOrder = rec.DateOrder
                 });
             }
 
