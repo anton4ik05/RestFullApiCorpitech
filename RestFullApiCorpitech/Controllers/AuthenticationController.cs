@@ -31,7 +31,6 @@ namespace RestFullApiCorpitech.Controllers
             }
 
             var now = DateTime.Now;
-
             var jwt = new JwtSecurityToken(
                 issuer: AuthOptions.ISSUER,
                 audience: AuthOptions.AUDIENCE,
@@ -39,17 +38,14 @@ namespace RestFullApiCorpitech.Controllers
                 claims: identity.Claims,
                 expires: now.AddMinutes(AuthOptions.LIFETIME),
                 signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)
-
-            );
+                );
 
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-
             var response = new
             {
                 access_token = encodedJwt,
                 username = identity.Name
             };
-
 
             return new ObjectResult(response); 
         }
