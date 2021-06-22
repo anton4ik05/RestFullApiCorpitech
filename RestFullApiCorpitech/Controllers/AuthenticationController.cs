@@ -21,7 +21,7 @@ namespace RestFullApiCorpitech.Controllers
         }
 
         [HttpPost("/token")]
-        public IActionResult Token(string username)
+        public IActionResult Token(string username, string password)
         {
             var identity = GetIdentity(username);
 

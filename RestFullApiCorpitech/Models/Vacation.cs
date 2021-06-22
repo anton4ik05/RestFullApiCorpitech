@@ -13,12 +13,12 @@ namespace RestFullApiCorpitech.Models
         public Guid Id { get; set; }
 
         [Display(Name = "Дата начала отпуска")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
         public DateTime StartVacation { get; set; }
 
         [Display(Name = "Дата конца отпуска")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
         public DateTime EndVacation { get; set; }
 

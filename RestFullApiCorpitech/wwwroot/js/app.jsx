@@ -23,7 +23,7 @@ function formatDateForInput(date) {
     var yy = date.getFullYear();
     if (yy < 10) yy = '0' + yy;
 
-    return dd + '.' + mm + '.' + yy;
+    return yy + '-' + mm + '-' + dd;
 }
 function removeItemOnce(arr, value) {
     var index = arr.indexOf(value);

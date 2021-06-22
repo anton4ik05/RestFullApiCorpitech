@@ -86,7 +86,6 @@ namespace RestFullApiCorpitech.Service
                 Double days = (endDate - startDate).Days + 1 - intersect;
                 value = Math.Round(Math.Round(days / 29.7) * (user.vacationYear/12));
             }
-
             return value;
         }
 
@@ -302,7 +301,11 @@ namespace RestFullApiCorpitech.Service
                     }
                     else
                     {
-                        double notdays = days - maxDays;
+                        if (daysVacation <= maxDays)
+                        {
+
+                        }
+                        double notdays = days - daysVacation;
 
                         info.Add(new InfoVacation
                         {
