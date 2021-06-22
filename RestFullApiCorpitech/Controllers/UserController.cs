@@ -19,6 +19,7 @@ namespace RestFullApiCorpitech.Controllers
         }
 
         [HttpGet]
+        // [Authorize(Roles = "admin")]
         public IActionResult Get()
         {
             return new ObjectResult(userService.GetUsers());
