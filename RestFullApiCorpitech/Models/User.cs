@@ -39,6 +39,9 @@ namespace RestFullApiCorpitech.Models
 
         public string Login { get; set; }
 
+        [JsonIgnore]
+        public string password { get; set; }
+
         public string Role { get; set; }
 
 
