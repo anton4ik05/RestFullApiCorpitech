@@ -634,7 +634,7 @@ class User extends React.Component {
                 ),
                 React.createElement('div', { className: "userDataSolo" }, this.state.freeVacDays),
                 React.createElement('div', { className: "userDataSolo operations" },
-                    React.createElement('span', { className: "operation", onClick: this.userInfoVacation }, '!'),
+                    React.createElement('span', { className: "operation", onClick: this.userInfoVacation }, '🛈'),
                     React.createElement('span', { className: "operation", onClick: this.editEmploye }, '✎'),
                     React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✘'),
                 )
