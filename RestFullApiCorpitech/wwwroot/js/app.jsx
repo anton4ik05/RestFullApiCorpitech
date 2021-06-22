@@ -23,7 +23,7 @@ function formatDateForInput(date) {
     var yy = date.getFullYear();
     if (yy < 10) yy = '0' + yy;
 
-    return yy + '-' + mm + '-' + dd;
+    return dd + '.' + mm + '.' + yy;
 }
 function removeItemOnce(arr, value) {
     var index = arr.indexOf(value);
@@ -634,7 +634,7 @@ class User extends React.Component {
                 ),
                 React.createElement('div', { className: "userDataSolo" }, this.state.freeVacDays),
                 React.createElement('div', { className: "userDataSolo operations" },
-                    React.createElement('span', { className: "operation", onClick: this.userInfoVacation }, '!'),
+                    React.createElement('span', { className: "operation", onClick: this.userInfoVacation }, '🛈'),
                     React.createElement('span', { className: "operation", onClick: this.editEmploye }, '✎'),
                     React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✘'),
                 )
