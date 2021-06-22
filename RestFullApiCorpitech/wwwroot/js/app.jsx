@@ -126,10 +126,12 @@ class Vacation extends React.Component {
             case "end": {
                 this.setState({ endVacation: myDatePicker });
                 this.myDatePicker = myDatePicker;
+                this.quantityDaysUpdate();
             } break;
             case "start": {
                 this.setState({ startVacation: myDatePicker });
                 this.myDatePickerFirst = myDatePicker;
+                this.quantityDaysUpdate();
             } break;
         }
     }
