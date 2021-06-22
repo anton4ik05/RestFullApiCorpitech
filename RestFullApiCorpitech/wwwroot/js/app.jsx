@@ -457,13 +457,14 @@ class User extends React.Component {
         super(props);
         this.myDatePicker = "";
         this.myDatePickerFirst = "";
-        this.state = { data: props.user, vacationDays: 0, days: "", fromDate: formatDateForInput(new Date(props.user.dateOfEmployment)), onDate: formatDateForInput(new Date()) };
+        this.state = { data: props.user, vacationDays: 0, freeVacDays:0, fromDate: formatDateForInput(new Date(props.user.dateOfEmployment)), onDate: formatDateForInput(new Date()) };
         this.updateDate = this.updateDate.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
         this.deleteEmploye = this.deleteEmploye.bind(this);
         this.onElementRemove = this.onElementRemove.bind(this);
         this.editEmploye = this.editEmploye.bind(this);
         this.updateFormula = this.updateFormula.bind(this);
+        this.freeDaysUp = this.freeDaysUp.bind(this);
         this.collapse = this.collapse.bind(this);
         this.userInfoVacation = this.userInfoVacation.bind(this);
         this.fromDateUpdate = this.fromDateUpdate.bind(this);
@@ -479,6 +480,24 @@ class User extends React.Component {
 
     fromDateUpdate(e) {
         this.setState({ fromDate: this.myDatePickerFirst });
+    }
+    freeDaysUp() {
+        console.log(this.state);
+        let state = this.setState.bind(this);
+        let vac = this.state.vacationDays;
+        $.ajax({
+            url: '../api/users/getVacations?id=' + this.state.data.id,
+            success: function (result) {
+                let vacDays = 0;
+                console.log(result);
+                result.forEach((elem) => {
+                    vacDays += elem.days;
+                });
+                state({ freeVacDays: vac - vacDays });
+            },
+            error: function (result) { console.log(result); }
+        });
+
     }
     deleteEmploye() {
         let onElementRemove = this.onElementRemove.bind();
@@ -519,6 +538,7 @@ class User extends React.Component {
             .then(
                 (result) => {
                     this.setState({ vacationDays: result });
+                    this.freeDaysUp();
 
                 },
                 (error) => {
@@ -613,6 +633,7 @@ class User extends React.Component {
                     React.createElement('div', { id: "collapsible", onClick: this.collapse, className: "collapsible" }, Math.round(this.state.vacationDays)),
                     React.createElement('div', { className: "contentColl" }, Math.round(this.state.vacationDays) + '=' + "(" + this.state.days + " / 29.7) * (" + this.state.data.vacationYear + " / 12)")
                 ),
+                React.createElement('div', { className: "userDataSolo" }, this.state.freeVacDays),
                 React.createElement('div', { className: "userDataSolo operations" },
                     React.createElement('span', { className: "operation", onClick: this.userInfoVacation }, '!'),
                     React.createElement('span', { className: "operation", onClick: this.editEmploye }, '✎'),
@@ -795,7 +816,10 @@ class UserList extends React.Component {
                         React.createElement('div', { className: "userDataSolo head" }, "ФИО"),
                         React.createElement('div', { className: "userDataSolo head" }, "Начальная дата"),
                         React.createElement('div', { className: "userDataSolo head" }, "Конечная дата"),
-                        React.createElement('div', { className: "userDataSolo head" }, "Дней Отпуска"))),
+                        React.createElement('div', { className: "userDataSolo head" }, "Дней Отпуска"),
+                        React.createElement('div', { className: "userDataSolo head" }, "Свободные дни отпуска"),
+                    )),
+
                 React.createElement('div', { className: "allUsers" },
                     this.state.users.map(function (user) {
                         return React.createElement(User, { key: Math.random() * Math.random(), user: user })
