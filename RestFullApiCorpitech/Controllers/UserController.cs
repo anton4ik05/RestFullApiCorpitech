@@ -9,6 +9,7 @@ namespace RestFullApiCorpitech.Controllers
    
     [ApiController]
     [Route("/api/users")]
+    //[Authorize]
     public class UserController : ControllerBase
     {
         private readonly UserService userService;
@@ -19,6 +20,7 @@ namespace RestFullApiCorpitech.Controllers
         }
 
         [HttpGet]
+        // [Authorize(Roles = "admin")]
         public IActionResult Get()
         {
             return new ObjectResult(userService.GetUsers());
@@ -26,6 +28,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpGet]
         [Route("/api/users/{id}")]
+        //[Authorize]
         public IActionResult Get(Guid id, DateTime startDate, DateTime endDate)
         {
             return new ObjectResult(userService.EvalUser(id, startDate, endDate));
@@ -33,6 +36,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpGet]
         [Route("/api/users/{id}/days")]
+        //[Authorize]
         public IActionResult GetDays(Guid id, DateTime startDate, DateTime endDate)
         {
             return new ObjectResult(userService.EvalUserDays(id, startDate, endDate));
@@ -40,6 +44,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpGet]
         [Route("/api/users/getVacations")]
+       // [Authorize]
         public IActionResult GetVacations(Guid id)
         {
 
@@ -48,6 +53,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpPost]
         [Route("/api/users")]
+       // [Authorize(Roles = "admin")]
         public IActionResult UserCreate(UserEditViewModel model)
         {
             if (ModelState.IsValid)
@@ -60,6 +66,8 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpPut]
         [Route("/api/users/{id}")]
+       // [Authorize]
+
         public IActionResult UserEdit(Guid id, UserEditViewModel model)
         {
             if (ModelState.IsValid)
@@ -73,6 +81,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpDelete]
         [Route("/api/users/del")]
+        //[Authorize(Roles = "admin")]
         public IActionResult UserDelete(Guid id)
         {
             if (userService.GetUser(id) != null)
@@ -80,7 +89,6 @@ namespace RestFullApiCorpitech.Controllers
                 userService.DeleteUser(id);
                 return new OkResult();
             }
-
             return new BadRequestObjectResult("User not found");
         }
 
