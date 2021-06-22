@@ -220,6 +220,8 @@ namespace RestFullApiCorpitech.Service
                 double days = 0;
                 double maxDays = user.vacationYear;
 
+                if (maxDays == 0) return null;
+
                 DateTime StartWorkYear = user.DateOfEmployment;
                 DateTime EndWorkYear = user.DateOfEmployment.AddYears(1) - new TimeSpan(1, 0, 0, 0);
 
@@ -252,7 +254,7 @@ namespace RestFullApiCorpitech.Service
                             StartWorkYear = StartWorkYear,
                             EndWorkYear = EndWorkYear,
                             StartVacation = userVacation.StartVacation,
-                            EndVacation = userVacation.StartVacation + new TimeSpan(Convert.ToInt32(daysVacation - notdays - 1), 0, 0, 0)
+                            EndVacation = userVacation.EndVacation
                         });
 
                         maxDays *= 2;
@@ -266,7 +268,7 @@ namespace RestFullApiCorpitech.Service
                             Days = notdays,
                             StartWorkYear = StartWorkYear,
                             EndWorkYear = EndWorkYear,
-                            StartVacation = userVacation.EndVacation - new TimeSpan(Convert.ToInt32(notdays - 1), 0, 0, 0),
+                            StartVacation = userVacation.StartVacation,
                             EndVacation = userVacation.EndVacation
                         });
                     }
