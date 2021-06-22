@@ -23,7 +23,8 @@ function formatDateForInput(date) {
     var yy = date.getFullYear();
     if (yy < 10) yy = '0' + yy;
 
-    return yy + '-' + mm + '-' + dd;
+    //return yy + '-' + mm + '-' + dd;
+    return dd + '.' + mm + '.' + yy;
 }
 function removeItemOnce(arr, value) {
     var index = arr.indexOf(value);
@@ -575,7 +576,6 @@ class User extends React.Component {
                 myDatePicker = formatDateForInput(date.date);
                 updateDate(myDatePicker, true);
             },
-            autoPick: true,
             autoHide: true,
             format: 'YYYY-mm-dd',
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],

@@ -27,15 +27,11 @@ class Login extends React.Component {
         let login = this.state.login.trim();
         let password = this.state.password.trim();
         let state = this.setState.bind(this);
-        if (!login || !password) {
+        if (!login) {
             return;
         }
-        let user = { login: login };
         $.ajax({
-            url: '../token',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(user),
+            url: '../token?username=' + login + '&' + 'password=' + password,
             success: function (result) {
                 console.log(result);
             },
@@ -44,6 +40,7 @@ class Login extends React.Component {
                 state({ errorText: result.responseJSON.errorText });
             }
         });
+
 
     }
     render() {
