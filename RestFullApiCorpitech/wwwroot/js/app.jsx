@@ -71,13 +71,12 @@ class Vacation extends React.Component {
         super(props);
         this.myDatePicker = "";
         this.myDatePickerFirst = "";
-        console.log(props);
         this.datePickerForDocTime = "";
         this.state = {
             data: props.vacation,
             status: true,
             counterVac: 0,
-            numOfDoc: props.vacation.orderNumber,
+            numOfDoc: props.vacation.orderNumber ? props.vacation.orderNumber: "",
             dateOfDoc: props.vacation.dateOrder,
             startVacation: props.vacation.startVacation,
             endVacation: props.vacation.endVacation,
@@ -482,14 +481,12 @@ class User extends React.Component {
         this.setState({ fromDate: this.myDatePickerFirst });
     }
     freeDaysUp() {
-        console.log(this.state);
         let state = this.setState.bind(this);
         let vac = this.state.vacationDays;
         $.ajax({
             url: '../api/users/getVacations?id=' + this.state.data.id,
             success: function (result) {
                 let vacDays = 0;
-                console.log(result);
                 result.forEach((elem) => {
                     vacDays += elem.days;
                 });
