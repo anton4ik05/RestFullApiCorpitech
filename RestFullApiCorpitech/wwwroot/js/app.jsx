@@ -42,18 +42,26 @@ function objToQueryString(obj) {
 class VacationInDetail extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { data: props.vacation, vacationsForView: props.vacationsForView,status: true, startVacation: props.vacation.startVacation, endVacation: props.vacation.endVacation, quantityDays: Math.floor((new Date(props.vacation.endVacation).getTime() - new Date(props.vacation.startVacation).getTime()) / (1000 * 60 * 60 * 24))+1 };
+        this.state = { data: props.vacation, vacationsArr: props.vacationsArr, dateOrder: "", orderNumber:"", status: true };
         this.idForInp = Math.round(Math.random() * 10000);
     }
+    componentDidMount() {
+        let vacsInfo = this.state.vacationsArr.find(obj => {
+            return obj.id == this.state.data.id;
+        });
+        if (vacsInfo) {
+            this.setState({ orderNumber: vacsInfo.orderNumber, dateOrder: vacsInfo.dateOrder});
+        }
+        
+    }
     render() {
-        console.log(this.state);
         return this.state.status === true ? React.createElement('div', { className: "infoVacationsBody" },
-            React.createElement('div', {}, this.state.quantityDays),
-            React.createElement('div', { className: "date" }, formatDate(new Date(this.state.data.startWorkYear)) + ' - ' + formatDateForInput(new Date(this.state.data.endWorkYear))),
+            React.createElement('div', {}, this.state.data.days),
+            React.createElement('div', { className: "date" }, formatDate(new Date(this.state.data.startWorkYear)) + ' - ' + formatDate(new Date(this.state.data.endWorkYear))),
             React.createElement('div', { className: "date" }, formatDate(new Date(this.state.data.startVacation))),
             React.createElement('div', { className: "date" }, formatDate(new Date(this.state.data.endVacation))),
-            React.createElement('div', {}, this.state.data.orderNumber),
-            React.createElement('div', { className: "date" }, formatDate(new Date(this.state.data.dateOrder))),
+            React.createElement('div', {}, this.state.orderNumber),
+            React.createElement('div', { className: "date" }, formatDate(new Date(this.state.dateOrder))),
         ) : null;
         return null;
     }
@@ -63,13 +71,14 @@ class Vacation extends React.Component {
         super(props);
         this.myDatePicker = "";
         this.myDatePickerFirst = "";
+        console.log(props);
         this.datePickerForDocTime = "";
         this.state = {
             data: props.vacation,
             status: true,
             counterVac: 0,
             numOfDoc: props.vacation.orderNumber,
-            dateOfDoc: props.vacation.or,
+            dateOfDoc: props.vacation.dateOrder,
             startVacation: props.vacation.startVacation,
             endVacation: props.vacation.endVacation,
             quantityDays: Math.floor((new Date(props.vacation.endVacation).getTime() - new Date(props.vacation.startVacation).getTime()) / (1000 * 60 * 60 * 24)) + 1
@@ -422,6 +431,7 @@ class UserVacationDetails extends React.Component {
 
     render() {
         let vacationsForView = this.state.vacationsForView;
+        let vacationsArr = this.state.vacations;
         return this.state.status === true ? React.createElement(
             'div', { className: "infoBlock" }, "Отпуска",
             React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
@@ -434,8 +444,8 @@ class UserVacationDetails extends React.Component {
                     React.createElement('div', {}, 'Номер'),
                     React.createElement('div', {}, 'Дата'),
                 ),
-                this.state.vacations.map(function (vacation, index) {
-                    return React.createElement(VacationInDetail, { key: Math.random() * Math.random(), vacationsForView:vacationsForView,vacation: vacation, index: index });
+                vacationsForView.map(function (vacation, index) {
+                    return React.createElement(VacationInDetail, { key: Math.random() * Math.random(), vacationsArr: vacationsArr, vacation: vacation, index: index });
                 })
             ),
         ) : null;
@@ -560,8 +570,8 @@ class User extends React.Component {
                 myDatePickerFirst = formatDateForInput(date.date);
                 updateDate(myDatePickerFirst, false);
             },
-            'setDate': new Date(this.state.data.dateOfEmployment),
             autoPick: false,
+            startDate: new Date(this.state.data.dateOfEmployment),
             autoHide: true,
             format: 'YYYY-mm-dd',
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
@@ -722,10 +732,10 @@ class UserForm extends React.Component {
         return this.state.status === true ? React.createElement('div', { className: "editBlock" }, "Добавление",
             React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
             React.createElement('form', { onSubmit: this.onSubmit },
-                React.createElement('input', { placeholder: 'Surname', type: 'text', autoComplete: "off", onChange: this.onSurnameChange, value: this.state.surname }),
-                React.createElement('input', { placeholder: 'Name', type: 'text', autoComplete: "off", onChange: this.onNameChange, value: this.state.name }),
-                React.createElement('input', { placeholder: 'Middlename', type: 'text', autoComplete: "off", onChange: this.onMiddlenameChange, value: this.state.middlename }),
-                React.createElement('input', { placeholder: 'Login', type: 'text', autoComplete: "off", onChange: this.onLoginChange, value: this.state.login }),
+                React.createElement('input', { placeholder: 'Фамилия', type: 'text', autoComplete: "off", onChange: this.onSurnameChange, value: this.state.surname }),
+                React.createElement('input', { placeholder: 'Имя', type: 'text', autoComplete: "off", onChange: this.onNameChange, value: this.state.name }),
+                React.createElement('input', { placeholder: 'Отчество', type: 'text', autoComplete: "off", onChange: this.onMiddlenameChange, value: this.state.middlename }),
+                React.createElement('input', { placeholder: 'Логин', type: 'text', autoComplete: "off", onChange: this.onLoginChange, value: this.state.login }),
                 React.createElement('select', { className: "form-inp", placeholder: 'Role', type: 'text', autoComplete: "off", onChange: this.onRoleChange, value: this.state.role },
                     React.createElement("option", { value: "moderator" }, "Moder"),
                     React.createElement("option", { value: "user" }, "User")),
