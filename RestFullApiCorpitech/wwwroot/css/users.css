@@ -4,7 +4,7 @@
 
 .usersTable {
     border-collapse: collapse;
-    width: 925px;
+    width: 1120px;
     margin: auto;
     text-align: center;
 }
@@ -182,11 +182,11 @@
 }
 .userHead {
     display: grid;
-    grid-template-columns: repeat(4, 215px) 70px;
+    grid-template-columns: repeat(4, 215px) 180px 70px;
 }
 .userData {
     display: grid;
-    grid-template-columns: repeat(4, 215px) 70px;
+    grid-template-columns: repeat(4, 215px) 180px 70px;
 }
 .userDataSolo {
     min-height: 30px;
