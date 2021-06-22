@@ -20,7 +20,7 @@ namespace RestFullApiCorpitech.ViewModels
 
         [Required(ErrorMessage = "Введите дату найма")]
         [Display(Name = "Дата найма")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
         public DateTime DateOfEmployment { get; set; } = DateTime.MinValue;
 
