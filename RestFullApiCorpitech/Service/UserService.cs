@@ -14,6 +14,19 @@ namespace RestFullApiCorpitech.Service
 
         private readonly ApplicationContext context;
 
+        ICollection<DateTime> holidayList = new List<DateTime>() {
+            new DateTime(2021, 1, 1),
+            new DateTime(2021, 1, 2),
+            new DateTime(2021, 1, 7),
+            new DateTime(2021, 3, 8),
+            new DateTime(2021, 5, 1),
+            new DateTime(2021, 5, 9),
+            new DateTime(2021, 5, 11),
+            new DateTime(2021, 7, 3),
+            new DateTime(2021, 11, 7),
+            new DateTime(2021, 12, 26),
+        };
+
         public UserService(ApplicationContext context)
         {
             this.context = context;
@@ -110,6 +123,50 @@ namespace RestFullApiCorpitech.Service
                 days = (endDate - startDate).Days + 1 - intersect;
             }
             return days;
+        }
+
+        public Double EvalVacationsHolidays(User user, DateTime startDate, DateTime endDate)
+
+        {
+            Double outVacations = 0;
+
+            if (!(startDate < user.DateOfEmployment || endDate < user.DateOfEmployment || startDate > endDate || startDate == endDate))
+            {
+                Double holidays = 0;
+                Double days = 0;
+                Double intersect = 0;
+
+                if (user.Vacations != null || user.Vacations.Any())
+                {
+
+                    ICollection<DateTime> allVacationDates = new List<DateTime>();
+                    var vacations = user.Vacations.ToArray();
+
+                    foreach (var vacation in vacations)
+                    {
+                        allVacationDates = AllDates(vacation.StartVacation, vacation.EndVacation, allVacationDates);
+                    }
+
+
+                    foreach (var date in allVacationDates)
+                    {
+                        if (Between(date, startDate, endDate))
+                        {
+                            intersect++;
+                        };
+
+                        foreach (var holiday in holidayList){
+                            if (date.Month == holiday.Month && date.Day == holiday.Day)
+                            {
+                                holidays++;
+                            }
+                        }
+                    }
+                }
+                days = (endDate - startDate).Days + 1 - intersect;
+                outVacations = Math.Round(Math.Round(days / 29.7) * (user.vacationYear / 12)) + holidays;
+            }
+            return outVacations;
         }
 
         private static ICollection<DateTime> AllDates(DateTime startDate, DateTime endDate, ICollection<DateTime> allDates)

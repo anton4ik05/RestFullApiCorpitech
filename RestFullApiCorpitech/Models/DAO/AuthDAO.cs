@@ -6,15 +6,27 @@ using System.Threading.Tasks;
 
 namespace RestFullApiCorpitech.Models.DAO
 {
-    public class AuthRequest
+    public class AuthDAO
     {
+
         [Required(AllowEmptyStrings = false)]
         [Display(Name = "Логин")]
-        private string login { get; set; }
+        private string login;
+        
 
         [Display(Name = "Пароль")]
         [DataType(DataType.Password)]
         private string password { get; set; }
+
+        public string getLogin()
+        {
+            return this.login;
+        }
+
+        public void setLogin(string login)
+        {
+            this.login = login;
+        }
 
     }
 }
