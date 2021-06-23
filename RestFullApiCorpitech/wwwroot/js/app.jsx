@@ -682,6 +682,7 @@ class User extends React.Component {
             .then(res => res.json())
             .then(
                 (result) => {
+                    console.log(result);
                     this.setState({ vacationDays: result });
                     this.freeDaysUp();
 
@@ -745,6 +746,7 @@ class User extends React.Component {
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
         $('#fromDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker('setDate', new Date(this.state.data.dateOfEmployment));
+        this.evalVacation();
         this.updateFormula();
     }
     updateFormula() {
