@@ -95,7 +95,7 @@ class VacationInDetail extends React.Component {
             React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.startVacation))),
             React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.endVacation))),
             React.createElement('div', {}, this.state.orderNumber),
-            React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.dateOrder))),
+            React.createElement('div', { className: "date" }, formatDateForInput(new Date(parseNewDate(this.state.dateOrder)))),
         ) : null;
         return null;
     }
