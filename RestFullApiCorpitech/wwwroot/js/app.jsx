@@ -466,7 +466,7 @@ class User extends React.Component {
         super(props);
         this.myDatePicker = "";
         this.myDatePickerFirst = "";
-        this.state = { data: props.user, vacationDays: 0, freeVacDays:0, fromDate: formatDateForInput(new Date(props.user.dateOfEmployment)), onDate: formatDateForInput(new Date()) };
+        this.state = { data: props.user, vacationDays: 0, freeVacDays: 0, fromDate: formatDateForInput(new Date(parseNewDate(props.user.dateOfEmployment))), onDate: formatDateForInput(new Date()) };
         this.updateDate = this.updateDate.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
         this.deleteEmploye = this.deleteEmploye.bind(this);
@@ -538,7 +538,8 @@ class User extends React.Component {
     }
 
     evalVacation() {
-        fetch(`../api/users/` + this.state.data.id + `?startDate=${encodeURIComponent(this.state.fromDate)}&endDate=${encodeURIComponent(this.state.onDate)}`, {
+        console.log(this.state.fromDate);
+        fetch(`../api/users/` + this.state.data.id + `?startDate=${this.state.fromDate}&endDate=${this.state.onDate}`, {
             method: "GET",
         })
             .then(res => res.json())
