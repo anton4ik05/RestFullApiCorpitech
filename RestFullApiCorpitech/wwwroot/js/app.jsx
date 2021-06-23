@@ -271,7 +271,6 @@ class Vacation extends React.Component {
             months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
-        $('#startVacation' + this.idForInp + '[data-toggle="datepicker"]').datepicker('setDate', new Date(this.state.startVacation));
         this.quantityDaysUpdate();
     }
     updateVact() {
@@ -611,7 +610,6 @@ class User extends React.Component {
             success: function (result) {
                 let vacDays = 0;
                 let holidays = 0;
-                console.log(result);
                 result.forEach((res) => {
                     let end = new Date(res.endVacation), start = new Date(res.startVacation);
                     let dates = [
@@ -745,6 +743,7 @@ class User extends React.Component {
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
         $('#fromDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker('setDate', new Date(this.state.data.dateOfEmployment));
+        this.evalVacation();
         this.updateFormula();
     }
     updateFormula() {
