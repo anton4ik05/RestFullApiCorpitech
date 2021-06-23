@@ -124,13 +124,11 @@ class Vacation extends React.Component {
         let myDates = getDaysArray(start, end);
         myDates.forEach((date) => {
             dates.forEach((holiday) => {
-                console.log(date.getMonth() + "  " + holiday.getMonth() + "  " + date.getDate() + "  " + holiday.getDate());
                 if (date.getMonth() == holiday.getMonth() && date.getDate() == holiday.getDate() ) {
                     holidays++;
                 }
             });
         });
-        console.log(holidays);
         let days = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
         if (days < 0) {
             days = 0;
@@ -202,6 +200,7 @@ class Vacation extends React.Component {
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
         $('#startVacation' + this.idForInp + '[data-toggle="datepicker"]').datepicker('setDate', new Date(this.state.startVacation));
+        this.quantityDaysUpdate();
     }
     updateVact() {
         if (this.state.counterVac > 0) {
