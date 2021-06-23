@@ -24,7 +24,6 @@ namespace RestFullApiCorpitech.ViewModels
         [Display(Name = "Дата найма")]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
-
         [JsonConverter(typeof(DateConverter))]
         public DateTime DateOfEmployment { get; set; } = DateTime.MinValue;
 

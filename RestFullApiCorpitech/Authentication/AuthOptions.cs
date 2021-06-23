@@ -8,7 +8,7 @@ namespace RestFullApiCorpitech.Authentication
         public const string ISSUER = "MyAuthServer";
         public const string AUDIENCE = "MyAuthClient";
         private const string KEY = "mysupersecret_secretkey!123";
-        public const int LIFETIME = 1500;
+        public const int LIFETIME = 3*24*60;
 
         public static SymmetricSecurityKey GetSymmetricSecurityKey()
         {
