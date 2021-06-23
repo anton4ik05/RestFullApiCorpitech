@@ -43,7 +43,7 @@ namespace RestFullApiCorpitech.Service
 
         public Double EvalUser(Guid id, DateTime startDate, DateTime endDate)
         {
-            return Eval(GetUser(id), startDate, endDate);
+            return EvalVacationsHolidays(GetUser(id), startDate, endDate);
 
         }
 
