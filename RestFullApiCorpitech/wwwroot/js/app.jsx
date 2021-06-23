@@ -1,9 +1,48 @@
-﻿function parseNewDate(date) {
+﻿function getToken() {
+    const tokenString = getCookie('token');
+    return tokenString;
+}
+function setToken(userToken) {
+    setCookie('token', userToken, 3);
+}
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+function eraseToken() {
+    eraseCookie('token');
+}
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+function eraseCookie(name) {
+    document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
+
+function parseNewDate(date) {
     let  newdate =date.split(".").reverse().join("-");
     return newdate;
 }
 
 let getDaysArray = function (start, end) {
+    if (start.getTime() > end.getTime()) {
+        let a = start;
+        start = end;
+        end = a;
+    }
     for (var arr = [], dt = new Date(start); dt <= end; dt.setDate(dt.getDate() + 1)) {
         arr.push(new Date(dt));
     }
@@ -40,26 +79,59 @@ function objToQueryString(obj) {
 class VacationInDetail extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { data: props.vacation, vacationsArr: props.vacationsArr, dateOrder: "", orderNumber:"", status: true };
+        this.state = { data: props.vacation, days: props.vacation.days, vacationsArr: props.vacationsArr, dateOrder: "", orderNumber: "", status: true };
         this.idForInp = Math.round(Math.random() * 10000);
+        this.quantityDaysUpdate = this.quantityDaysUpdate.bind(this);
+    }
+    quantityDaysUpdate() {
+        let end = new Date(this.state.data.endVacation), start = new Date(this.state.data.startVacation);
+        let dates = [
+            new Date(start.getFullYear() + "-1-1"),
+            new Date(start.getFullYear() + "-1-2"),
+            new Date(start.getFullYear() + "-1-7"),
+            new Date(start.getFullYear() + "-3-8"),
+            new Date(start.getFullYear() + "-5-1"),
+            new Date(start.getFullYear() + "-5-9"),
+            new Date(start.getFullYear() + "-5-11"),
+            new Date(start.getFullYear() + "-7-3"),
+            new Date(start.getFullYear() + "-11-7"),
+            new Date(start.getFullYear() + "-12-25"),
+        ];
+       
+        let holidays = 0;
+        let myDates = getDaysArray(start, end);
+        myDates.forEach((date) => {
+            dates.forEach((holiday) => {
+                if (date.getMonth() == holiday.getMonth() && date.getDate() == holiday.getDate()) {
+                    holidays++;
+                }
+            });
+        });
+        let days = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        if (days < 0) {
+            days = 0;
+        }
+        this.setState({ days: days - holidays });
     }
     componentDidMount() {
+
         let vacsInfo = this.state.vacationsArr.find(obj => {
             return obj.id == this.state.data.id;
         });
         if (vacsInfo) {
             this.setState({ orderNumber: vacsInfo.orderNumber, dateOrder: vacsInfo.dateOrder});
         }
+        this.quantityDaysUpdate();
         
     }
     render() {
         return this.state.status === true ? React.createElement('div', { className: "infoVacationsBody" },
-            React.createElement('div', {}, this.state.data.days),
-            React.createElement('div', { className: "date" }, formatDate(new Date(this.state.data.startWorkYear)) + ' - ' + formatDate(new Date(this.state.data.endWorkYear))),
-            React.createElement('div', { className: "date" }, formatDate(new Date(this.state.data.startVacation))),
-            React.createElement('div', { className: "date" }, formatDate(new Date(this.state.data.endVacation))),
+            React.createElement('div', {}, this.state.days),
+            React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.startWorkYear)) + ' - ' + formatDateForInput(new Date(this.state.data.endWorkYear))),
+            React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.startVacation))),
+            React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.endVacation))),
             React.createElement('div', {}, this.state.orderNumber),
-            React.createElement('div', { className: "date" }, formatDate(new Date(this.state.dateOrder))),
+            React.createElement('div', { className: "date" }, formatDateForInput(new Date(parseNewDate(this.state.dateOrder)))),
         ) : null;
         return null;
     }
@@ -501,6 +573,36 @@ class User extends React.Component {
     fromDateUpdate(e) {
         this.setState({ fromDate: this.myDatePickerFirst });
     }
+    quantityDaysUpdate() {
+        let end = new Date(this.state.data.endVacation), start = new Date(this.state.data.startVacation);
+        let dates = [
+            new Date(start.getFullYear() + "-1-1"),
+            new Date(start.getFullYear() + "-1-2"),
+            new Date(start.getFullYear() + "-1-7"),
+            new Date(start.getFullYear() + "-3-8"),
+            new Date(start.getFullYear() + "-5-1"),
+            new Date(start.getFullYear() + "-5-9"),
+            new Date(start.getFullYear() + "-5-11"),
+            new Date(start.getFullYear() + "-7-3"),
+            new Date(start.getFullYear() + "-11-7"),
+            new Date(start.getFullYear() + "-12-25"),
+        ];
+
+        let holidays = 0;
+        let myDates = getDaysArray(start, end);
+        myDates.forEach((date) => {
+            dates.forEach((holiday) => {
+                if (date.getMonth() == holiday.getMonth() && date.getDate() == holiday.getDate()) {
+                    holidays++;
+                }
+            });
+        });
+        let days = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        if (days < 0) {
+            days = 0;
+        }
+        this.setState({ days: days - holidays });
+    }
     freeDaysUp() {
         let state = this.setState.bind(this);
         let vac = this.state.vacationDays;
@@ -508,10 +610,35 @@ class User extends React.Component {
             url: '../api/users/getVacations?id=' + this.state.data.id,
             success: function (result) {
                 let vacDays = 0;
+                let holidays = 0;
+                console.log(result);
+                result.forEach((res) => {
+                    let end = new Date(res.endVacation), start = new Date(res.startVacation);
+                    let dates = [
+                        new Date(start.getFullYear() + "-1-1"),
+                        new Date(start.getFullYear() + "-1-2"),
+                        new Date(start.getFullYear() + "-1-7"),
+                        new Date(start.getFullYear() + "-3-8"),
+                        new Date(start.getFullYear() + "-5-1"),
+                        new Date(start.getFullYear() + "-5-9"),
+                        new Date(start.getFullYear() + "-5-11"),
+                        new Date(start.getFullYear() + "-7-3"),
+                        new Date(start.getFullYear() + "-11-7"),
+                        new Date(start.getFullYear() + "-12-25"),
+                    ];
+                    let myDates = getDaysArray(start, end);
+                    myDates.forEach((date) => {
+                        dates.forEach((holiday) => {
+                            if (date.getMonth() == holiday.getMonth() && date.getDate() == holiday.getDate()) {
+                                holidays++;
+                            }
+                        });
+                    });
+                });
                 result.forEach((elem) => {
                     vacDays += elem.days;
                 });
-                state({ freeVacDays: vac - vacDays });
+                state({ freeVacDays: vac - vacDays + holidays });
             },
             error: function (result) { console.log(result); }
         });
