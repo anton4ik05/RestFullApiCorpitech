@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using RestFullApiCorpitech.util;
 
 namespace RestFullApiCorpitech.Models
 {
@@ -31,6 +32,7 @@ namespace RestFullApiCorpitech.Models
         [Display(Name = "Дата найма")]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
+        [JsonConverter(typeof(DateConverter))]
         public DateTime DateOfEmployment { get; set; } = DateTime.MinValue;
 
         public ICollection<Vacation> Vacations { get; set; } = new List<Vacation>();

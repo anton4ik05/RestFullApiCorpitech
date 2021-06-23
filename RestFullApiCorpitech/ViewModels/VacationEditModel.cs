@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using RestFullApiCorpitech.Models;
+using RestFullApiCorpitech.util;
 
 namespace RestFullApiCorpitech.ViewModels
 {
@@ -10,11 +11,13 @@ namespace RestFullApiCorpitech.ViewModels
         [Display(Name = "Дата начала отпуска")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
         [DataType(DataType.Date)]
+        [JsonConverter(typeof(DateConverter))]
         public DateTime startVacation { get; set; }
 
         [Display(Name = "Дата конца отпуска")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
         [DataType(DataType.Date)]
+        [JsonConverter(typeof(DateConverter))]
         public DateTime endVacation { get; set; }
 
         [JsonIgnore]
@@ -25,6 +28,7 @@ namespace RestFullApiCorpitech.ViewModels
 
         public string OrderNumber { get; set; }
 
+        [JsonConverter(typeof(DateConverter))]
         public DateTime DateOrder { get; set; }
     }
 }

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using RestFullApiCorpitech.util;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace RestFullApiCorpitech.ViewModels
 {
@@ -22,6 +24,8 @@ namespace RestFullApiCorpitech.ViewModels
         [Display(Name = "Дата найма")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
         [DataType(DataType.Date)]
+
+        [JsonConverter(typeof(DateConverter))]
         public DateTime DateOfEmployment { get; set; } = DateTime.MinValue;
 
         public ICollection<VacationEditModel> Vacations { get; set; } = new List<VacationEditModel>();
