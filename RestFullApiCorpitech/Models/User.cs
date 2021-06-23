@@ -30,7 +30,7 @@ namespace RestFullApiCorpitech.Models
 
         [Required(ErrorMessage = "Введите дату найма")]
         [Display(Name = "Дата найма")]
-        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = false)]
         [DataType(DataType.Date)]
         [JsonConverter(typeof(DateConverter))]
         public DateTime DateOfEmployment { get; set; } = DateTime.MinValue;

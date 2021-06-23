@@ -9,13 +9,13 @@ namespace RestFullApiCorpitech.ViewModels
     public class VacationEditModel
     {
         [Display(Name = "Дата начала отпуска")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
         [JsonConverter(typeof(DateConverter))]
         public DateTime startVacation { get; set; }
 
         [Display(Name = "Дата конца отпуска")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
         [JsonConverter(typeof(DateConverter))]
         public DateTime endVacation { get; set; }
