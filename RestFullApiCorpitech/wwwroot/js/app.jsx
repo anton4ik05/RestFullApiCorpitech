@@ -38,6 +38,11 @@ function parseNewDate(date) {
 }
 
 let getDaysArray = function (start, end) {
+    if (start.getTime() > end.getTime()) {
+        let a = start;
+        start = end;
+        end = a;
+    }
     for (var arr = [], dt = new Date(start); dt <= end; dt.setDate(dt.getDate() + 1)) {
         arr.push(new Date(dt));
     }
@@ -74,9 +79,39 @@ function objToQueryString(obj) {
 class VacationInDetail extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { data: props.vacation, vacationsArr: props.vacationsArr, dateOrder: "", orderNumber:"", status: true };
+        this.state = { data: props.vacation, days: props.vacation.days, vacationsArr: props.vacationsArr, dateOrder: "", orderNumber: "", status: true };
         this.idForInp = Math.round(Math.random() * 10000);
-        console.log(props);
+        this.quantityDaysUpdate = this.quantityDaysUpdate.bind(this);
+    }
+    quantityDaysUpdate() {
+        let end = new Date(this.state.data.endVacation), start = new Date(this.state.data.startVacation);
+        let dates = [
+            new Date(start.getFullYear() + "-1-1"),
+            new Date(start.getFullYear() + "-1-2"),
+            new Date(start.getFullYear() + "-1-7"),
+            new Date(start.getFullYear() + "-3-8"),
+            new Date(start.getFullYear() + "-5-1"),
+            new Date(start.getFullYear() + "-5-9"),
+            new Date(start.getFullYear() + "-5-11"),
+            new Date(start.getFullYear() + "-7-3"),
+            new Date(start.getFullYear() + "-11-7"),
+            new Date(start.getFullYear() + "-12-25"),
+        ];
+       
+        let holidays = 0;
+        let myDates = getDaysArray(start, end);
+        myDates.forEach((date) => {
+            dates.forEach((holiday) => {
+                if (date.getMonth() == holiday.getMonth() && date.getDate() == holiday.getDate()) {
+                    holidays++;
+                }
+            });
+        });
+        let days = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        if (days < 0) {
+            days = 0;
+        }
+        this.setState({ days: days - holidays });
     }
     componentDidMount() {
 
@@ -86,11 +121,12 @@ class VacationInDetail extends React.Component {
         if (vacsInfo) {
             this.setState({ orderNumber: vacsInfo.orderNumber, dateOrder: vacsInfo.dateOrder});
         }
+        this.quantityDaysUpdate();
         
     }
     render() {
         return this.state.status === true ? React.createElement('div', { className: "infoVacationsBody" },
-            React.createElement('div', {}, this.state.data.days),
+            React.createElement('div', {}, this.state.days),
             React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.startWorkYear)) + ' - ' + formatDateForInput(new Date(this.state.data.endWorkYear))),
             React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.startVacation))),
             React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.endVacation))),
@@ -537,6 +573,36 @@ class User extends React.Component {
     fromDateUpdate(e) {
         this.setState({ fromDate: this.myDatePickerFirst });
     }
+    quantityDaysUpdate() {
+        let end = new Date(this.state.data.endVacation), start = new Date(this.state.data.startVacation);
+        let dates = [
+            new Date(start.getFullYear() + "-1-1"),
+            new Date(start.getFullYear() + "-1-2"),
+            new Date(start.getFullYear() + "-1-7"),
+            new Date(start.getFullYear() + "-3-8"),
+            new Date(start.getFullYear() + "-5-1"),
+            new Date(start.getFullYear() + "-5-9"),
+            new Date(start.getFullYear() + "-5-11"),
+            new Date(start.getFullYear() + "-7-3"),
+            new Date(start.getFullYear() + "-11-7"),
+            new Date(start.getFullYear() + "-12-25"),
+        ];
+
+        let holidays = 0;
+        let myDates = getDaysArray(start, end);
+        myDates.forEach((date) => {
+            dates.forEach((holiday) => {
+                if (date.getMonth() == holiday.getMonth() && date.getDate() == holiday.getDate()) {
+                    holidays++;
+                }
+            });
+        });
+        let days = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        if (days < 0) {
+            days = 0;
+        }
+        this.setState({ days: days - holidays });
+    }
     freeDaysUp() {
         let state = this.setState.bind(this);
         let vac = this.state.vacationDays;
@@ -544,10 +610,35 @@ class User extends React.Component {
             url: '../api/users/getVacations?id=' + this.state.data.id,
             success: function (result) {
                 let vacDays = 0;
+                let holidays = 0;
+                console.log(result);
+                result.forEach((res) => {
+                    let end = new Date(res.endVacation), start = new Date(res.startVacation);
+                    let dates = [
+                        new Date(start.getFullYear() + "-1-1"),
+                        new Date(start.getFullYear() + "-1-2"),
+                        new Date(start.getFullYear() + "-1-7"),
+                        new Date(start.getFullYear() + "-3-8"),
+                        new Date(start.getFullYear() + "-5-1"),
+                        new Date(start.getFullYear() + "-5-9"),
+                        new Date(start.getFullYear() + "-5-11"),
+                        new Date(start.getFullYear() + "-7-3"),
+                        new Date(start.getFullYear() + "-11-7"),
+                        new Date(start.getFullYear() + "-12-25"),
+                    ];
+                    let myDates = getDaysArray(start, end);
+                    myDates.forEach((date) => {
+                        dates.forEach((holiday) => {
+                            if (date.getMonth() == holiday.getMonth() && date.getDate() == holiday.getDate()) {
+                                holidays++;
+                            }
+                        });
+                    });
+                });
                 result.forEach((elem) => {
                     vacDays += elem.days;
                 });
-                state({ freeVacDays: vac - vacDays });
+                state({ freeVacDays: vac - vacDays + holidays });
             },
             error: function (result) { console.log(result); }
         });
