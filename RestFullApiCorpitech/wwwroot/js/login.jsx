@@ -60,7 +60,7 @@ class Login extends React.Component {
             return;
         }
         $.ajax({
-            url: '../token?username=' + login,
+            url: '../token?username=' + login + "&password=" + password,
             type: 'POST',
             success: function (result) {
                 console.log(result);
