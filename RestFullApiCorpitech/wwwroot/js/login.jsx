@@ -1,7 +1,6 @@
 ﻿function getToken() {
     const tokenString = sessionStorage.getItem('token');
-    const userToken = JSON.parse(tokenString);
-    return userToken?.token
+    return tokenString;
 }
 function setToken(userToken) {
     sessionStorage.setItem('token', JSON.stringify(userToken));
@@ -11,7 +10,7 @@ class Login extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { token: getToken(), login: "", password: "", errorText:"" };
+        this.state = { login: "", password: "", errorText:"", draw:"" };
         this.onLoginChange = this.onLoginChange.bind(this);
         this.onPasswordChange = this.onPasswordChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
@@ -22,6 +21,10 @@ class Login extends React.Component {
     onPasswordChange(e) {
         this.setState({ password: e.target.value });
     }
+    exit(){
+        setToken("");
+        this.setState({draw:""});
+    }
     onSubmit(e) {
         e.preventDefault();
         let login = this.state.login.trim();
@@ -31,9 +34,12 @@ class Login extends React.Component {
             return;
         }
         $.ajax({
-            url: '../token?username=' + login + '&' + 'password=' + password,
+            url: '../token?username=' + login,
+            type: 'POST',
             success: function (result) {
                 console.log(result);
+                setToken(result.access_token); console.log(getToken());
+                state({ draw: "ON" });
             },
             error: function (result) {
                 console.log(result);
@@ -44,8 +50,8 @@ class Login extends React.Component {
 
     }
     render() {
-        console.log(this.state.token);
-        return !this.state.token ?
+
+        return !this.state.draw ?
             React.createElement('div', { className: "container-login100" },
                 React.createElement('div', { className: "wrap-login100" },
                     React.createElement('div', { className: "errorText" }, this.state.errorText),
@@ -60,7 +66,8 @@ class Login extends React.Component {
                         React.createElement('button', { className: "login100-form-btn", type: 'submit' }, 'Вход')
                     )
                 ))
-            : React.createElement('div', null, "asd");
+            : React.createElement('div', null, 
+                   React.createElement('button', {onClick: this.exit }, "Выход"));
     }
 }
 
