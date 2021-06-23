@@ -1,4 +1,38 @@
-﻿function parseNewDate(date) {
+﻿function getToken() {
+    const tokenString = getCookie('token');
+    return tokenString;
+}
+function setToken(userToken) {
+    setCookie('token', userToken, 3);
+}
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+function eraseToken() {
+    eraseCookie('token');
+}
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+function eraseCookie(name) {
+    document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
+
+function parseNewDate(date) {
     let  newdate =date.split(".").reverse().join("-");
     return newdate;
 }
@@ -42,8 +76,10 @@ class VacationInDetail extends React.Component {
         super(props);
         this.state = { data: props.vacation, vacationsArr: props.vacationsArr, dateOrder: "", orderNumber:"", status: true };
         this.idForInp = Math.round(Math.random() * 10000);
+        console.log(props);
     }
     componentDidMount() {
+
         let vacsInfo = this.state.vacationsArr.find(obj => {
             return obj.id == this.state.data.id;
         });
@@ -55,11 +91,11 @@ class VacationInDetail extends React.Component {
     render() {
         return this.state.status === true ? React.createElement('div', { className: "infoVacationsBody" },
             React.createElement('div', {}, this.state.data.days),
-            React.createElement('div', { className: "date" }, formatDate(new Date(this.state.data.startWorkYear)) + ' - ' + formatDate(new Date(this.state.data.endWorkYear))),
-            React.createElement('div', { className: "date" }, formatDate(new Date(this.state.data.startVacation))),
-            React.createElement('div', { className: "date" }, formatDate(new Date(this.state.data.endVacation))),
+            React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.startWorkYear)) + ' - ' + formatDateForInput(new Date(this.state.data.endWorkYear))),
+            React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.startVacation))),
+            React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.endVacation))),
             React.createElement('div', {}, this.state.orderNumber),
-            React.createElement('div', { className: "date" }, formatDate(new Date(this.state.dateOrder))),
+            React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.dateOrder))),
         ) : null;
         return null;
     }
