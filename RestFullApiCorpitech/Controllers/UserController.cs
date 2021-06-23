@@ -29,24 +29,17 @@ namespace RestFullApiCorpitech.Controllers
         [HttpGet]
         [Route("/api/users/{id}")]
         //[Authorize]
-        public IActionResult Get(Guid id, string startDate, string endDate)
+        public IActionResult Get(Guid id, DateTime startDate, DateTime endDate)
         {
-            var start = DateTime.ParseExact(startDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
-            var end = DateTime.ParseExact(endDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
-
-
-
-            return new ObjectResult(userService.EvalUser(id, start, end));
+            return new ObjectResult(userService.EvalUser(id, startDate, endDate));
         }
 
         [HttpGet]
         [Route("/api/users/{id}/days")]
         //[Authorize]
-        public IActionResult GetDays(Guid id, string startDate, string endDate)
+        public IActionResult GetDays(Guid id, DateTime startDate, DateTime endDate)
         {
-            var start = DateTime.ParseExact(startDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
-            var end = DateTime.ParseExact(endDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
-            return new ObjectResult(userService.EvalUserDays(id, start, end));
+            return new ObjectResult(userService.EvalUserDays(id, startDate, endDate));
         }
 
         [HttpGet]
