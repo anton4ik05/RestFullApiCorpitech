@@ -152,7 +152,6 @@ class Vacation extends React.Component {
             endVacation: props.vacation.endVacation,
             quantityDays: Math.floor((new Date(parseNewDate(props.vacation.endVacation)).getTime() - new Date(parseNewDate(props.vacation.startVacation)).getTime()) / (1000 * 60 * 60 * 24)) + 1
         };
-        console.log(this.props);
         this.updateDate = this.updateDate.bind(this);
         this.quantityDaysUpdate = this.quantityDaysUpdate.bind(this);
         this.removeVact = this.removeVact.bind(this);
@@ -272,7 +271,6 @@ class Vacation extends React.Component {
             months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
-        $('#startVacation' + this.idForInp + '[data-toggle="datepicker"]').datepicker('setDate', new Date(this.state.startVacation));
         this.quantityDaysUpdate();
     }
     updateVact() {
@@ -612,7 +610,6 @@ class User extends React.Component {
             success: function (result) {
                 let vacDays = 0;
                 let holidays = 0;
-                console.log(result);
                 result.forEach((res) => {
                     let end = new Date(res.endVacation), start = new Date(res.startVacation);
                     let dates = [
@@ -683,7 +680,6 @@ class User extends React.Component {
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log(result);
                     this.setState({ vacationDays: result });
                     this.freeDaysUp();
 
