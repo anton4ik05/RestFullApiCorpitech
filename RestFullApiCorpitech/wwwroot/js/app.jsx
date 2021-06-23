@@ -1,15 +1,6 @@
-﻿function formatDate(date) {
-
-    var dd = date.getDate();
-    if (dd < 10) dd = '0' + dd;
-
-    var mm = date.getMonth() + 1;
-    if (mm < 10) mm = '0' + mm;
-
-    var yy = date.getFullYear();
-    if (yy < 10) yy = '0' + yy;
-
-    return dd + '.' + mm + '.' + yy;
+﻿function parseNewDate(date) {
+    let  newdate =date.split(".").reverse().join("-");
+    return newdate;
 }
 
 function formatDateForInput(date) {
@@ -23,7 +14,6 @@ function formatDateForInput(date) {
     var yy = date.getFullYear();
     if (yy < 10) yy = '0' + yy;
 
-    //return yy + '-' + mm + '-' + dd;
     return dd + '.' + mm + '.' + yy;
 }
 function removeItemOnce(arr, value) {
@@ -81,7 +71,7 @@ class Vacation extends React.Component {
             dateOfDoc: props.vacation.dateOrder,
             startVacation: props.vacation.startVacation,
             endVacation: props.vacation.endVacation,
-            quantityDays: Math.floor((new Date(props.vacation.endVacation).getTime() - new Date(props.vacation.startVacation).getTime()) / (1000 * 60 * 60 * 24)) + 1
+            quantityDays: Math.floor((new Date(parseNewDate(props.vacation.endVacation)).getTime() - new Date(parseNewDate(props.vacation.startVacation)).getTime()) / (1000 * 60 * 60 * 24)) + 1
         };
         this.updateDate = this.updateDate.bind(this);
         this.quantityDaysUpdate = this.quantityDaysUpdate.bind(this);
@@ -110,7 +100,7 @@ class Vacation extends React.Component {
     }
 
     quantityDaysUpdate() {
-        let end = new Date(this.state.endVacation), start = new Date(this.state.startVacation);
+        let end = new Date(parseNewDate(this.state.endVacation)), start = new Date(parseNewDate(this.state.startVacation));
         let days = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
         if (days < 0) {
             days = 0;
@@ -147,7 +137,7 @@ class Vacation extends React.Component {
             },
             autoPick: true,
             autoHide: true,
-            format: 'YYYY-mm-dd',
+            format: 'dd.mm.YYYY',
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
             daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
             daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
@@ -159,9 +149,8 @@ class Vacation extends React.Component {
                 myDatePicker = formatDateForInput(date.date);
                 updateDate(myDatePicker, "end");
             },
-            autoPick: true,
             autoHide: true,
-            format: 'YYYY-mm-dd',
+            format: 'dd.mm.YYYY',
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
             daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
             daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
@@ -175,7 +164,7 @@ class Vacation extends React.Component {
             },
             autoPick: false,
             autoHide: true,
-            format: 'YYYY-mm-dd',
+            format: 'dd.mm.YYYY',
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
             daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
             daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
@@ -301,7 +290,7 @@ class UserEdit extends React.Component {
 
             autoHide: true,
             autoPick: true,
-            format: 'YYYY-mm-dd',
+            format: 'dd.mm.YYYY',
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
             daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
             daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
@@ -577,7 +566,7 @@ class User extends React.Component {
                 updateDate(myDatePicker, true);
             },
             autoHide: true,
-            format: 'YYYY-mm-dd',
+            format: 'dd.mm.YYYY',
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
             daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
             daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
@@ -592,7 +581,7 @@ class User extends React.Component {
             autoPick: false,
             startDate: new Date(this.state.data.dateOfEmployment),
             autoHide: true,
-            format: 'YYYY-mm-dd',
+            format: 'dd.mm.YYYY',
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
             daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
             daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
@@ -705,7 +694,7 @@ class UserForm extends React.Component {
             },
             autoHide: true,
             autoPick: true,
-            format: 'YYYY-mm-dd',
+            format: 'dd.mm.YYYY',
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
             daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
             daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
