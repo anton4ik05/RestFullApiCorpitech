@@ -101,11 +101,29 @@ class Vacation extends React.Component {
 
     quantityDaysUpdate() {
         let end = new Date(parseNewDate(this.state.endVacation)), start = new Date(parseNewDate(this.state.startVacation));
+        let dates = [
+            new Date("2021-1-1"),
+            new Date("2021-1-2"),
+            new Date("2021-1-7"),
+            new Date("2021-3-8"),
+            new Date("2021-5-1"),
+            new Date("2021-5-9"),
+            new Date("2021-5-11"),
+            new Date("2021-7-3"),
+            new Date("2021-11-7"),
+            new Date("2021-12-26"),
+        ];
+        let holidays = 0;
+        dates.forEach((date) => {
+            if (date.getMonth() > start.getMonth() && date.getDate() > start.getDate() && date.getMonth() < end.getMonth() && date.getDate() < end.getDate()) {
+                holidays++;
+            }
+        });
         let days = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
         if (days < 0) {
             days = 0;
         }
-        this.setState({ quantityDays: days });
+        this.setState({ quantityDays: days - holidays });
     }
 
     updateDate(myDatePicker, on) { //true - endVacation,false- start
