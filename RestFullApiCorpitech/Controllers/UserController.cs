@@ -1,19 +1,20 @@
 ﻿using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RestFullApiCorpitech.Models.DAO;
 using RestFullApiCorpitech.Service;
 using RestFullApiCorpitech.ViewModels;
 
 namespace RestFullApiCorpitech.Controllers
 {
-   
+    
+
     [ApiController]
     [Route("/api/users")]
     //[Authorize]
     public class UserController : ControllerBase
     {
         private readonly UserService userService;
-
         public UserController(UserService userService)
         {
             this.userService = userService;
@@ -26,27 +27,20 @@ namespace RestFullApiCorpitech.Controllers
             return new ObjectResult(userService.GetUsers());
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("/api/users/{id}")]
         //[Authorize]
-        public IActionResult Get(Guid id, string startDate, string endDate)
+        public IActionResult Get(Guid id, DateIntervalDAO interval)
         {
-            var start = DateTime.ParseExact(startDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
-            var end = DateTime.ParseExact(endDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
-
-
-
-            return new ObjectResult(userService.EvalUser(id, start, end));
+            return new ObjectResult(userService.EvalUser(id, interval.startDate, interval.endDate));
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("/api/users/{id}/days")]
         //[Authorize]
-        public IActionResult GetDays(Guid id, string startDate, string endDate)
+        public IActionResult GetDays(Guid id, DateIntervalDAO interval)
         {
-            var start = DateTime.ParseExact(startDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
-            var end = DateTime.ParseExact(endDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
-            return new ObjectResult(userService.EvalUserDays(id, start, end));
+            return new ObjectResult(userService.EvalUserDays(id, interval.startDate, interval.endDate));
         }
 
         [HttpGet]
