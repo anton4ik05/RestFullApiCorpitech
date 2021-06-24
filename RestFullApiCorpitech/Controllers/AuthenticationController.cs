@@ -44,7 +44,7 @@ namespace RestFullApiCorpitech.Controllers
             var response = new
             {
                 access_token = encodedJwt,
-                username = identity.Name
+                username = userService.GetUserByUsername(identity.Name).Role.ToString()
             };
 
             return new ObjectResult(response); 
