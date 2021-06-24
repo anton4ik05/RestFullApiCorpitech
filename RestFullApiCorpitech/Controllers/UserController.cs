@@ -39,7 +39,12 @@ namespace RestFullApiCorpitech.Controllers
         //[Authorize]
         public IActionResult GetDays(Guid id, string startDate, string endDate)
         {
-            return new ObjectResult(userService.EvalUserDays(id, DateTime.ParseExact(startDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture), DateTime.ParseExact(endDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture)));
+            return new ObjectResult(userService.EvalUserDays(id, ParseDate(startDate), DateTime.ParseExact(endDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture)));
+        }
+
+        private static DateTime ParseDate(string startDate)
+        {
+            return DateTime.ParseExact(startDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
         }
 
         [HttpGet]
