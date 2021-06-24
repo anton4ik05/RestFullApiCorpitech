@@ -39,6 +39,7 @@ namespace RestFullApiCorpitech.Models
 
         public double vacationYear { get; set; } = 28; 
 
+
         public string Login { get; set; }
 
         [JsonIgnore]
