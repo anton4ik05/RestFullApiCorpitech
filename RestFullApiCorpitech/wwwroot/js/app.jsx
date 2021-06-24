@@ -700,7 +700,7 @@ class User extends React.Component {
                 React.createElement('div', { className: "userDataSolo" }, this.state.freeVacDays),
                 React.createElement('div', { className: "userDataSolo operations" },
                     React.createElement('span', { className: "operation", onClick: this.userInfoVacation }, '🛈'),
-                    this.state.role === "moderator" ? React.createElement('span', { className: "operation", onClick: this.editEmploye }, '✎') : null,
+                    this.state.role === "admin" ? React.createElement('span', { className: "operation", onClick: this.editEmploye }, '✎') : null,
                     this.state.role === "admin" ? React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✘') : null,
                 )
             );
@@ -837,7 +837,7 @@ class UserList extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { users: [], role: "" };
+        this.state = { users: [], role: getRole() };
         this.onAddUser = this.onAddUser.bind(this);
         this.exit = this.exit.bind(this);
     }
@@ -851,11 +851,7 @@ class UserList extends React.Component {
             .then(res => res.json())
             .then(
                 (result) => {
-                    const myUser = result.find(obj => {
-                        return obj.login == getLogin()
-                    });
-
-                    this.setState({ users: result, role: myUser.role });
+                    this.setState({ users: result });
                 },
                 (error) => {
                     console.log(error)
@@ -876,12 +872,11 @@ class UserList extends React.Component {
     }
     exit() {
         setToken("");
-        setLogin("");
+        setRole("");
         this.setState({ "role": "" });
     }
-    //role === "admin" ? React.createElement('div', { className: "addButton", onClick: this.onAddUser }, "Добавить") : null,
     render() {
-        const role = this.state.role;
+        const role = getRole();
         return getToken() ?
             React.createElement('div', {},
                 React.createElement('nav', { className: "navbar navbar-expand-sm bg-dark navbar-dark" },

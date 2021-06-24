@@ -5,12 +5,12 @@
 function setToken(userToken) {
     setCookie('token', userToken, 3);
 }
-function getLogin() {
-    const loginStr = getCookie('login');
+function getRole() {
+    const loginStr = getCookie('role');
     return loginStr;
 }
-function setLogin(login) {
-    setCookie('login', login, 3);
+function setRole(role) {
+    setCookie('role', role, 3);
 }
 function setCookie(name, value, days) {
     var expires = "";
@@ -23,7 +23,7 @@ function setCookie(name, value, days) {
 }
 function eraseToken() {
     eraseCookie('token');
-    eraseCookie('login');
+    eraseCookie('role');
 }
 function getCookie(name) {
     var nameEQ = name + "=";
