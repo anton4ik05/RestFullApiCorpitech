@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RestFullApiCorpitech.Models.DAO
 {
-    public class AuthDAO
+    public class AuthDTO
     {
 
         [Required(AllowEmptyStrings = false)]

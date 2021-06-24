@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RestFullApiCorpitech.Models.DAO
 {
-    public class DateIntervalDAO
+    public class DateIntervalDTO
     {
 
         [Display(Name = "Начальная дата")]
