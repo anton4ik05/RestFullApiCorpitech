@@ -43,18 +43,19 @@ namespace RestFullApiCorpitech.Controllers
 
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
-           var response = new
+            var response = new
             {
                 access_token = encodedJwt,
-                role = identity.FindFirst(ClaimsIdentity.DefaultRoleClaimType)?.Value
-        };
+                role = identity.FindFirst(ClaimsIdentity.DefaultRoleClaimType)?.Value,
+                id = identity.Claims.FirstOrDefault(x=>x.Type == "Id")?.Value
+                
+            };
 
             return new ObjectResult(response); 
         }
 
         private ClaimsIdentity GetIdentity(string username, string password)
         {
-
             User user = userService.GetUserByLogin(username,password);
 
             if (user != null)
@@ -62,7 +63,8 @@ namespace RestFullApiCorpitech.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login),
-                    new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role, ClaimValueTypes.String)
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role, ClaimValueTypes.String),
+                    new Claim("Id", user.Id.ToString())
                 };
 
                 ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
