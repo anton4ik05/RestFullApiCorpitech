@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using RestFullApiCorpitech.Models.Data;
 
 namespace RestFullApiCorpitech
 {
@@ -11,12 +10,6 @@ namespace RestFullApiCorpitech
         public static async Task<int> Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-
-            using (var scope = host.Services.CreateScope())
-            {
-                await DataInizializer.InizializeAsync(scope.ServiceProvider);
-            }
-            
             host.Run();
             return 0;
         }

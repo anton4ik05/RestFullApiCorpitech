@@ -261,7 +261,7 @@ namespace RestFullApiCorpitech.Service
 
         public IEnumerable<User> GetUsers()
         {
-            return context.Users.Include(x => x.Vacations.OrderBy(x => x.StartVacation)).OrderBy(x => x.Surname).ThenBy(x => x.Name).ToList();
+            return context.Users.Include(x => x.Vacations.OrderBy(x => x.StartVacation)).OrderBy(x => x.Surname).ThenBy(x => x.Name).Where(x=> x.Role != "admin").ToList();
         }
 
         public ICollection<InfoVacation> GetVacations(Guid id)
@@ -300,7 +300,6 @@ namespace RestFullApiCorpitech.Service
                                 StartVacation = userVacation.StartVacation,
                                 EndVacation = userVacation.EndVacation
                             });
-
                         }
                         else
                         {
@@ -426,9 +425,9 @@ namespace RestFullApiCorpitech.Service
             return context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
         }
 
-        public User GetUserByLogin(string login)
+        public User GetUserByLogin(string login, string password)
         {
-            return context.Users.FirstOrDefault(x => x.Login == login);
+            return context.Users.FirstOrDefault(x => x.Login == login && x.password == password);
         }
 
         public class InfoVacation

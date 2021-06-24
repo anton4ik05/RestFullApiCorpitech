@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -23,13 +24,29 @@ namespace RestFullApiCorpitech.Models
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<User>().Property<bool>("isDeleted");
-            modelBuilder.Entity<User>().HasQueryFilter(m => EF.Property<bool>(m, "isDeleted") == false);
 
-            modelBuilder.Entity<Vacation>().Property<bool>("isDeleted");
-            modelBuilder.Entity<Vacation>().HasQueryFilter(m => EF.Property<bool>(m, "isDeleted") == false);
+            //modelBuilder.Entity<User>().Property<bool>("isDeleted");
+            //modelBuilder.Entity<User>().HasQueryFilter(m => EF.Property<bool>(m, "isDeleted") == false);
 
-            modelBuilder.Entity<User>().HasMany(x => x.Vacations).WithOne(x=> x.User);
+            //modelBuilder.Entity<Vacation>().Property<bool>("isDeleted");
+            //modelBuilder.Entity<Vacation>().HasQueryFilter(m => EF.Property<bool>(m, "isDeleted") == false);
+
+            modelBuilder.Entity<User>().HasMany(x => x.Vacations).WithOne(x => x.User);
+
+            modelBuilder.Entity<User>().HasData(new User
+            {
+                Id = Guid.NewGuid(),
+                Surname = "admin",
+                Name = "admin",
+                Middlename = "admin",
+                DateOfEmployment = new DateTime(2015, 1, 1),
+                vacationYear = 28,
+                Vacations = new List<Vacation>(),
+                Login = "admin",
+                password = "admin",
+                Role = "admin",
+            });
+
         }
 
         public override int SaveChanges()
