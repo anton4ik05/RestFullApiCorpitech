@@ -12,6 +12,13 @@ function getRole() {
 function setRole(role) {
     setCookie('role', role, 3);
 }
+function getId() {
+    const idStr = getCookie('id');
+    return idStr;
+}
+function setId(id) {
+    setCookie('id', role, 3);
+}
 function setCookie(name, value, days) {
     var expires = "";
     if (days) {
@@ -24,6 +31,7 @@ function setCookie(name, value, days) {
 function eraseToken() {
     eraseCookie('token');
     eraseCookie('role');
+    eraseCookie('id');
 }
 function getCookie(name) {
     var nameEQ = name + "=";
