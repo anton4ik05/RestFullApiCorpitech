@@ -60,9 +60,9 @@
                         React.createElement('button', { className: "login100-form-btn", type: 'submit' }, 'Вход')
                     )
                 ))
-            : React.createElement('div', null,
-                React.createElement('a', { href: "/" }, "Home"),
-                   React.createElement('button', {onClick: this.exit }, "Выход"));
+            : React.createElement('div', { className:"mainButts" },
+                React.createElement('a', { className: "butt",href: "/" }, "Отпуска"),
+                   React.createElement('button', {className:"butt", onClick: this.exit }, "Выход"));
     }
 }
 
