@@ -300,7 +300,6 @@ namespace RestFullApiCorpitech.Service
                                 StartVacation = userVacation.StartVacation,
                                 EndVacation = userVacation.EndVacation
                             });
-
                         }
                         else
                         {
