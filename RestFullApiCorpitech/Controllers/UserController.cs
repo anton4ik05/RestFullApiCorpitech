@@ -31,7 +31,7 @@ namespace RestFullApiCorpitech.Controllers
         //[Authorize]
         public IActionResult Get(Guid id, string startDate, string endDate)
         {
-           return new ObjectResult(userService.EvalUser(id, DateTime.ParseExact(startDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture), DateTime.ParseExact(endDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture)));
+           return new ObjectResult(userService.EvalUser(id, userService.ParseDate(startDate), userService.ParseDate(endDate)));
         }
 
         [HttpGet]
@@ -39,13 +39,9 @@ namespace RestFullApiCorpitech.Controllers
         //[Authorize]
         public IActionResult GetDays(Guid id, string startDate, string endDate)
         {
-            return new ObjectResult(userService.EvalUserDays(id, ParseDate(startDate), DateTime.ParseExact(endDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture)));
+            return new ObjectResult(userService.EvalUserDays(id, userService.ParseDate(startDate), userService.ParseDate(endDate)));
         }
 
-        private static DateTime ParseDate(string startDate)
-        {
-            return DateTime.ParseExact(startDate, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
-        }
 
         [HttpGet]
         [Route("/api/users/getVacations")]
