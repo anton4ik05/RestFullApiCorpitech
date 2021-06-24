@@ -1,11 +1,13 @@
 ﻿body {
+    margin:0;
+    padding:0;
     background: #e8e8e8
 }
 
 .usersTable {
     border-collapse: collapse;
     width: 1120px;
-    margin: auto;
+    margin: 10px auto;
     text-align: center;
 }
 
@@ -211,7 +213,6 @@
 .head {
     background: #372a80;
     color: aliceblue;
-    font-weight: 700;
 }
 .form-inp {
     width: 300px;
