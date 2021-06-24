@@ -5,6 +5,13 @@
 function setToken(userToken) {
     setCookie('token', userToken, 3);
 }
+function getLogin() {
+    const loginStr = getCookie('login');
+    return loginStr;
+}
+function setLogin(login) {
+    setCookie('login', login, 3);
+}
 function setCookie(name, value, days) {
     var expires = "";
     if (days) {
@@ -16,6 +23,7 @@ function setCookie(name, value, days) {
 }
 function eraseToken() {
     eraseCookie('token');
+    eraseCookie('login');
 }
 function getCookie(name) {
     var nameEQ = name + "=";

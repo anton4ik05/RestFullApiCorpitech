@@ -385,7 +385,6 @@ class UserEdit extends React.Component {
 
     render() {
         let onVacationsChange = this.onVacationsChange.bind(this);
-        let vacts = this.state.vacations;
         return this.state.status === true ? React.createElement(
             'div', { className: "editBlock" }, "Редактирование",
             React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
@@ -839,7 +838,7 @@ class UserList extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { users: [] };
+        this.state = { users: [],role:"" };
         this.onAddUser = this.onAddUser.bind(this);
     }
 
@@ -852,7 +851,11 @@ class UserList extends React.Component {
             .then(res => res.json())
             .then(
                 (result) => {
-                    this.setState({ users: result });
+                    const myUser = result.find(obj => {
+                        return obj.login == getLogin()
+                    });
+
+                    this.setState({ users: result, role: myUser.role });
                 },
                 (error) => {
                     console.log(error)
@@ -873,9 +876,9 @@ class UserList extends React.Component {
     }
 
     render() {
-
-        return getToken()? React.createElement('div', {},
-            React.createElement('div', { className: "addButton", onClick: this.onAddUser }, "Добавить"),
+        console.log(this.state);
+        return getToken() ? React.createElement('div', {},
+            this.state.role==="admin"? React.createElement('div', { className: "addButton", onClick: this.onAddUser }, "Добавить"):null,
             React.createElement('div', { className: 'usersTable' },
                 React.createElement('div', {},
                     React.createElement('div', { className: "userHead" },

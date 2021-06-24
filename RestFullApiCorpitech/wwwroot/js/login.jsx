@@ -31,7 +31,8 @@
             type: 'POST',
             success: function (result) {
                 console.log(result);
-                setToken(result.access_token); console.log(getToken());
+                setToken(result.access_token);
+                setLogin(result.username);
                 state({ token: getToken() });
             },
             error: function (result) {
