@@ -517,6 +517,7 @@ class User extends React.Component {
     freeDaysUp() {
         let state = this.setState.bind(this);
         let vac = this.state.vacationDays;
+        console.log(this.state.data.id);
         $.ajax({
             url: '../api/users/getVacations?id=' + this.state.data.id,
             success: function (result) {

@@ -33,6 +33,7 @@
                 console.log(result);
                 setToken(result.access_token);
                 setRole(result.role);
+                setId(result.id);
                 state({ token: getToken() });
             },
             error: function (result) {
