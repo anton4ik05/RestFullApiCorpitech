@@ -310,9 +310,7 @@ class UserEdit extends React.Component {
                 myDatePicker = formatDateForInput(date.date);
                 updateDate(myDatePicker);
             },
-
             autoHide: true,
-            autoPick: true,
             format: 'dd.mm.YYYY',
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
             daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
@@ -340,6 +338,7 @@ class UserEdit extends React.Component {
     }
 
     putTheEdit(id, user) {
+        console.log(user);
         $.ajax({
             url: '../api/users/' + id,
             type: 'PUT',
@@ -664,7 +663,6 @@ class User extends React.Component {
             months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
-        $('#fromDate' + this.idForInp + '[data-toggle="datepicker"]').datepicker('setDate', new Date(this.state.data.dateOfEmployment));
         this.evalVacation();
         this.updateFormula();
     }
