@@ -680,7 +680,7 @@ class UserForm extends React.Component {
     constructor(props) {
         super(props);
         this.myDatePicker = "";
-        this.state = { status: true, name: "", surname: "", middlename: "", login: "", role: "", vacationYear: "28", dateOfEmployment: this.myDatePicker };
+        this.state = { status: true, name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "28", dateOfEmployment: this.myDatePicker };
         this.onSubmit = this.onSubmit.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
         this.onSurnameChange = this.onSurnameChange.bind(this);
@@ -826,6 +826,9 @@ class UserDataEdit extends React.Component {
         let password = this.state.password.trim();
         if (!login) {
             return;
+        }
+        if (this.state.role === "admin") {
+            password = "";
         }
         let data = { login: login, password: password };
         this.setState({ login: "", password: "" });
