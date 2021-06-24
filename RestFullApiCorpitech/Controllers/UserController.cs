@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RestFullApiCorpitech.Models.DAO;
 using RestFullApiCorpitech.Service;
 using RestFullApiCorpitech.ViewModels;
 
@@ -74,6 +75,21 @@ namespace RestFullApiCorpitech.Controllers
             if (ModelState.IsValid)
             {
                 userService.UpdateUser(id, model);
+                return new ObjectResult(userService.GetUser(id));
+            }
+
+            return new BadRequestResult();
+        }
+
+        [HttpPut]
+        [Route("/api/users/{id}/credentials")]
+        // [Authorize]
+
+        public IActionResult UserEditCredentials(Guid id, AuthDTO model)
+        {
+            if (ModelState.IsValid)
+            {
+                userService.UpdateUserCredentials(id, model);
                 return new ObjectResult(userService.GetUser(id));
             }
 
