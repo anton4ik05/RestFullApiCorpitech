@@ -705,7 +705,7 @@ class UserForm extends React.Component {
     constructor(props) {
         super(props);
         this.myDatePicker = "";
-        this.state = { status: true, name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "28", dateOfEmployment: this.myDatePicker };
+        this.state = { status: true, name: "", surname: "", middlename: "", login: "", role: "", vacationYear: "28", dateOfEmployment: this.myDatePicker };
         this.onSubmit = this.onSubmit.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
         this.onSurnameChange = this.onSurnameChange.bind(this);
@@ -783,7 +783,7 @@ class UserForm extends React.Component {
             return;
         }
         let user = { name: name, surname: surname, middlename: middlename, vacationYear: vacationYear, login: login, role: role, dateOfEmployment: dateOfEmployment, vacations: [] };
-        this.setState({ name: "", surname: "", middlename: "", login: "", role: "", vacationYear: "", dateOfEmployment: "" });
+        this.setState({ name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "", dateOfEmployment: "" });
         $.ajax({
             url: '../api/users',
             type: 'POST',
@@ -822,6 +822,64 @@ class UserForm extends React.Component {
     }
 }
 
+class UserDataEdit extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { status: true, role: props.role, login: "", password: "" };
+        this.onLoginChange = this.onLoginChange.bind(this);
+        this.onPasswordChange = this.onPasswordChange.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    onLoginChange(e) {
+        this.setState({ login: e.target.value });
+    }
+    onPasswordChange(e) {
+        this.setState({ password: e.target.value });
+    }
+    close() {
+        this.setState({ status: false });
+        $('#edit').remove();
+    }
+    onSubmit(e) {
+        e.preventDefault();
+        let login = this.state.login.trim();
+        let password = this.state.password.trim();
+        if (!login) {
+            return;
+        }
+        let data = { login: login, password: password};
+        this.setState({ login: "", password: ""});
+        /*$.ajax({
+            url: '../api/users',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(user),
+            success: function (result) {
+                console.log("USER is added.");
+                ReactDOM.unmountComponentAtNode(document.getElementById('content'));
+                ReactDOM.render(
+                    React.createElement(UserList, null),
+                    document.getElementById('content'),
+                );
+            },
+            error: function (result) { console.log(result); }
+        });*/
+        this.close();
+
+    }
+
+    render() {
+        return this.state.status === true ? React.createElement('div', { className: "editBlock" }, "Изменение данных",
+            React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
+            React.createElement('form', { onSubmit: this.onSubmit },
+                React.createElement('input', { placeholder: 'Логин', type: 'text', autoComplete: "off", onChange: this.onLoginChange, value: this.state.login }),
+                React.createElement('input', { placeholder: 'Пароль', type: 'password', autoComplete: "off", onChange: this.onPasswordChange, value: this.state.password }),
+                React.createElement('button', { type: 'submit', className: 'postfix' }, 'Сохранить')
+            )
+        ) : null;
+    }
+}
 
 class UserList extends React.Component {
 
@@ -830,6 +888,7 @@ class UserList extends React.Component {
         this.state = { users: [], role: getRole() };
         this.onAddUser = this.onAddUser.bind(this);
         this.exit = this.exit.bind(this);
+        this.editSets = this.editSets.bind(this);
     }
 
 
@@ -852,7 +911,13 @@ class UserList extends React.Component {
     componentDidMount() {
         this.loadData();
     }
-
+    editSets() {
+        $('body').append("<div id='edit'></div>");
+        ReactDOM.render(
+            React.createElement(UserDataEdit, { user: this.state.role }),
+            document.getElementById('edit'),
+        );
+    }
     onAddUser(user) {
         $('body').append("<div id='edit'></div>");
         ReactDOM.render(
@@ -872,10 +937,13 @@ class UserList extends React.Component {
                 React.createElement('nav', { className: "navbar navbar-expand-sm bg-dark navbar-dark" },
                     React.createElement('ul', { className: "navbar-nav" },
                         React.createElement('li', { className: "nav-item active" },
-                            React.createElement('a', { href: "", className: "nav-link" }, "Отпуска"),
+                            React.createElement('a', { href: "#", className: "nav-link" }, "Отпуска"),
                         ),
                         React.createElement('li', { className: "nav-item" },
                             React.createElement('a', { href: "", className: "nav-link", onClick: this.exit }, "Выход"),
+                        ),
+                        React.createElement('li', { className: "nav-item" },
+                            React.createElement('a', { href: "#", className: "nav-link", onClick: this.editSets}, "Редактировать данные"),
                         ),
                         role === "admin" ? React.createElement('li', { className: "nav-item" },
                             React.createElement('a', { href: "#", className: "nav-link", onClick: this.onAddUser }, "Добавить"),
