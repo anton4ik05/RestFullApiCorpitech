@@ -4,7 +4,6 @@ class VacationInDetail extends React.Component {
         super(props);
         this.state = { data: props.vacation, days: props.vacation.days, vacationsArr: props.vacationsArr, dateOrder: "", orderNumber: "", status: true };
         this.idForInp = Math.round(Math.random() * 10000);
-        this.quantityDaysUpdate = this.quantityDaysUpdate.bind(this);
     }
     /*quantityDaysUpdate() {
         let end = new Date(this.state.data.endVacation), start = new Date(this.state.data.startVacation);
