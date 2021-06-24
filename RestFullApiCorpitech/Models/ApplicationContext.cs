@@ -46,6 +46,10 @@ namespace RestFullApiCorpitech.Models
                 password = "admin",
                 Role = "admin",
             });
+            modelBuilder
+                .Entity<User>()
+                .HasIndex(u => u.Login)
+                .IsUnique();
 
         }
         /*

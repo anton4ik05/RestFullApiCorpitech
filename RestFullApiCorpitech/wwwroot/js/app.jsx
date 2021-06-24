@@ -2,7 +2,6 @@
 class VacationInDetail extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props);
         this.state = { data: props.vacation, days: props.vacation.days, vacationsArr: props.vacationsArr, dateOrder: "", orderNumber: "", status: true };
         this.idForInp = Math.round(Math.random() * 10000);
         this.quantityDaysUpdate = this.quantityDaysUpdate.bind(this);
@@ -81,7 +80,6 @@ class Vacation extends React.Component {
         this.removeVact = this.removeVact.bind(this);
         this.numOfDocChange = this.numOfDocChange.bind(this);
         this.dateOfDocChange = this.dateOfDocChange.bind(this);
-        this.updateVact = this.updateVact.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
         this.fromDateUpdate = this.fromDateUpdate.bind(this);
         this.idForInp = Math.round(Math.random() * 10000);
@@ -142,11 +140,13 @@ class Vacation extends React.Component {
                 this.setState({ endVacation: myDatePicker });
                 this.myDatePicker = myDatePicker;
                 this.quantityDaysUpdate();
+                this.props.onVacationsChange(this.props.index, false, { "startVacation": this.state.startVacation, "endVacation": this.state.endVacation });
             } break;
             case "start": {
                 this.setState({ startVacation: myDatePicker });
                 this.myDatePickerFirst = myDatePicker;
                 this.quantityDaysUpdate();
+                this.props.onVacationsChange(this.props.index, false,{"startVacation":this.state.startVacation,"endVacation":this.state.endVacation});
             } break;
         }
     }
@@ -197,13 +197,6 @@ class Vacation extends React.Component {
         });
         this.quantityDaysUpdate();
     }
-    updateVact() {
-        if (this.state.counterVac > 0) {
-            this.props.onVacationsChange(this.props.index, false);
-        } else {
-            this.setState({ counterVac: this.state.counterVac + 1 });
-        }
-    }
     removeVact() {
         this.setState({ status: false });
         this.props.onVacationsChange(this.props.index);
@@ -219,7 +212,6 @@ class Vacation extends React.Component {
             React.createElement('div', { className: "closeVac", onClick: this.removeVact }, "✖"),
 
         ) : null;
-        return null;
     }
 }
 
@@ -276,8 +268,7 @@ class UserEdit extends React.Component {
             this.setState({ vacations: myVacs });
         } else {
             myVacs[index] = newVac;
-            this.setState({ vacations: myVacs });
-            console.log(this.state.vacations);
+           this.setState({ vacations: myVacs });
         }
 
     }
@@ -443,7 +434,6 @@ class UserVacationDetails extends React.Component {
 
     render() {
         let vacationsForView = this.state.vacationsForView;
-        console.log(vacationsForView);
         let vacationsArr = this.state.vacations;
         return this.state.status === true ? React.createElement(
             'div', { className: "infoBlock" }, "Отпуска",

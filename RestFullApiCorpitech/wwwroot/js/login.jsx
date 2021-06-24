@@ -32,7 +32,7 @@
             success: function (result) {
                 console.log(result);
                 setToken(result.access_token);
-                setRole(result.username);
+                setRole(result.role);
                 state({ token: getToken() });
             },
             error: function (result) {
