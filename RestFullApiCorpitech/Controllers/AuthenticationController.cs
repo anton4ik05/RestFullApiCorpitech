@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -41,11 +42,12 @@ namespace RestFullApiCorpitech.Controllers
                 );
 
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-            var response = new
+
+           var response = new
             {
                 access_token = encodedJwt,
-                username = userService.GetUserByUsername(identity.Name).Role.ToString()
-            };
+                role = identity.FindFirst(ClaimsIdentity.DefaultRoleClaimType)?.Value
+        };
 
             return new ObjectResult(response); 
         }
@@ -60,7 +62,7 @@ namespace RestFullApiCorpitech.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login),
-                    new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role)
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role, ClaimValueTypes.String)
                 };
 
                 ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
