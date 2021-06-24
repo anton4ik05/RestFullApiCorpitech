@@ -2,6 +2,7 @@
 class VacationInDetail extends React.Component {
     constructor(props) {
         super(props);
+        console.log(props);
         this.state = { data: props.vacation, days: props.vacation.days, vacationsArr: props.vacationsArr, dateOrder: "", orderNumber: "", status: true };
         this.idForInp = Math.round(Math.random() * 10000);
         this.quantityDaysUpdate = this.quantityDaysUpdate.bind(this);
@@ -338,7 +339,6 @@ class UserEdit extends React.Component {
     }
 
     putTheEdit(id, user) {
-        console.log(user);
         $.ajax({
             url: '../api/users/' + id,
             type: 'PUT',
@@ -443,6 +443,7 @@ class UserVacationDetails extends React.Component {
 
     render() {
         let vacationsForView = this.state.vacationsForView;
+        console.log(vacationsForView);
         let vacationsArr = this.state.vacations;
         return this.state.status === true ? React.createElement(
             'div', { className: "infoBlock" }, "Отпуска",
@@ -469,7 +470,7 @@ class User extends React.Component {
         super(props);
         this.myDatePicker = "";
         this.myDatePickerFirst = "";
-        this.state = { data: props.user, vacationDays: 0, freeVacDays: 0, fromDate: formatDateForInput(new Date(parseNewDate(props.user.dateOfEmployment))), onDate: formatDateForInput(new Date()) };
+        this.state = { data: props.user, role:props.role,vacationDays: 0, freeVacDays: 0, fromDate: formatDateForInput(new Date(parseNewDate(props.user.dateOfEmployment))), onDate: formatDateForInput(new Date()) };
         this.updateDate = this.updateDate.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
         this.deleteEmploye = this.deleteEmploye.bind(this);
@@ -481,6 +482,7 @@ class User extends React.Component {
         this.userInfoVacation = this.userInfoVacation.bind(this);
         this.fromDateUpdate = this.fromDateUpdate.bind(this);
         this.idForInp = Math.round(Math.random() * 10000);
+        console.log(props);
     }
 
     onDateUpdate(e) {
@@ -699,8 +701,8 @@ class User extends React.Component {
                 React.createElement('div', { className: "userDataSolo" }, this.state.freeVacDays),
                 React.createElement('div', { className: "userDataSolo operations" },
                     React.createElement('span', { className: "operation", onClick: this.userInfoVacation }, '🛈'),
-                    React.createElement('span', { className: "operation", onClick: this.editEmploye }, '✎'),
-                    React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✘'),
+                    this.state.role==="moderator"?React.createElement('span', { className: "operation", onClick: this.editEmploye }, '✎'):null,
+                    this.state.role === "admin" ? React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✘'):null,
                 )
             );
         } else {
@@ -874,9 +876,9 @@ class UserList extends React.Component {
     }
 
     render() {
-        console.log(this.state);
+        const role = this.state.role;
         return getToken() ? React.createElement('div', {},
-            this.state.role==="admin"? React.createElement('div', { className: "addButton", onClick: this.onAddUser }, "Добавить"):null,
+            role==="admin"? React.createElement('div', { className: "addButton", onClick: this.onAddUser }, "Добавить"):null,
             React.createElement('div', { className: 'usersTable' },
                 React.createElement('div', {},
                     React.createElement('div', { className: "userHead" },
@@ -889,7 +891,7 @@ class UserList extends React.Component {
 
                 React.createElement('div', { className: "allUsers" },
                     this.state.users.map(function (user) {
-                        return React.createElement(User, { key: Math.random() * Math.random(), user: user })
+                        return React.createElement(User, { key: Math.random() * Math.random(), user: user ,role:role })
                     })
                 )
 
