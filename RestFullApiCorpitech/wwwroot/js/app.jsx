@@ -800,7 +800,6 @@ class UserForm extends React.Component {
 class UserDataEdit extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props);
         this.state = { status: true, role: props.role, login: "", password: "" };
         this.onLoginChange = this.onLoginChange.bind(this);
         this.onPasswordChange = this.onPasswordChange.bind(this);
@@ -826,9 +825,6 @@ class UserDataEdit extends React.Component {
         let password = this.state.password.trim();
         if (!login) {
             return;
-        }
-        if (this.state.role === "admin") {
-            password = "";
         }
         let data = { login: login, password: password };
         this.setState({ login: "", password: "" });
@@ -910,6 +906,7 @@ class UserList extends React.Component {
     exit() {
         setToken("");
         setRole("");
+        setId("");
         this.setState({ "role": "" });
     }
     render() {
