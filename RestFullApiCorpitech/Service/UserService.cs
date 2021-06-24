@@ -6,6 +6,7 @@ using System.Threading;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RestFullApiCorpitech.ViewModels;
+using RestFullApiCorpitech.Models.DAO;
 
 namespace RestFullApiCorpitech.Service
 {
@@ -247,7 +248,18 @@ namespace RestFullApiCorpitech.Service
             record.vacationYear = model.vacationYear;
             context.SaveChanges();
         }
-        
+
+        public void UpdateUserCredentials(Guid id, AuthDTO model)
+        {
+            var record = context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
+
+            if (record == null) return;
+
+            record.Login = model.login;
+            record.password = model.password;
+            context.SaveChanges();
+        }
+
         public void DeleteUser(Guid id)
         {
 
