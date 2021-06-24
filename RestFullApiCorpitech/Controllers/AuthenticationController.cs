@@ -23,7 +23,7 @@ namespace RestFullApiCorpitech.Controllers
         [HttpPost("/token")]
         public IActionResult Token(string username, string password)
         {
-            var identity = GetIdentity(username);
+            var identity = GetIdentity(username, password);
 
             if (identity == null)
             {
@@ -50,9 +50,9 @@ namespace RestFullApiCorpitech.Controllers
             return new ObjectResult(response); 
         }
 
-        private ClaimsIdentity GetIdentity(string username)
+        private ClaimsIdentity GetIdentity(string username, string password)
         {
-            User user = userService.GetUserByLogin(username);
+            User user = userService.GetUserByLogin(username,password);
 
             if (user != null)
             {

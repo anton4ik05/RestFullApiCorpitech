@@ -25,10 +25,23 @@ namespace RestFullApiCorpitech.Models.Data
             if (isExists) return;
 
             await context.Database.MigrateAsync();
+            
+            var user = new User()
+            {
+                Surname = "admin",
+                Name = "admin",
+                Middlename = "admin",
+                DateOfEmployment = new DateTime(2015,1,1),
+                vacationYear = 28,
+                Vacations = new List<Vacation>(),
+                Login = "admin",
+                password = "admin",
+                Role = "admin"
+            };
 
+            context.Users.Add(user);
 
-
-            await context.SaveChangesAsync();
+            context.SaveChanges();
 
         }
     }

@@ -9,7 +9,7 @@ namespace RestFullApiCorpitech.Controllers
    
     [ApiController]
     [Route("/api/users")]
-    [Authorize]
+    //[Authorize]
     public class UserController : ControllerBase
     {
         private readonly UserService userService;
@@ -20,7 +20,7 @@ namespace RestFullApiCorpitech.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public IActionResult Get()
         {
             return new ObjectResult(userService.GetUsers());
