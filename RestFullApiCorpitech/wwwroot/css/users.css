@@ -14,7 +14,7 @@
 
 .operations {
     margin: auto;
-    width: 60px;
+    width: 80px;
 }
 
 .operation {
@@ -186,11 +186,11 @@
 }
 .userHead {
     display: grid;
-    grid-template-columns: repeat(4, 215px) 180px 70px;
+    grid-template-columns: repeat(4, 215px) 180px 80px;
 }
 .userData {
     display: grid;
-    grid-template-columns: repeat(4, 215px) 180px 70px;
+    grid-template-columns: repeat(4, 215px) 180px 80px;
 }
 .userDataSolo {
     min-height: 30px;
