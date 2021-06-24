@@ -6,8 +6,9 @@ class VacationInDetail extends React.Component {
         this.idForInp = Math.round(Math.random() * 10000);
         this.quantityDaysUpdate = this.quantityDaysUpdate.bind(this);
     }
-    quantityDaysUpdate() {
+    /*quantityDaysUpdate() {
         let end = new Date(this.state.data.endVacation), start = new Date(this.state.data.startVacation);
+        console.log(this.state);
         let dates = [
             new Date(start.getFullYear() + "-1-1"),
             new Date(start.getFullYear() + "-1-2"),
@@ -35,7 +36,7 @@ class VacationInDetail extends React.Component {
             days = 0;
         }
         this.setState({ days: days - holidays });
-    }
+    }*/
     componentDidMount() {
 
         let vacsInfo = this.state.vacationsArr.find(obj => {
@@ -44,7 +45,6 @@ class VacationInDetail extends React.Component {
         if (vacsInfo) {
             this.setState({ orderNumber: vacsInfo.orderNumber, dateOrder: vacsInfo.dateOrder });
         }
-        this.quantityDaysUpdate();
 
     }
     render() {
@@ -517,7 +517,6 @@ class User extends React.Component {
     freeDaysUp() {
         let state = this.setState.bind(this);
         let vac = this.state.vacationDays;
-        console.log(this.state.data.id);
         $.ajax({
             url: '../api/users/getVacations?id=' + this.state.data.id,
             success: function (result) {
@@ -828,6 +827,17 @@ class UserDataEdit extends React.Component {
         if (!login) {
             return;
         }
+
+         //ЫФЫВВВВВВВВВВВВВВВВВВВВВ
+         //ЫФЫВВВВВВВВВВВВВВВВВВВВВ
+
+         //ЫФЫВВВВВВВВВВВВВВВВВВВВВ //ЫФЫВВВВВВВВВВВВВВВВВВВВВ
+         //ЫФЫВВВВВВВВВВВВВВВВВВВВВ
+         //ЫФЫВВВВВВВВВВВВВВВВВВВВВ
+
+         //ЫФЫВВВВВВВВВВВВВВВВВВВВВ
+         //ЫФЫВВВВВВВВВВВВВВВВВВВВВ
+         //ЫФЫВВВВВВВВВВВВВВВВВВВВВ
         let data = { login: login, password: password};
         this.setState({ login: "", password: ""});
         $.ajax({
