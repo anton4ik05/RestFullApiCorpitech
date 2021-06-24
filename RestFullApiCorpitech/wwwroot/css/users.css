@@ -148,6 +148,7 @@
     background: #fff0b6;
     border: 1px solid;
     cursor: pointer;
+    margin: 20px auto;
 }
 
 .addButton:hover {
