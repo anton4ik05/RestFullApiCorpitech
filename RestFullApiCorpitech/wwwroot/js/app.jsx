@@ -21,7 +21,7 @@ class VacationInDetail extends React.Component {
             new Date(start.getFullYear() + "-11-7"),
             new Date(start.getFullYear() + "-12-25"),
         ];
-       
+
         let holidays = 0;
         let myDates = getDaysArray(start, end);
         myDates.forEach((date) => {
@@ -43,10 +43,10 @@ class VacationInDetail extends React.Component {
             return obj.id == this.state.data.id;
         });
         if (vacsInfo) {
-            this.setState({ orderNumber: vacsInfo.orderNumber, dateOrder: vacsInfo.dateOrder});
+            this.setState({ orderNumber: vacsInfo.orderNumber, dateOrder: vacsInfo.dateOrder });
         }
         this.quantityDaysUpdate();
-        
+
     }
     render() {
         return this.state.status === true ? React.createElement('div', { className: "infoVacationsBody" },
@@ -70,7 +70,7 @@ class Vacation extends React.Component {
             data: props.vacation,
             status: true,
             counterVac: 0,
-            numOfDoc: props.vacation.orderNumber ? props.vacation.orderNumber: "",
+            numOfDoc: props.vacation.orderNumber ? props.vacation.orderNumber : "",
             dateOfDoc: props.vacation.dateOrder,
             startVacation: props.vacation.startVacation,
             endVacation: props.vacation.endVacation,
@@ -105,22 +105,22 @@ class Vacation extends React.Component {
     quantityDaysUpdate() {
         let end = new Date(parseNewDate(this.state.endVacation)), start = new Date(parseNewDate(this.state.startVacation));
         let dates = [
-            new Date(start.getFullYear()+"-1-1"),
-            new Date(start.getFullYear()+"-1-2"),
-            new Date(start.getFullYear()+"-1-7"),
-            new Date(start.getFullYear()+"-3-8"),
-            new Date(start.getFullYear()+"-5-1"),
-            new Date(start.getFullYear()+"-5-9"),
-            new Date(start.getFullYear()+"-5-11"),
-            new Date(start.getFullYear()+"-7-3"),
-            new Date(start.getFullYear()+"-11-7"),
-            new Date(start.getFullYear()+"-12-25"),
+            new Date(start.getFullYear() + "-1-1"),
+            new Date(start.getFullYear() + "-1-2"),
+            new Date(start.getFullYear() + "-1-7"),
+            new Date(start.getFullYear() + "-3-8"),
+            new Date(start.getFullYear() + "-5-1"),
+            new Date(start.getFullYear() + "-5-9"),
+            new Date(start.getFullYear() + "-5-11"),
+            new Date(start.getFullYear() + "-7-3"),
+            new Date(start.getFullYear() + "-11-7"),
+            new Date(start.getFullYear() + "-12-25"),
         ];
         let holidays = 0;
         let myDates = getDaysArray(start, end);
         myDates.forEach((date) => {
             dates.forEach((holiday) => {
-                if (date.getMonth() == holiday.getMonth() && date.getDate() == holiday.getDate() ) {
+                if (date.getMonth() == holiday.getMonth() && date.getDate() == holiday.getDate()) {
                     holidays++;
                 }
             });
@@ -152,7 +152,7 @@ class Vacation extends React.Component {
     }
 
     componentDidMount() {
-        let myDatePicker = "", myDatePickerFirst = "", datePickerForDocTime="";
+        let myDatePicker = "", myDatePickerFirst = "", datePickerForDocTime = "";
         let updateDate = this.updateDate.bind();
         $('#dateOfDoc' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
@@ -279,7 +279,7 @@ class UserEdit extends React.Component {
             this.setState({ vacations: myVacs });
             console.log(this.state.vacations);
         }
-        
+
     }
 
     onLoginChange(e) {
@@ -421,7 +421,7 @@ class UserVacationDetails extends React.Component {
             data: props.user,
             id: props.user.id,
             status: true,
-            vacationsForView:[],
+            vacationsForView: [],
             vacations: props.user.vacations,
         };
         this.close = this.close.bind(this);
@@ -470,7 +470,7 @@ class User extends React.Component {
         super(props);
         this.myDatePicker = "";
         this.myDatePickerFirst = "";
-        this.state = { data: props.user, role:props.role,vacationDays: 0, freeVacDays: 0, fromDate: formatDateForInput(new Date(parseNewDate(props.user.dateOfEmployment))), onDate: formatDateForInput(new Date()) };
+        this.state = { data: props.user, role: props.role, vacationDays: 0, freeVacDays: 0, fromDate: formatDateForInput(new Date(parseNewDate(props.user.dateOfEmployment))), onDate: formatDateForInput(new Date()) };
         this.updateDate = this.updateDate.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
         this.deleteEmploye = this.deleteEmploye.bind(this);
@@ -482,7 +482,6 @@ class User extends React.Component {
         this.userInfoVacation = this.userInfoVacation.bind(this);
         this.fromDateUpdate = this.fromDateUpdate.bind(this);
         this.idForInp = Math.round(Math.random() * 10000);
-        console.log(props);
     }
 
     onDateUpdate(e) {
@@ -701,8 +700,8 @@ class User extends React.Component {
                 React.createElement('div', { className: "userDataSolo" }, this.state.freeVacDays),
                 React.createElement('div', { className: "userDataSolo operations" },
                     React.createElement('span', { className: "operation", onClick: this.userInfoVacation }, '🛈'),
-                    this.state.role==="moderator"?React.createElement('span', { className: "operation", onClick: this.editEmploye }, '✎'):null,
-                    this.state.role === "admin" ? React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✘'):null,
+                    this.state.role === "moderator" ? React.createElement('span', { className: "operation", onClick: this.editEmploye }, '✎') : null,
+                    this.state.role === "admin" ? React.createElement('span', { className: "operation", onClick: this.deleteEmploye }, '✘') : null,
                 )
             );
         } else {
@@ -838,8 +837,9 @@ class UserList extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { users: [],role:"" };
+        this.state = { users: [], role: "" };
         this.onAddUser = this.onAddUser.bind(this);
+        this.exit = this.exit.bind(this);
     }
 
 
@@ -874,29 +874,47 @@ class UserList extends React.Component {
             document.getElementById('edit'),
         );
     }
-
+    exit() {
+        setToken("");
+        setLogin("");
+        this.setState({ "role": "" });
+    }
+    //role === "admin" ? React.createElement('div', { className: "addButton", onClick: this.onAddUser }, "Добавить") : null,
     render() {
         const role = this.state.role;
-        return getToken() ? React.createElement('div', {},
-            role==="admin"? React.createElement('div', { className: "addButton", onClick: this.onAddUser }, "Добавить"):null,
-            React.createElement('div', { className: 'usersTable' },
-                React.createElement('div', {},
-                    React.createElement('div', { className: "userHead" },
-                        React.createElement('div', { className: "userDataSolo head" }, "ФИО"),
-                        React.createElement('div', { className: "userDataSolo head" }, "Начальная дата"),
-                        React.createElement('div', { className: "userDataSolo head" }, "Конечная дата"),
-                        React.createElement('div', { className: "userDataSolo head" }, "Дней Отпуска"),
-                        React.createElement('div', { className: "userDataSolo head" }, "Свободные дни отпуска"),
-                    )),
+        return getToken() ?
+            React.createElement('div', {},
+                React.createElement('nav', { className: "navbar navbar-expand-sm bg-dark navbar-dark" },
+                    React.createElement('ul', { className: "navbar-nav" },
+                        React.createElement('li', { className: "nav-item active" },
+                            React.createElement('a', { href: "", className: "nav-link" }, "Отпуска"),
+                        ),
+                        React.createElement('li', { className: "nav-item" },
+                            React.createElement('a', { href: "", className: "nav-link", onClick: this.exit }, "Выход"),
+                        ),
+                        role === "admin" ? React.createElement('li', { className: "nav-item" },
+                            React.createElement('a', { href: "#", className: "nav-link", onClick: this.onAddUser }, "Добавить"),
+                        ) : null,
+                    )
+                ),
+                React.createElement('div', { className: 'usersTable' },
+                    React.createElement('div', {},
+                        React.createElement('div', { className: "userHead" },
+                            React.createElement('div', { className: "userDataSolo head" }, "ФИО"),
+                            React.createElement('div', { className: "userDataSolo head" }, "Начальная дата"),
+                            React.createElement('div', { className: "userDataSolo head" }, "Конечная дата"),
+                            React.createElement('div', { className: "userDataSolo head" }, "Дней Отпуска"),
+                            React.createElement('div', { className: "userDataSolo head" }, "Свободные дни отпуска"),
+                        )),
 
-                React.createElement('div', { className: "allUsers" },
-                    this.state.users.map(function (user) {
-                        return React.createElement(User, { key: Math.random() * Math.random(), user: user ,role:role })
-                    })
+                    React.createElement('div', { className: "allUsers" },
+                        this.state.users.map(function (user) {
+                            return React.createElement(User, { key: Math.random() * Math.random(), user: user, role: role })
+                        })
+                    )
+
                 )
-
-            )
-        ) : null;
+            ) : null;
 
     }
 }

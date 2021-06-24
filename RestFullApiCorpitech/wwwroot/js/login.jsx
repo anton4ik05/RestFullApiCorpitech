@@ -60,13 +60,16 @@
                         React.createElement('button', { className: "login100-form-btn", type: 'submit' }, 'Вход')
                     )
                 ))
-            : React.createElement('div', { className:"mainButts" },
-                React.createElement('a', { className: "butt",href: "/" }, "Отпуска"),
-                   React.createElement('button', {className:"butt", onClick: this.exit }, "Выход"));
+            : document.location.href = '/';
     }
 }
 
-ReactDOM.render(
-    React.createElement(Login, null),
-    document.getElementById('loginApp'),
-);
+
+if (!getToken()) {
+    ReactDOM.render(
+        React.createElement(Login, null),
+        document.getElementById('loginApp'),
+    );
+} else {
+    document.location.href = '/';
+}
