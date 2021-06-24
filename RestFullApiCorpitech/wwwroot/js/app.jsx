@@ -521,34 +521,10 @@ class User extends React.Component {
             url: '../api/users/getVacations?id=' + this.state.data.id,
             success: function (result) {
                 let vacDays = 0;
-                let holidays = 0;
-                result.forEach((res) => {
-                    let end = new Date(res.endVacation), start = new Date(res.startVacation);
-                    let dates = [
-                        new Date(start.getFullYear() + "-1-1"),
-                        new Date(start.getFullYear() + "-1-2"),
-                        new Date(start.getFullYear() + "-1-7"),
-                        new Date(start.getFullYear() + "-3-8"),
-                        new Date(start.getFullYear() + "-5-1"),
-                        new Date(start.getFullYear() + "-5-9"),
-                        new Date(start.getFullYear() + "-5-11"),
-                        new Date(start.getFullYear() + "-7-3"),
-                        new Date(start.getFullYear() + "-11-7"),
-                        new Date(start.getFullYear() + "-12-25"),
-                    ];
-                    let myDates = getDaysArray(start, end);
-                    myDates.forEach((date) => {
-                        dates.forEach((holiday) => {
-                            if (date.getMonth() == holiday.getMonth() && date.getDate() == holiday.getDate()) {
-                                holidays++;
-                            }
-                        });
-                    });
-                });
                 result.forEach((elem) => {
                     vacDays += elem.days;
                 });
-                state({ freeVacDays: vac - vacDays + holidays });
+                state({ freeVacDays: vac - vacDays });
             },
             error: function (result) { console.log(result); }
         });
@@ -829,6 +805,7 @@ class UserDataEdit extends React.Component {
         this.onLoginChange = this.onLoginChange.bind(this);
         this.onPasswordChange = this.onPasswordChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+        this.close = this.close.bind(this);
     }
 
     onLoginChange(e) {
@@ -837,10 +814,12 @@ class UserDataEdit extends React.Component {
     onPasswordChange(e) {
         this.setState({ password: e.target.value });
     }
+
     close() {
         this.setState({ status: false });
         $('#edit').remove();
     }
+
     onSubmit(e) {
         e.preventDefault();
         let login = this.state.login.trim();
@@ -850,13 +829,13 @@ class UserDataEdit extends React.Component {
         }
         let data = { login: login, password: password};
         this.setState({ login: "", password: ""});
-        /*$.ajax({
-            url: '../api/users',
+        $.ajax({
+            url: '../api/users/'+getId()+'/credentials',
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify(user),
+            data: JSON.stringify(data),
             success: function (result) {
-                console.log("USER is added.");
+                console.log("USER is edited.");
                 ReactDOM.unmountComponentAtNode(document.getElementById('content'));
                 ReactDOM.render(
                     React.createElement(UserList, null),
@@ -864,7 +843,7 @@ class UserDataEdit extends React.Component {
                 );
             },
             error: function (result) { console.log(result); }
-        });*/
+        });
         this.close();
 
     }
