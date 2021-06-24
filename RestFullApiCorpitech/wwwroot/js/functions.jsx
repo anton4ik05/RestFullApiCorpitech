@@ -17,7 +17,7 @@ function getId() {
     return idStr;
 }
 function setId(id) {
-    setCookie('id', role, 3);
+    setCookie('id', id, 3);
 }
 function setCookie(name, value, days) {
     var expires = "";
