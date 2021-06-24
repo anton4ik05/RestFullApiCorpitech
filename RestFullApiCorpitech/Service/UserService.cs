@@ -445,5 +445,10 @@ namespace RestFullApiCorpitech.Service
 
 
         }
+
+        public DateTime ParseDate(string date)
+        {
+            return DateTime.ParseExact(date, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
+        }
     }
 }
