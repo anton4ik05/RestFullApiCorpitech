@@ -284,7 +284,9 @@ namespace RestFullApiCorpitech.Service
                 foreach (var userVacation in userVacations)
                 {
                     double daysVacation = (userVacation.EndVacation - userVacation.StartVacation).Days + 1; // Дни отпуска
+                    HolidaysDays(userVacation.StartVacation, userVacation.EndVacation);
                     days +=daysVacation;
+
 
                    if (daysVacation <= maxDays)
                     {
@@ -419,6 +421,13 @@ namespace RestFullApiCorpitech.Service
             }
             return null;
         }
+
+        private void HolidaysDays(DateTime StartVacation, DateTime EndVacation)
+        {
+
+           
+        }
+
 
         public User GetUser(Guid id)
         {
