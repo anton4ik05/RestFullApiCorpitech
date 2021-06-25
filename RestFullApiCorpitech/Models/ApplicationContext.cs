@@ -1,5 +1,8 @@
-﻿using System;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,22 +18,70 @@ namespace RestFullApiCorpitech.Models
 
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Vacation> Vacations { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+
+            //modelBuilder.Entity<User>().Property<bool>("isDeleted");
+            //modelBuilder.Entity<User>().HasQueryFilter(m => EF.Property<bool>(m, "isDeleted") == false);
+
+            //modelBuilder.Entity<Vacation>().Property<bool>("isDeleted");
+            //modelBuilder.Entity<Vacation>().HasQueryFilter(m => EF.Property<bool>(m, "isDeleted") == false);
+
+            modelBuilder.Entity<User>().HasMany(x => x.Vacations).WithOne(x => x.User);
+
             modelBuilder.Entity<User>().HasData(new User
             {
-                Id = new Guid("716C2E99-6F6C-4472-81A5-43C56E11637C"),
-                Surname = "Иванов",
-                Name = "Иван",
-                Middlename = "Иванович",
-                dateOfEmployment = new DateTime(2015, 11, 11)
-            }
-            );
+                Id = Guid.NewGuid(),
+                Surname = "admin",
+                Name = "admin",
+                Middlename = "admin",
+                DateOfEmployment = new DateTime(2015, 1, 1),
+                vacationYear = 28,
+                Vacations = new List<Vacation>(),
+                Login = "admin",
+                password = "admin",
+                Role = "admin",
+            });
+            modelBuilder
+                .Entity<User>()
+                .HasIndex(u => u.Login)
+                .IsUnique();
 
-            modelBuilder.Entity<User>().HasMany(c => c.Vacations).WithOne(e => e.user);
+        }
+        /*
+
+        public override int SaveChanges()
+        {
+            UpdateSoftDeleteStatuses();
+            return base.SaveChanges();
         }
 
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            UpdateSoftDeleteStatuses();
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        private void UpdateSoftDeleteStatuses()
+        {
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.CurrentValues["isDeleted"] = false;
+                        break;
+                    case EntityState.Deleted:
+                        entry.State = EntityState.Modified;
+                        entry.CurrentValues["isDeleted"] = true;
+                        break;
+                }
+            }
+        }
+      */
     }
 }

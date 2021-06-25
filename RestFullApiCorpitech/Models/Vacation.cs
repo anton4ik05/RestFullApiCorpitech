@@ -1,23 +1,40 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using Calabonga.EntityFrameworkCore.Entities.Base;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.SignalR;
+using RestFullApiCorpitech.util;
 
 namespace RestFullApiCorpitech.Models
 {
-    public class Vacation: Identity
+    public class Vacation
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
 
         [Display(Name = "Дата начала отпуска")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
-        public DateTime startVacation { get; set; }
+        [JsonConverter(typeof(DateConverter))]
+        public DateTime StartVacation { get; set; }
 
         [Display(Name = "Дата конца отпуска")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{yyyy-MM-dd}")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
-        public DateTime endVacation { get; set; }
+        [JsonConverter(typeof(DateConverter))]
+        public DateTime EndVacation { get; set; }
 
-        public User user { get; set; }
+        [JsonIgnore]
+        public User User { get; set; }
+
+        [JsonIgnore]
+        public Guid UserId { get; set; }
+
+        public string OrderNumber { get; set; }
+
+        [JsonConverter(typeof(DateConverter))]
+        public DateTime DateOrder { get; set; }
 
     }
 }
