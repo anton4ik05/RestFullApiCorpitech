@@ -256,7 +256,15 @@ namespace RestFullApiCorpitech.Service
             if (record == null) return;
 
             record.Login = model.login;
-            record.password = model.password;
+            if (model.password != "")
+            {
+                record.password = model.password;
+            }
+            else
+            {
+                record.password = null;
+            }
+            
             context.SaveChanges();
         }
 

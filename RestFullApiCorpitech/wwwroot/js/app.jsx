@@ -4,10 +4,10 @@ class VacationInDetail extends React.Component {
         super(props);
         this.state = { data: props.vacation, days: props.vacation.days, vacationsArr: props.vacationsArr, dateOrder: "", orderNumber: "", status: true };
         this.idForInp = Math.round(Math.random() * 10000);
-        this.quantityDaysUpdate = this.quantityDaysUpdate.bind(this);
     }
-    quantityDaysUpdate() {
+    /*quantityDaysUpdate() {
         let end = new Date(this.state.data.endVacation), start = new Date(this.state.data.startVacation);
+        console.log(this.state);
         let dates = [
             new Date(start.getFullYear() + "-1-1"),
             new Date(start.getFullYear() + "-1-2"),
@@ -35,7 +35,7 @@ class VacationInDetail extends React.Component {
             days = 0;
         }
         this.setState({ days: days - holidays });
-    }
+    }*/
     componentDidMount() {
 
         let vacsInfo = this.state.vacationsArr.find(obj => {
@@ -44,7 +44,6 @@ class VacationInDetail extends React.Component {
         if (vacsInfo) {
             this.setState({ orderNumber: vacsInfo.orderNumber, dateOrder: vacsInfo.dateOrder });
         }
-        this.quantityDaysUpdate();
 
     }
     render() {
@@ -146,7 +145,7 @@ class Vacation extends React.Component {
                 this.setState({ startVacation: myDatePicker });
                 this.myDatePickerFirst = myDatePicker;
                 this.quantityDaysUpdate();
-                this.props.onVacationsChange(this.props.index, false,{"startVacation":this.state.startVacation,"endVacation":this.state.endVacation});
+                this.props.onVacationsChange(this.props.index, false, { "startVacation": this.state.startVacation, "endVacation": this.state.endVacation });
             } break;
         }
     }
@@ -268,7 +267,7 @@ class UserEdit extends React.Component {
             this.setState({ vacations: myVacs });
         } else {
             myVacs[index] = newVac;
-           this.setState({ vacations: myVacs });
+            this.setState({ vacations: myVacs });
         }
 
     }
@@ -517,7 +516,6 @@ class User extends React.Component {
     freeDaysUp() {
         let state = this.setState.bind(this);
         let vac = this.state.vacationDays;
-        console.log(this.state.data.id);
         $.ajax({
             url: '../api/users/getVacations?id=' + this.state.data.id,
             success: function (result) {
@@ -682,7 +680,7 @@ class UserForm extends React.Component {
     constructor(props) {
         super(props);
         this.myDatePicker = "";
-        this.state = { status: true, name: "", surname: "", middlename: "", login: "", role: "", vacationYear: "28", dateOfEmployment: this.myDatePicker };
+        this.state = { status: true, name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "28", dateOfEmployment: this.myDatePicker };
         this.onSubmit = this.onSubmit.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
         this.onSurnameChange = this.onSurnameChange.bind(this);
@@ -802,6 +800,7 @@ class UserForm extends React.Component {
 class UserDataEdit extends React.Component {
     constructor(props) {
         super(props);
+        console.log(props);
         this.state = { status: true, role: props.role, login: "", password: "" };
         this.onLoginChange = this.onLoginChange.bind(this);
         this.onPasswordChange = this.onPasswordChange.bind(this);
@@ -828,11 +827,14 @@ class UserDataEdit extends React.Component {
         if (!login) {
             return;
         }
-        let data = { login: login, password: password};
-        this.setState({ login: "", password: ""});
+        if (this.state.role === "admin") {
+            password = "";
+        }
+        let data = { login: login, password: password };
+        this.setState({ login: "", password: "" });
         $.ajax({
-            url: '../api/users/'+getId()+'/credentials',
-            type: 'POST',
+            url: '../api/users/' + getId() + '/credentials',
+            type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(data),
             success: function (result) {
@@ -854,7 +856,7 @@ class UserDataEdit extends React.Component {
             React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
             React.createElement('form', { onSubmit: this.onSubmit },
                 React.createElement('input', { placeholder: 'Логин', type: 'text', autoComplete: "off", onChange: this.onLoginChange, value: this.state.login }),
-                React.createElement('input', { placeholder: 'Пароль', type: 'password', autoComplete: "off", onChange: this.onPasswordChange, value: this.state.password }),
+                this.state.role === "admin" ? React.createElement('input', { placeholder: 'Пароль', type: 'password', autoComplete: "off", onChange: this.onPasswordChange, value: this.state.password }) : null,
                 React.createElement('button', { type: 'submit', className: 'postfix' }, 'Сохранить')
             )
         ) : null;
@@ -894,7 +896,7 @@ class UserList extends React.Component {
     editSets() {
         $('body').append("<div id='edit'></div>");
         ReactDOM.render(
-            React.createElement(UserDataEdit, { user: this.state.role }),
+            React.createElement(UserDataEdit, { role: this.state.role }),
             document.getElementById('edit'),
         );
     }
@@ -923,7 +925,7 @@ class UserList extends React.Component {
                             React.createElement('a', { href: "", className: "nav-link", onClick: this.exit }, "Выход"),
                         ),
                         React.createElement('li', { className: "nav-item" },
-                            React.createElement('a', { href: "#", className: "nav-link", onClick: this.editSets}, "Редактировать данные"),
+                            React.createElement('a', { href: "#", className: "nav-link", onClick: this.editSets }, "Редактировать данные"),
                         ),
                         role === "admin" ? React.createElement('li', { className: "nav-item" },
                             React.createElement('a', { href: "#", className: "nav-link", onClick: this.onAddUser }, "Добавить"),

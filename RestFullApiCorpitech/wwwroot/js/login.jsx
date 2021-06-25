@@ -30,7 +30,6 @@
             url: '../token?username=' + login + "&password=" + password,
             type: 'POST',
             success: function (result) {
-                console.log(result);
                 setToken(result.access_token);
                 setRole(result.role);
                 setId(result.id);
