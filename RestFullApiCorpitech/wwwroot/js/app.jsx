@@ -330,7 +330,7 @@ class UserEdit extends React.Component {
 
     putTheEdit(id, user) {
         $.ajax({
-            url: '../api/users/' + id,
+            url: '../api/users/' + id +'&token='+getToken(),
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(user),
@@ -419,7 +419,7 @@ class UserVacationDetails extends React.Component {
     componentDidMount() {
         let state = this.setState.bind(this);
         $.ajax({
-            url: '../api/users/getVacations?id=' + this.state.id,
+            url: '../api/users/getVacations?id=' + this.state.id + '&token=' + getToken(),
             success: function (result) {
                 state({ vacationsForView: result });
             },
@@ -517,7 +517,7 @@ class User extends React.Component {
         let state = this.setState.bind(this);
         let vac = this.state.vacationDays;
         $.ajax({
-            url: '../api/users/getVacations?id=' + this.state.data.id,
+            url: '../api/users/getVacations?id=' + this.state.data.id + '&token=' + getToken(),
             success: function (result) {
                 let vacDays = 0;
                 result.forEach((elem) => {
@@ -533,7 +533,7 @@ class User extends React.Component {
         let onElementRemove = this.onElementRemove.bind();
         if (confirm("Вы точно хотите удалить пользователя?")) {
             $.ajax({
-                url: '../api/users/del?id=' + this.state.data.id,
+                url: '../api/users/del?id=' + this.state.data.id + '&token=' + getToken(),
                 type: 'DELETE',
                 success: function (result) {
                     console.log(result);
@@ -561,20 +561,17 @@ class User extends React.Component {
     }
 
     evalVacation() {
-        fetch(`../api/users/` + this.state.data.id + `?startDate=${this.state.fromDate}&endDate=${this.state.onDate}`, {
-            method: "GET",
-        })
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    this.setState({ vacationDays: result });
-                    this.freeDaysUp();
-
-                },
-                (error) => {
-                    console.log(error)
-                }
-            )
+        let state = this.setState.bind(this);
+        let freeDaysUp = this.freeDaysUp.bind(this);
+        $.ajax({
+            url: `../api/users/` + this.state.data.id + `?startDate=${this.state.fromDate}&endDate=${this.state.onDate}` + '&token=' + getToken(),
+            success: function (result) {
+                console.log(result);
+                state({ vacationDays: result });
+                freeDaysUp();
+            },
+            error: function (result) { console.log(result); }
+        });
 
     }
 
@@ -636,7 +633,7 @@ class User extends React.Component {
         let days = 0;
         let state = this.setState.bind(this);
         $.ajax({
-            url: '../api/users/' + this.state.data.id + '/days?startDate=' + this.state.fromDate + '&endDate=' + this.state.onDate,
+            url: '../api/users/' + this.state.data.id + '/days?startDate=' + this.state.fromDate + '&endDate=' + this.state.onDate + '&token=' + getToken(),
             success: function (result) {
                 days = result;
                 state({ days: days });
@@ -760,7 +757,7 @@ class UserForm extends React.Component {
         let user = { name: name, surname: surname, middlename: middlename, vacationYear: vacationYear, login: login, role: role, dateOfEmployment: dateOfEmployment, vacations: [] };
         this.setState({ name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "", dateOfEmployment: "" });
         $.ajax({
-            url: '../api/users',
+            url: '../api/users' + '&token=' + getToken(),
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(user),
@@ -800,7 +797,6 @@ class UserForm extends React.Component {
 class UserDataEdit extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props);
         this.state = { status: true, role: props.role, login: "", password: "" };
         this.onLoginChange = this.onLoginChange.bind(this);
         this.onPasswordChange = this.onPasswordChange.bind(this);
@@ -827,13 +823,10 @@ class UserDataEdit extends React.Component {
         if (!login) {
             return;
         }
-        if (this.state.role === "admin") {
-            password = "";
-        }
         let data = { login: login, password: password };
         this.setState({ login: "", password: "" });
         $.ajax({
-            url: '../api/users/' + getId() + '/credentials',
+            url: '../api/users/' + getId() + '/credentials' + '&token=' + getToken(),
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(data),
@@ -876,19 +869,15 @@ class UserList extends React.Component {
 
     loadData() {
         let startDate = "2000-02-11", endDate = formatDateForInput(new Date);
-        fetch(`../api/users?=startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`, {
-            method: "GET",
-        })
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    this.setState({ users: result });
-                },
-                (error) => {
-                    console.log(error)
-                }
-            )
-
+        let state = this.setState.bind(this);
+        $.ajax({
+            url: `../api/users?=startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}&token=${getToken()}`,
+            success: function (result) {
+                console.log(result);
+                state({ users: result });
+            },
+            error: function (result) { console.log(result); }
+        });
     }
     componentDidMount() {
         this.loadData();
@@ -910,6 +899,7 @@ class UserList extends React.Component {
     exit() {
         setToken("");
         setRole("");
+        setId("");
         this.setState({ "role": "" });
     }
     render() {
