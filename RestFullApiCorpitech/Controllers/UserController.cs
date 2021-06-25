@@ -91,7 +91,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpPut]
         [Route("/api/users/{id}/credentials")]
-        [Authorize(Roles = "admin")]
+        [Authorize]
         public IActionResult UserEditCredentials(Guid id, AuthDTO model)
         {
             if (ModelState.IsValid)
