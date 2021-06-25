@@ -871,7 +871,7 @@ class UserList extends React.Component {
         let startDate = "2000-02-11", endDate = formatDateForInput(new Date);
         let state = this.setState.bind(this);
         $.ajax({
-            url: `../api/users?=startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}&token=${getToken()}`,
+            url: `../api/users?=&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}&token=`+getToken(),
             success: function (result) {
                 console.log(result);
                 state({ users: result });
