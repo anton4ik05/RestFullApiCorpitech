@@ -808,7 +808,7 @@ class UserDataEdit extends React.Component {
         let data = { login: login, password: password };
         this.setState({ login: "", password: "" });
         $.ajax({
-            url: '../api/users/' + getId() + '/credentials' + '&token=' + getToken(),
+            url: '../api/users/' + getId() + '/credentials' + '?token=' + getToken(),
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(data),
