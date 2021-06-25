@@ -1,21 +1,283 @@
 ﻿body {
-    background:#e8e8e8
+    margin:0;
+    padding:0;
+    background: #e8e8e8
 }
+
 .usersTable {
     border-collapse: collapse;
-    width: 90%;
-    margin: auto;
+    width: 1120px;
+    margin: 10px auto;
     text-align: center;
 }
-caption {
+
+
+.operations {
+    margin: auto;
+    width: 80px;
+}
+
+.operation {
+    user-select: none;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 5px 0;
+    padding-right: 5px;
+}
+
+.operation:hover {
+    color: #808080;
+}
+
+.operation:active {
+    font-weight: 200;
+}
+
+#edit {
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    position: absolute;
+    background: rgb(0 0 0 / 0.52);
+}
+
+.editBlock {
+    position: relative;
+    width: 500px;
+    top: 50px;
+    border-radius: 20px;
+    background: #fff;
+    padding: 20px;
+    margin: auto;
+}
+
+.editBlock form {
+    width: 300px;
+    margin: auto;
+}
+
+.editBlock .close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    color: #000;
+}
+
+.editBlock input {
+    width: 300px;
+    margin: 10px auto;
+    height: 30px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.editBlock .vacations {
+    position: relative;
+    width: 300px;
+    height: 200px;
     border: 1px solid #000;
+    border-radius: 5px;
+    overflow: hidden;
 }
-thead{
-    background:#fff0b6
+
+.editBlock button {
+    cursor: pointer;
+    width: 300px;
+    height: 30px;
+    margin: 3px auto;
+    font-weight: bolder;
+    background: #fff0b6;
 }
-th {
+
+.editBlock button:hover {
+    background: #f6d67c;
+}
+
+.editBlock button:active {
+    transform: scale(0.9);
+}
+
+.allVacations {
+    position: relative;
+    height: 150px;
+    border-bottom: 1px solid;
+}
+
+.vacations {
+    font-weight: bold;
+    text-align: center;
+}
+
+.vacationDays {
+    display: flex;
+    flex-wrap:wrap;
+    width: 300px;
+    border-bottom: 1px solid;
+    border-top: 1px solid;
+}
+
+.vacationDays input {
+    width: 115px;
+    margin: 2px 2px;
+}
+
+.vacationDays .quanDays {
+    width:55px;
+    margin: 2px 2px;
+}
+
+.vacations .addVac {
+    font-size: 15px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.vacationDays .closeVac {
+    cursor: pointer;
+    line-height: 31px;
+}
+
+.addButton {
+    width: 200px;
+    height: 30px;
+    font-weight: bold;
+    line-height: 30px;
+    text-align: center;
+    background: #fff0b6;
+    border: 1px solid;
+    cursor: pointer;
+    margin: 20px auto;
+}
+
+.addButton:hover {
+    background: #f6d67c;
+}
+
+.addButton:active {
+    transform: scale(0.9);
+}
+.coll {
+    cursor: pointer;
+    overflow: hidden;
+}
+.contentColl {
+    max-height: 0;
+    word-break: break-all;
+}
+.collapsible {
+    height:30px;
+    line-height:30px;
+    width: 100%;
+}
+.active, .collapsible:hover {
+    background-color: #9a93c1;
+}
+
+.content {
+    padding: 0 18px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+    background-color: #f1f1f1;
+}
+.userHead {
+    display: grid;
+    grid-template-columns: repeat(4, 215px) 180px 80px;
+}
+.userData {
+    display: grid;
+    grid-template-columns: repeat(4, 215px) 180px 80px;
+}
+.userDataSolo {
+    min-height: 30px;
     border: 1px solid #000;
+    line-height: 30px;
 }
-td{
-    border:1px solid #000;
+.tableTitle{
+    width:100%;
+    text-align:center;
+}
+.userDataSolo input {
+    width: 100%;
+    height: 30px;
+    padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    text-align: center;
+    border: none;
+}
+.head {
+    background: #372a80;
+    color: aliceblue;
+}
+.form-inp {
+    width: 300px;
+    margin: 10px auto;
+    height: 30px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+#info {
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    position: absolute;
+    background: rgb(0 0 0 / 0.52);
+}
+
+.infoBlock {
+    position: relative;
+    width: 800px;
+    top: 50px;
+    border-radius: 20px;
+    background: #fff;
+    padding: 20px;
+    margin: auto;
+}
+.infoBlock .close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    color: #000;
+}
+.infoVacations {
+    width: 750px;
+    margin: 25px auto;
+}
+.infoVacationsHead {
+    display: grid;
+    grid-template-columns: 90px 200px repeat(2, 130px) 70px 130px;
+    text-align: center;
+    background: #fdfbfb;
+    border: 1px solid;
+    box-sizing: border-box;
+}
+
+.infoVacationsHead div {
+    border: 1px solid;
+    box-sizing: border-box;
+}
+.infoVacationsBody {
+    display: grid;
+    grid-template-columns: 90px 200px repeat(2, 130px) 70px 130px;
+    text-align: center;
+    border: 1px solid;
+    background: #eaeaea;
+    box-sizing: border-box;
+}
+.infoVacationsBody div {
+    border: 1px solid;
+    box-sizing: border-box;
+}
+.infoVacationsBody date {
+    background: #fff;
 }

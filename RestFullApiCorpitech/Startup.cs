@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -6,13 +8,15 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using RestFullApiCorpitech.Models;
-using RestFullApiCorpitech.Repos;
 using Microsoft.AspNetCore.Http;
 using React.AspNet;
 using JavaScriptEngineSwitcher.ChakraCore;
 using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
 using JavaScriptEngineSwitcher.V8;
 using RestFullApiCorpitech.Service;
+using RestFullApiCorpitech.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace RestFullApiCorpitech
 {
@@ -29,12 +33,47 @@ namespace RestFullApiCorpitech
         {
             services.AddControllersWithViews();
             services.AddControllers();
-            services.AddSwaggerGen(c =>
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            if (context.Request.Query.ContainsKey("token"))
+                            {
+                                context.Token = context.Request.Query["token"];
+                            }
+                            return Task.CompletedTask;
+                        }
+                    };
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = AuthOptions.ISSUER,
+
+                        ValidateAudience = true,
+
+                        ValidAudience = AuthOptions.AUDIENCE,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+
+                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey()
+
+                        
+                    };
+                });
+
+
+
+                services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "RestFullApiCorpitech", Version = "v1" });
             });
 
-            services.AddTransient<UserRepository>();
             services.AddTransient<UserService>();
 
             string connection = Configuration.GetConnectionString("DefaultConnection");
@@ -59,7 +98,9 @@ namespace RestFullApiCorpitech
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "RestFullApiCorpitech v1"));
             }
-           
+
+            app.UseAuthentication();
+
             app.UseHttpsRedirection();
             
             app.UseDefaultFiles();
