@@ -549,7 +549,6 @@ class User extends React.Component {
         $.ajax({
             url: `../api/users/` + this.state.data.id + `?startDate=${this.state.fromDate}&endDate=${this.state.onDate}` + '&token=' + getToken(),
             success: function (result) {
-                console.log(result);
                 state({ vacationDays: result });
                 freeDaysUp();
             },
@@ -856,7 +855,6 @@ class UserList extends React.Component {
         $.ajax({
             url: `../api/users?=&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}&token=`+getToken(),
             success: function (result) {
-                console.log(result);
                 state({ users: result });
             },
             error: function (result) { console.log(result); }
