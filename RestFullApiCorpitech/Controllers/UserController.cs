@@ -37,7 +37,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpGet]
         [Route("/api/users/{id}")]
-        //[Authorize]
+        [Authorize]
         public IActionResult Get(Guid id, string startDate, string endDate)
         {
            return new ObjectResult(userService.EvalUser(id, userService.ParseDate(startDate), userService.ParseDate(endDate)));
@@ -45,7 +45,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpGet]
         [Route("/api/users/{id}/days")]
-        //[Authorize]
+        [Authorize]
         public IActionResult GetDays(Guid id, string startDate, string endDate)
         {
             return new ObjectResult(userService.EvalUserDays(id, userService.ParseDate(startDate), userService.ParseDate(endDate)));
@@ -54,7 +54,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpGet]
         [Route("/api/users/getVacations")]
-       // [Authorize]
+        [Authorize]
         public IActionResult GetVacations(Guid id)
         {
 
@@ -63,7 +63,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpPost]
         [Route("/api/users")]
-       // [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         public IActionResult UserCreate(UserEditViewModel model)
         {
             if (ModelState.IsValid)
@@ -76,7 +76,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpPut]
         [Route("/api/users/{id}")]
-       // [Authorize]
+        [Authorize(Roles="admin")]
 
         public IActionResult UserEdit(Guid id, UserEditViewModel model)
         {
@@ -91,7 +91,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpPut]
         [Route("/api/users/{id}/credentials")]
-        // [Authorize]
+        [Authorize(Roles = "admin")]
         public IActionResult UserEditCredentials(Guid id, AuthDTO model)
         {
             if (ModelState.IsValid)
@@ -105,7 +105,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpDelete]
         [Route("/api/users/del")]
-        //[Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         public IActionResult UserDelete(Guid id)
         {
             if (userService.GetUser(id) != null)

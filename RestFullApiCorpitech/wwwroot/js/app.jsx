@@ -5,37 +5,7 @@ class VacationInDetail extends React.Component {
         this.state = { data: props.vacation, days: props.vacation.days, vacationsArr: props.vacationsArr, dateOrder: "", orderNumber: "", status: true };
         this.idForInp = Math.round(Math.random() * 10000);
     }
-    /*quantityDaysUpdate() {
-        let end = new Date(this.state.data.endVacation), start = new Date(this.state.data.startVacation);
-        console.log(this.state);
-        let dates = [
-            new Date(start.getFullYear() + "-1-1"),
-            new Date(start.getFullYear() + "-1-2"),
-            new Date(start.getFullYear() + "-1-7"),
-            new Date(start.getFullYear() + "-3-8"),
-            new Date(start.getFullYear() + "-5-1"),
-            new Date(start.getFullYear() + "-5-9"),
-            new Date(start.getFullYear() + "-5-11"),
-            new Date(start.getFullYear() + "-7-3"),
-            new Date(start.getFullYear() + "-11-7"),
-            new Date(start.getFullYear() + "-12-25"),
-        ];
 
-        let holidays = 0;
-        let myDates = getDaysArray(start, end);
-        myDates.forEach((date) => {
-            dates.forEach((holiday) => {
-                if (date.getMonth() == holiday.getMonth() && date.getDate() == holiday.getDate()) {
-                    holidays++;
-                }
-            });
-        });
-        let days = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-        if (days < 0) {
-            days = 0;
-        }
-        this.setState({ days: days - holidays });
-    }*/
     componentDidMount() {
 
         let vacsInfo = this.state.vacationsArr.find(obj => {
@@ -81,22 +51,21 @@ class Vacation extends React.Component {
         this.dateOfDocChange = this.dateOfDocChange.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
         this.fromDateUpdate = this.fromDateUpdate.bind(this);
+        this.upVac = this.upVac.bind(this);
         this.idForInp = Math.round(Math.random() * 10000);
     }
     dateOfDocChange() {
-        this.setState({ dateOfDoc: this.datePickerForDocTime });
+        this.setState({ dateOfDoc: this.state.dateOfDoc });
     }
     numOfDocChange(e) {
         this.setState({ numOfDoc: e.target.value });
     }
     onDateUpdate(e) {
-        this.setState({ endVacation: this.myDatePicker });
-        this.quantityDaysUpdate();
+        this.setState({ endVacation: this.state.endVacation });
     }
 
     fromDateUpdate(e) {
-        this.setState({ startVacation: this.myDatePickerFirst });
-        this.quantityDaysUpdate();
+        this.setState({ startVacation: this.state.startVacation });
     }
 
     quantityDaysUpdate() {
@@ -139,24 +108,29 @@ class Vacation extends React.Component {
                 this.setState({ endVacation: myDatePicker });
                 this.myDatePicker = myDatePicker;
                 this.quantityDaysUpdate();
-                this.props.onVacationsChange(this.props.index, false, { "startVacation": this.state.startVacation, "endVacation": this.state.endVacation });
+                this.upVac();
             } break;
             case "start": {
                 this.setState({ startVacation: myDatePicker });
                 this.myDatePickerFirst = myDatePicker;
                 this.quantityDaysUpdate();
-                this.props.onVacationsChange(this.props.index, false, { "startVacation": this.state.startVacation, "endVacation": this.state.endVacation });
+                this.upVac();
             } break;
         }
     }
+    upVac() {
+        this.props.onVacationsChange(this.props.index, false, { "startVacation": this.state.startVacation, "endVacation": this.state.endVacation });
+    }
 
     componentDidMount() {
-        let myDatePicker = "", myDatePickerFirst = "", datePickerForDocTime = "";
+        let myDatePicker = this.state.endVacation, myDatePickerFirst = this.state.startVacation, datePickerForDocTime = "";
         let updateDate = this.updateDate.bind();
+        let newDate="";
         $('#dateOfDoc' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
                 datePickerForDocTime = formatDateForInput(date.date);
                 updateDate(datePickerForDocTime, "doc");
+               
             },
             autoPick: true,
             autoHide: true,
@@ -169,10 +143,15 @@ class Vacation extends React.Component {
         });
         $('#endVacation' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
-                myDatePicker = formatDateForInput(date.date);
+                newDate = date.date;
+            },
+            hide: function () {
+                if (newDate == "") {
+                    newDate = new Date(parseNewDate(myDatePicker));
+                }
+                myDatePicker = formatDateForInput(newDate);
                 updateDate(myDatePicker, "end");
             },
-            autoHide: true,
             format: 'dd.mm.YYYY',
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
             daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
@@ -182,11 +161,15 @@ class Vacation extends React.Component {
         });
         $('#startVacation' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
-                myDatePickerFirst = formatDateForInput(date.date);
+                newDate = date.date;
+            },
+            hide: function () {
+                if (newDate == "") {
+                    newDate = new Date(parseNewDate(myDatePickerFirst));
+                }
+                myDatePickerFirst = formatDateForInput(newDate);
                 updateDate(myDatePickerFirst, "start");
             },
-            autoPick: false,
-            autoHide: true,
             format: 'dd.mm.YYYY',
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
             daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
@@ -330,7 +313,7 @@ class UserEdit extends React.Component {
 
     putTheEdit(id, user) {
         $.ajax({
-            url: '../api/users/' + id +'&token='+getToken(),
+            url: '../api/users/' + id +'?token='+getToken(),
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(user),
@@ -757,7 +740,7 @@ class UserForm extends React.Component {
         let user = { name: name, surname: surname, middlename: middlename, vacationYear: vacationYear, login: login, role: role, dateOfEmployment: dateOfEmployment, vacations: [] };
         this.setState({ name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "", dateOfEmployment: "" });
         $.ajax({
-            url: '../api/users' + '&token=' + getToken(),
+            url: '../api/users' + '?token=' + getToken(),
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(user),
@@ -871,7 +854,7 @@ class UserList extends React.Component {
         let startDate = "2000-02-11", endDate = formatDateForInput(new Date);
         let state = this.setState.bind(this);
         $.ajax({
-            url: `../api/users?=startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}&token=${getToken()}`,
+            url: `../api/users?=&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}&token=`+getToken(),
             success: function (result) {
                 console.log(result);
                 state({ users: result });

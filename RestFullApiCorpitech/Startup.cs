@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -36,6 +37,18 @@ namespace RestFullApiCorpitech
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            if (context.Request.Query.ContainsKey("token"))
+                            {
+                                context.Token = context.Request.Query["token"];
+                            }
+                            return Task.CompletedTask;
+                        }
+                    };
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
