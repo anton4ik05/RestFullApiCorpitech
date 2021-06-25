@@ -130,7 +130,6 @@ class Vacation extends React.Component {
             pick: function (date, view) {
                 datePickerForDocTime = formatDateForInput(date.date);
                 updateDate(datePickerForDocTime, "doc");
-
             },
             autoPick: true,
             autoHide: true,
