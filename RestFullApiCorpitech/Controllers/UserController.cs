@@ -21,7 +21,7 @@ namespace RestFullApiCorpitech.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, modedator")]
         public IActionResult Get()
         {
             return new ObjectResult(userService.GetUsers());
