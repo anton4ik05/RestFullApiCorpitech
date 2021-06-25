@@ -313,7 +313,7 @@ class UserEdit extends React.Component {
 
     putTheEdit(id, user) {
         $.ajax({
-            url: '../api/users/' + id +'&token='+getToken(),
+            url: '../api/users/' + id +'?token='+getToken(),
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(user),
@@ -740,7 +740,7 @@ class UserForm extends React.Component {
         let user = { name: name, surname: surname, middlename: middlename, vacationYear: vacationYear, login: login, role: role, dateOfEmployment: dateOfEmployment, vacations: [] };
         this.setState({ name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "", dateOfEmployment: "" });
         $.ajax({
-            url: '../api/users' + '&token=' + getToken(),
+            url: '../api/users' + '?token=' + getToken(),
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(user),
@@ -854,7 +854,7 @@ class UserList extends React.Component {
         let startDate = "2000-02-11", endDate = formatDateForInput(new Date);
         let state = this.setState.bind(this);
         $.ajax({
-            url: `../api/users?=startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}&token=${getToken()}`,
+            url: `../api/users?=&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}&token=`+getToken(),
             success: function (result) {
                 console.log(result);
                 state({ users: result });
