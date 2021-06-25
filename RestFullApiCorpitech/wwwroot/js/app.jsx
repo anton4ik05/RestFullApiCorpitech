@@ -316,7 +316,7 @@ class UserEdit extends React.Component {
 
     putTheEdit(id, user) {
         $.ajax({
-            url: '../api/users/' + id +'&token='+getToken(),
+            url: '../api/users/' + id +'?token='+getToken(),
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(user),
