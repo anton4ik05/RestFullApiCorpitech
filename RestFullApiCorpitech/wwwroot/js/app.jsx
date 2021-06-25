@@ -313,7 +313,7 @@ class UserEdit extends React.Component {
 
     putTheEdit(id, user) {
         $.ajax({
-            url: '../api/users/' + id + '&token=' + getToken(),
+            url: '../api/users/' + id + '?token=' + getToken(),
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(user),
@@ -739,7 +739,7 @@ class UserForm extends React.Component {
         let user = { name: name, surname: surname, middlename: middlename, vacationYear: vacationYear, login: login, role: role, dateOfEmployment: dateOfEmployment, vacations: [] };
         this.setState({ name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "", dateOfEmployment: "" });
         $.ajax({
-            url: '../api/users' + '&token=' + getToken(),
+            url: '../api/users' + '?token=' + getToken(),
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(user),
