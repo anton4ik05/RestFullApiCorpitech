@@ -561,20 +561,17 @@ class User extends React.Component {
     }
 
     evalVacation() {
-        fetch(`../api/users/` + this.state.data.id + `?startDate=${this.state.fromDate}&endDate=${this.state.onDate}`, {
-            method: "GET",
-        })
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    this.setState({ vacationDays: result });
-                    this.freeDaysUp();
-
-                },
-                (error) => {
-                    console.log(error)
-                }
-            )
+        let state = this.setState.bind(this);
+        let freeDaysUp = this.freeDaysUp.bind(this);
+        $.ajax({
+            url: `../api/users/` + this.state.data.id + `?startDate=${this.state.fromDate}&endDate=${this.state.onDate}`,
+            success: function (result) {
+                console.log(result);
+                state({ vacationDays: result });
+                freeDaysUp();
+            },
+            error: function (result) { console.log(result); }
+        });
 
     }
 
@@ -872,19 +869,15 @@ class UserList extends React.Component {
 
     loadData() {
         let startDate = "2000-02-11", endDate = formatDateForInput(new Date);
-        fetch(`../api/users?=startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`, {
-            method: "GET",
-        })
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    this.setState({ users: result });
-                },
-                (error) => {
-                    console.log(error)
-                }
-            )
-
+        let state = this.setState.bind(this);
+        $.ajax({
+            url: `../api/users?=startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`,
+            success: function (result) {
+                console.log(result);
+                state({ users: result });
+            },
+            error: function (result) { console.log(result); }
+        });
     }
     componentDidMount() {
         this.loadData();
