@@ -22,7 +22,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpGet]
         [Authorize(Roles = "admin, modedator")]
-        public IActionResult Get()
+        public IActionResult Get(Guid id)
         {
             return new ObjectResult(userService.GetUser(id));
         }
