@@ -29,7 +29,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpGet]
         [Route("/api/admin/users")]
-        //[Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         public IActionResult AdminGet()
         {
             return new ObjectResult(userService.GetUsers());
