@@ -65,7 +65,6 @@ let getDaysArray = function (start, end) {
 };
 
 function formatDateForInput(date) {
-    console.log(date);
     var dd = date.getDate();
     if (dd < 10) dd = '0' + dd;
 
