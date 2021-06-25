@@ -21,8 +21,16 @@ namespace RestFullApiCorpitech.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
-        public IActionResult Get()
+        //[Authorize]
+        public IActionResult Get(Guid id)
+        {
+            return new ObjectResult(userService.GetUser(id));
+        }
+
+        [HttpGet]
+        [Route("/api/admin/users")]
+        //[Authorize(Roles = "admin")]
+        public IActionResult AdminGet()
         {
             return new ObjectResult(userService.GetUsers());
         }
