@@ -36,7 +36,7 @@ namespace RestFullApiCorpitech.Models
         [JsonConverter(typeof(DateConverter))]
         public DateTime DateOrder { get; set; }
 
-        //public int Days { get; set; }
+        public int Days { get; set; }
 
     }
 }
