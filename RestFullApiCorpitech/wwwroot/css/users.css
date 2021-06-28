@@ -271,8 +271,10 @@
     background: #fff0b6;
 }
 .infoVacations {
-    width: 750px;
+    width: 830px;
     margin: 25px auto;
+    max-height: 600px;
+    overflow: auto;
 }
 .infoVacationsHead {
     display: grid;
