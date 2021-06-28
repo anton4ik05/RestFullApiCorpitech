@@ -25,7 +25,7 @@ namespace RestFullApiCorpitech.Service
             new DateTime(2021, 5, 11),
             new DateTime(2021, 7, 3),
             new DateTime(2021, 11, 7),
-            new DateTime(2021, 12, 26),
+            new DateTime(2021, 12, 25),
         };
 
         public UserService(ApplicationContext context)
@@ -237,7 +237,7 @@ namespace RestFullApiCorpitech.Service
 
             if (record == null) return;
             if (record.Vacations == null) record.Vacations = new List<Vacation>();
-
+            
             record.Vacations.Add(new Vacation
             {
                 StartVacation = model.startVacation,
