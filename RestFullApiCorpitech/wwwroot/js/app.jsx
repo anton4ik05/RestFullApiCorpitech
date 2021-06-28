@@ -1,57 +1,31 @@
 ﻿
-class VacationInDetail extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { data: props.vacation, days: props.vacation.days, vacationsArr: props.vacationsArr, dateOrder: "", orderNumber: "", status: true };
-        this.idForInp = Math.round(Math.random() * 10000);
-    }
-
-    componentDidMount() {
-
-        let vacsInfo = this.state.vacationsArr.find(obj => {
-            return obj.id == this.state.data.id;
-        });
-        if (vacsInfo) {
-            this.setState({ orderNumber: vacsInfo.orderNumber, dateOrder: vacsInfo.dateOrder });
-        }
-
-    }
-    render() {
-        return this.state.status === true ? React.createElement('div', { className: "infoVacationsBody" },
-            React.createElement('div', {}, this.state.days),
-            React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.startWorkYear)) + ' - ' + formatDateForInput(new Date(this.state.data.endWorkYear))),
-            React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.startVacation))),
-            React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.endVacation))),
-            React.createElement('div', {}, this.state.orderNumber),
-            React.createElement('div', { className: "date" }, formatDateForInput(new Date(parseNewDate(this.state.dateOrder)))),
-        ) : null;
-        return null;
-    }
-}
-class Vacation extends React.Component {
+class VacationEdit extends React.Component {
     constructor(props) {
         super(props);
         this.myDatePicker = "";
         this.myDatePickerFirst = "";
         this.datePickerForDocTime = "";
+        console.log(props);
         this.state = {
-            data: props.vacation,
+            role: getRole(),
+            userId: props.userId,
+            data: props,
             status: true,
-            counterVac: 0,
-            numOfDoc: props.vacation.orderNumber ? props.vacation.orderNumber : "",
+            numOfDoc: props.vacation.orderNumber,
             dateOfDoc: props.vacation.dateOrder,
             startVacation: props.vacation.startVacation,
             endVacation: props.vacation.endVacation,
             quantityDays: Math.floor((new Date(parseNewDate(props.vacation.endVacation)).getTime() - new Date(parseNewDate(props.vacation.startVacation)).getTime()) / (1000 * 60 * 60 * 24)) + 1
         };
+        
+        this.editVac = this.editVac.bind(this);
         this.updateDate = this.updateDate.bind(this);
         this.quantityDaysUpdate = this.quantityDaysUpdate.bind(this);
-        this.removeVact = this.removeVact.bind(this);
         this.numOfDocChange = this.numOfDocChange.bind(this);
         this.dateOfDocChange = this.dateOfDocChange.bind(this);
         this.onDateUpdate = this.onDateUpdate.bind(this);
+        this.close = this.close.bind(this);
         this.fromDateUpdate = this.fromDateUpdate.bind(this);
-        this.upVac = this.upVac.bind(this);
         this.idForInp = Math.round(Math.random() * 10000);
     }
     dateOfDocChange() {
@@ -67,7 +41,24 @@ class Vacation extends React.Component {
     fromDateUpdate(e) {
         this.setState({ startVacation: this.state.startVacation });
     }
-
+    updateDate(myDatePicker, on) { //true - endVacation,false- start
+        switch (on) {
+            case "doc": {
+                this.setState({ dateOfDoc: myDatePicker });
+                this.datePickerForDocTime = myDatePicker;
+            } break;
+            case "end": {
+                this.setState({ endVacation: myDatePicker });
+                this.myDatePicker = myDatePicker;
+                this.quantityDaysUpdate();
+            } break;
+            case "start": {
+                this.setState({ startVacation: myDatePicker });
+                this.myDatePickerFirst = myDatePicker;
+                this.quantityDaysUpdate();
+            } break;
+        }
+    }
     quantityDaysUpdate() {
         let end = new Date(parseNewDate(this.state.endVacation)), start = new Date(parseNewDate(this.state.startVacation));
         let dates = [
@@ -96,30 +87,6 @@ class Vacation extends React.Component {
             days = 0;
         }
         this.setState({ quantityDays: days - holidays });
-    }
-
-    updateDate(myDatePicker, on) { //true - endVacation,false- start
-        switch (on) {
-            case "doc": {
-                this.setState({ dateOfDoc: myDatePicker });
-                this.datePickerForDocTime = myDatePicker;
-            } break;
-            case "end": {
-                this.setState({ endVacation: myDatePicker });
-                this.myDatePicker = myDatePicker;
-                this.quantityDaysUpdate();
-                this.upVac();
-            } break;
-            case "start": {
-                this.setState({ startVacation: myDatePicker });
-                this.myDatePickerFirst = myDatePicker;
-                this.quantityDaysUpdate();
-                this.upVac();
-            } break;
-        }
-    }
-    upVac() {
-        this.props.onVacationsChange(this.props.index, false, { "startVacation": this.state.startVacation, "endVacation": this.state.endVacation });
     }
 
     componentDidMount() {
@@ -178,21 +145,292 @@ class Vacation extends React.Component {
         });
         this.quantityDaysUpdate();
     }
-    removeVact() {
+    close() {
         this.setState({ status: false });
-        this.props.onVacationsChange(this.props.index);
+        $('#info1').remove();
+    }
+    editVac() {
+        let startVacation = this.state.startVacation.trim();
+        let endVacation = this.state.endVacation.trim();
+        let orderNumber = this.state.numOfDoc.trim();
+        let dateOrder = this.state.dateOfDoc.trim();
+        if (!startVacation || !endVacation || !orderNumber || !dateOrder) {
+            return;
+        }
+        let user = { id: this.state.userId };
+        let vacation = { startVacation: startVacation, endVacation: endVacation, orderNumber: orderNumber, dateOrder: dateOrder };
+        this.setState({ name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "", dateOfEmployment: "" });
+        $.ajax({
+            url: '/api/users/' + this.state.data.vacation.id + '/editVacation' + '?token=' + getToken(),
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(vacation),
+            success: function (result) {
+                console.log("vac is edited.");
+                ReactDOM.unmountComponentAtNode(document.getElementById('info'));
+                 ReactDOM.render(
+                     React.createElement(UserVacationDetails, { user: user}),
+                     document.getElementById('info'),
+                 );
+            },
+            error: function (result) { console.log(result); }
+        });
+        this.close();
+
+    }
+    render() {
+        return this.state.status === true ? React.createElement(
+            'div', { className: "infoBlock" }, "Отпуск",
+            React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
+            React.createElement('div', { className: "vacationDays" },
+                React.createElement('input', { id: "startVacation" + this.idForInp, className: "fromVac", "data-toggle": "datepicker", onChange: this.fromDateUpdate, value: this.state.startVacation }),
+                React.createElement('input', { id: "endVacation" + this.idForInp, className: "toVac", "data-toggle": "datepicker", onChange: this.onDateUpdate, value: this.state.endVacation }),
+                React.createElement('input', { id: "quantityDays" + this.idForInp, className: "quanDays", onChange: this.quantityDaysUpdate, value: this.state.quantityDays }),
+                React.createElement('input', { id: "numOfDoc" + this.idForInp, placeholder: "Номер", className: "numOfDoc", onChange: this.numOfDocChange, value: this.state.numOfDoc }),
+                React.createElement('input', { id: "dateOfDoc" + this.idForInp, className: "dateOfDoc", "data-toggle": "datepicker", onChange: this.dateOfDocChange, value: this.state.dateOfDoc }),
+                React.createElement('button', { onClick: this.editVac, type: 'button', className: 'postfix' }, 'Сохранить')),
+        ) : null;
+    }
+}
+
+
+class VacationAdding extends React.Component {
+    constructor(props) {
+        super(props);
+        this.myDatePicker = "";
+        this.myDatePickerFirst = "";
+        this.datePickerForDocTime = "";
+        this.state = {
+            role: getRole(),
+            data: props.user,
+            userId: props.userId,
+            status: true,
+            counterVac: 0,
+            numOfDoc: "",
+            dateOfDoc: formatDateForInput(new Date()),
+            startVacation: formatDateForInput(new Date()),
+            endVacation: formatDateForInput(new Date()),
+            quantityDays: 0,
+        };
+        console.log(this.state.data);
+        this.addVac = this.addVac.bind(this);
+        this.updateDate = this.updateDate.bind(this);
+        this.quantityDaysUpdate = this.quantityDaysUpdate.bind(this);
+        this.numOfDocChange = this.numOfDocChange.bind(this);
+        this.dateOfDocChange = this.dateOfDocChange.bind(this);
+        this.onDateUpdate = this.onDateUpdate.bind(this);
+        this.close = this.close.bind(this);
+        this.fromDateUpdate = this.fromDateUpdate.bind(this);
+        this.idForInp = Math.round(Math.random() * 10000);
+    }
+    dateOfDocChange() {
+        this.setState({ dateOfDoc: this.state.dateOfDoc });
+    }
+    numOfDocChange(e) {
+        this.setState({ numOfDoc: e.target.value });
+    }
+    onDateUpdate(e) {
+        this.setState({ endVacation: this.state.endVacation });
     }
 
-    render() {
-        return this.state.status === true ? React.createElement('div', { className: "vacationDays" },
-            React.createElement('input', { id: "startVacation" + this.idForInp, className: "fromVac", "data-toggle": "datepicker", onChange: this.fromDateUpdate, value: this.state.startVacation }),
-            React.createElement('input', { id: "endVacation" + this.idForInp, className: "toVac", "data-toggle": "datepicker", onChange: this.onDateUpdate, value: this.state.endVacation }),
-            React.createElement('input', { id: "quantityDays" + this.idForInp, className: "quanDays", onChange: this.quantityDaysUpdate, value: this.state.quantityDays }),
-            React.createElement('input', { id: "numOfDoc" + this.idForInp, placeholder: "Номер", className: "numOfDoc", onChange: this.numOfDocChange, value: this.state.numOfDoc }),
-            React.createElement('input', { id: "dateOfDoc" + this.idForInp, className: "dateOfDoc", "data-toggle": "datepicker", onChange: this.dateOfDocChange, value: this.state.dateOfDoc }),
-            React.createElement('div', { className: "closeVac", onClick: this.removeVact }, "✖"),
+    fromDateUpdate(e) {
+        this.setState({ startVacation: this.state.startVacation });
+    }
+    updateDate(myDatePicker, on) { //true - endVacation,false- start
+        switch (on) {
+            case "doc": {
+                this.setState({ dateOfDoc: myDatePicker });
+                this.datePickerForDocTime = myDatePicker;
+            } break;
+            case "end": {
+                this.setState({ endVacation: myDatePicker });
+                this.myDatePicker = myDatePicker;
+                this.quantityDaysUpdate();
+            } break;
+            case "start": {
+                this.setState({ startVacation: myDatePicker });
+                this.myDatePickerFirst = myDatePicker;
+                this.quantityDaysUpdate();
+            } break;
+        }
+    }
+    quantityDaysUpdate() {
+        let end = new Date(parseNewDate(this.state.endVacation)), start = new Date(parseNewDate(this.state.startVacation));
+        let dates = [
+            new Date(start.getFullYear() + "-1-1"),
+            new Date(start.getFullYear() + "-1-2"),
+            new Date(start.getFullYear() + "-1-7"),
+            new Date(start.getFullYear() + "-3-8"),
+            new Date(start.getFullYear() + "-5-1"),
+            new Date(start.getFullYear() + "-5-9"),
+            new Date(start.getFullYear() + "-5-11"),
+            new Date(start.getFullYear() + "-7-3"),
+            new Date(start.getFullYear() + "-11-7"),
+            new Date(start.getFullYear() + "-12-25"),
+        ];
+        let holidays = 0;
+        let myDates = getDaysArray(start, end);
+        myDates.forEach((date) => {
+            dates.forEach((holiday) => {
+                if (date.getMonth() == holiday.getMonth() && date.getDate() == holiday.getDate()) {
+                    holidays++;
+                }
+            });
+        });
+        let days = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        if (days < 0) {
+            days = 0;
+        }
+        this.setState({ quantityDays: days - holidays });
+    }
 
+    componentDidMount() {
+        let myDatePicker = this.state.endVacation, myDatePickerFirst = this.state.startVacation, datePickerForDocTime = "";
+        let updateDate = this.updateDate.bind();
+        let newDate = "";
+        $('#dateOfDoc' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
+            pick: function (date, view) {
+                datePickerForDocTime = formatDateForInput(date.date);
+                updateDate(datePickerForDocTime, "doc");
+            },
+            autoPick: true,
+            autoHide: true,
+            format: 'dd.mm.YYYY',
+            days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+            daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+            monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+        });
+        $('#endVacation' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
+            pick: function (date, view) {
+                newDate = date.date;
+            },
+            hide: function () {
+                if (newDate == "") {
+                    newDate = new Date(parseNewDate(myDatePicker));
+                }
+                myDatePicker = formatDateForInput(newDate);
+                updateDate(myDatePicker, "end");
+            },
+            format: 'dd.mm.YYYY',
+            days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+            daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+            monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+        });
+        $('#startVacation' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
+            pick: function (date, view) {
+                newDate = date.date;
+            },
+            hide: function () {
+                if (newDate == "") {
+                    newDate = new Date(parseNewDate(myDatePickerFirst));
+                }
+                myDatePickerFirst = formatDateForInput(newDate);
+                updateDate(myDatePickerFirst, "start");
+            },
+            format: 'dd.mm.YYYY',
+            days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+            daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+            monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+        });
+        this.quantityDaysUpdate();
+    }
+    close() {
+        this.setState({ status: false });
+        $('#info1').remove();
+    }
+    addVac() {
+        let startVacation = this.state.startVacation.trim();
+        let endVacation = this.state.endVacation.trim();
+        let orderNumber = this.state.numOfDoc.trim();
+        let dateOrder = this.state.dateOfDoc.trim();
+        if (!startVacation || !endVacation || !orderNumber || !dateOrder) {
+            return;
+        }
+        let vacation = { startVacation: startVacation, endVacation: endVacation, orderNumber: orderNumber, dateOrder: dateOrder};
+        this.setState({ name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "", dateOfEmployment: "" });
+        let user = { id: this.state.userId };
+        $.ajax({
+            url: '/api/users/' + this.state.data.id + '/addVacation' + '?token=' + getToken(),
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(vacation),
+            success: function (result) {
+                console.log("vac is added.");
+                ReactDOM.unmountComponentAtNode(document.getElementById('info'));
+                ReactDOM.render(
+                    React.createElement(UserVacationDetails, { user: user }),
+                    document.getElementById('info'),
+                );
+            },
+            error: function (result) { console.log(result); }
+        });
+        this.close();
+
+    }
+    render() {
+        return this.state.status === true ? React.createElement(
+            'div', { className: "infoBlock" }, "Отпуск",
+            React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
+            React.createElement('div', { className: "vacationDays" },
+                React.createElement('input', { id: "startVacation" + this.idForInp, className: "fromVac", "data-toggle": "datepicker", onChange: this.fromDateUpdate, value: this.state.startVacation }),
+                React.createElement('input', { id: "endVacation" + this.idForInp, className: "toVac", "data-toggle": "datepicker", onChange: this.onDateUpdate, value: this.state.endVacation }),
+                React.createElement('input', { id: "quantityDays" + this.idForInp, className: "quanDays", onChange: this.quantityDaysUpdate, value: this.state.quantityDays }),
+                React.createElement('input', { id: "numOfDoc" + this.idForInp, placeholder: "Номер", className: "numOfDoc", onChange: this.numOfDocChange, value: this.state.numOfDoc }),
+                React.createElement('input', { id: "dateOfDoc" + this.idForInp, className: "dateOfDoc", "data-toggle": "datepicker", onChange: this.dateOfDocChange, value: this.state.dateOfDoc }),
+            React.createElement('button', { onClick: this.addVac, type: 'button', className: 'postfix' }, 'Добавить')),
         ) : null;
+    }
+}
+class VacationInDetail extends React.Component {
+    constructor(props) {
+        super(props);
+        console.log(props);
+        this.state = { userId: props.userId, role: getRole(), data: props.vacation, days: props.vacation.days, vacation: "", vacationsArr: props.vacationsArr, dateOrder: "", orderNumber: "", status: true };
+        this.idForInp = Math.round(Math.random() * 10000);
+        this.editVac = this.editVac.bind(this);
+        this.removeVac = this.removeVac.bind(this);
+    }
+
+    componentDidMount() {
+
+        let vacsInfo = this.state.vacationsArr.find(obj => {
+            return obj.id == this.state.data.id;
+        });
+        if (vacsInfo) {
+            this.setState({ orderNumber: vacsInfo.orderNumber, vacation: vacsInfo,dateOrder: vacsInfo.dateOrder });
+        }
+
+    }
+    editVac() {
+        $('body').append("<div id='info1'></div>");
+        ReactDOM.render(
+            React.createElement(VacationEdit, { vacation: this.state.vacation, userId: this.state.userId }),
+            document.getElementById('info1'),
+        );
+    }
+    removeVac() {
+        console.log("asd");
+    }
+    render() {
+        return this.state.status === true ? React.createElement('div', { className: "infoVacationsBody" },
+            React.createElement('div', {}, this.state.days),
+            React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.startWorkYear)) + ' - ' + formatDateForInput(new Date(this.state.data.endWorkYear))),
+            React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.startVacation))),
+            React.createElement('div', { className: "date" }, formatDateForInput(new Date(this.state.data.endVacation))),
+            React.createElement('div', {}, this.state.orderNumber),
+            React.createElement('div', { className: "date" }, formatDateForInput(new Date(parseNewDate(this.state.dateOrder)))),
+            React.createElement('div', { className: "operations" },
+                this.state.role === "admin" ? React.createElement('span', { className: "operation", onClick: this.editVac }, '✎') : null,
+                this.state.role === "admin" ? React.createElement('span', { className: "operation", onClick: this.removeVac}, '✘') : null,
+            ),
+        ) : null;
+        return null;
     }
 }
 
@@ -211,9 +449,7 @@ class UserEdit extends React.Component {
             dateOfEmployment: props.user.dateOfEmployment,
             vacations: props.user.vacations,
             vacationYear: props.user.vacationYear
-            
         };
-       
         this.onSubmit = this.onSubmit.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
         this.onSurnameChange = this.onSurnameChange.bind(this);
@@ -223,8 +459,6 @@ class UserEdit extends React.Component {
         this.onLoginChange = this.onLoginChange.bind(this);
         this.onRoleChange = this.onRoleChange.bind(this);
         this.updateDate = this.updateDate.bind(this);
-        this.onVacationsChange = this.onVacationsChange.bind(this);
-        this.addVacation = this.addVacation.bind(this);
         this.close = this.close.bind(this);
     }
 
@@ -244,17 +478,6 @@ class UserEdit extends React.Component {
         this.setState({ vacationYear: e.target.value });
     }
 
-    onVacationsChange(index, type = true, newVac = null) {
-        let myVacs = this.state.vacations;
-        if (type) {
-            myVacs.splice(index, 1);
-            this.setState({ vacations: myVacs });
-        } else {
-            myVacs[index] = newVac;
-            this.setState({ vacations: myVacs });
-        }
-
-    }
 
     onLoginChange(e) {
         this.setState({ login: e.target.value });
@@ -296,21 +519,8 @@ class UserEdit extends React.Component {
             ],
             monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         });
-
-        const demo = document.querySelector('#allVacations');
-        new PerfectScrollbar(demo,
-            {
-                wheelSpeed: 0.5,
-                suppressScrollX: true,
-                useBothWheelAxes: true,
-            });
     }
 
-    addVacation() {
-        let myVacs = this.state.vacations;
-        myVacs.push({ startVacation: formatDateForInput(new Date()), endVacation: formatDateForInput(new Date()) });
-        this.setState({ vacations: myVacs });
-    }
 
     putTheEdit(id, user) {
         $.ajax({
@@ -335,14 +545,6 @@ class UserEdit extends React.Component {
 
     onSubmit(e) {
         e.preventDefault();
-        let myVacations = [];
-        for (let i = 0; i < $('#allVacations').find('.vacationDays').length; i++) {
-            let startVacation = $($('#allVacations').find('.vacationDays')[i]).find('.fromVac').val();
-            let endVacation = $($('#allVacations').find('.vacationDays')[i]).find('.toVac').val();
-            let orderNumber = $($('#allVacations').find('.vacationDays')[i]).find('.numOfDoc').val();
-            let dateOrder = $($('#allVacations').find('.vacationDays')[i]).find('.dateOfDoc').val();
-            myVacations.push({ dateOrder: dateOrder, orderNumber: orderNumber, startVacation: startVacation, endVacation: endVacation });
-        }
         let name = this.state.name.trim();
         let surname = this.state.surname.trim();
         let middlename = this.state.middlename.trim();
@@ -353,11 +555,10 @@ class UserEdit extends React.Component {
         if (!name || !surname || !middlename || !dateOfEmployment || !vacationYear || !login || !role) {
             return;
         }
-        this.putTheEdit(this.state.data.id, { name: name, surname: surname, middlename: middlename, vacationYear: vacationYear, login: login, role: role, dateOfEmployment: dateOfEmployment, vacations: myVacations });
+        this.putTheEdit(this.state.data.id, { name: name, surname: surname, middlename: middlename, vacationYear: vacationYear, login: login, role: role, dateOfEmployment: dateOfEmployment, vacations: this.state.vacations });
     }
 
     render() {
-        let onVacationsChange = this.onVacationsChange.bind(this);
         return this.state.status === true ? React.createElement(
             'div', { className: "editBlock" }, "Редактирование",
             React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
@@ -371,14 +572,6 @@ class UserEdit extends React.Component {
                     React.createElement("option", { value: "user" }, "User")),
                 React.createElement('input', { placeholder: 'Дней отпуска в год', type: 'Number', autoComplete: "off", onChange: this.onVacationYearChange, value: this.state.vacationYear }),
                 React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', autoComplete: "off", onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
-                React.createElement('div', { id: "vacations", className: "vacations" }, "Все отпуска",
-                    React.createElement('div', { id: "allVacations", className: "allVacations" },
-                        this.state.vacations.map(function (vacation, index) {
-                            return React.createElement(Vacation, { key: Math.random() * Math.random(), vacation: vacation, index: index, onVacationsChange: onVacationsChange });
-                        })
-                    ),
-                    React.createElement('div', { onClick: this.addVacation, className: "addVac" }, "➕")
-                ),
                 React.createElement('button', { type: 'submit', className: 'postfix' }, 'Изменить')
             ),
         ) : null;
@@ -390,34 +583,51 @@ class UserEdit extends React.Component {
 class UserVacationDetails extends React.Component {
     constructor(props) {
         super(props);
+        console.log(props);
         this.myDatePicker = "";
         this.state = {
             data: props.user,
-            id: props.user.id,
+            id : props.user.id,
             status: true,
             vacationsForView: [],
-            vacations: props.user.vacations,
+            vacations:[],
         };
         this.close = this.close.bind(this);
+        this.addVac = this.addVac.bind(this);
     }
     componentDidMount() {
         let state = this.setState.bind(this);
+        let id = this.state.id;
         $.ajax({
-            url: '../api/users/getVacations?id=' + this.state.id + '&token=' + getToken(),
+            url: '../api/users?id=' + id + '&token=' + getToken(),
             success: function (result) {
-                state({ vacationsForView: result });
+                $.ajax({
+                    url: '../api/users/getVacations?id=' + id + '&token=' + getToken(),
+                    success: function (result2) {
+                        state({ vacations: result.vacations, vacationsForView: result2 });
+                    },
+                    error: function (result2) { console.log(result2); }
+                });
             },
             error: function (result) { console.log(result); }
         });
+        
     }
     close() {
         this.setState({ status: false });
         $('#info').remove();
     }
-
+    addVac() {
+        $('body').append("<div id='info1'></div>");
+        ReactDOM.render(
+            React.createElement(VacationAdding, { user: this.state.data, userId: this.state.id }),
+            document.getElementById('info1'),
+        );
+    }
     render() {
         let vacationsForView = this.state.vacationsForView;
         let vacationsArr = this.state.vacations;
+        let id = this.state.id;
         return this.state.status === true ? React.createElement(
             'div', { className: "infoBlock" }, "Отпуска",
             React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
@@ -431,9 +641,10 @@ class UserVacationDetails extends React.Component {
                     React.createElement('div', {}, 'Дата'),
                 ),
                 vacationsForView.map(function (vacation, index) {
-                    return React.createElement(VacationInDetail, { key: Math.random() * Math.random(), vacationsArr: vacationsArr, vacation: vacation, index: index });
+                    return React.createElement(VacationInDetail, { key: Math.random() * Math.random(), vacationsArr: vacationsArr, vacation: vacation, index: index, userId: id });
                 })
             ),
+            React.createElement('button', { onClick: this.addVac, type: 'button', className: 'postfix' }, 'Добавить'),
         ) : null;
     }
 }
@@ -660,18 +871,18 @@ class UserForm extends React.Component {
     constructor(props) {
         super(props);
         this.myDatePicker = "";
-        this.state = { status: true, name: "", surname: "", middlename: "", login: "", role: "moderator", vacations:[],vacationYear: "28", dateOfEmployment: this.myDatePicker };
+        this.state = { status: true, name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "28", dateOfEmployment: this.myDatePicker };
         this.onSubmit = this.onSubmit.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
         this.onSurnameChange = this.onSurnameChange.bind(this);
         this.onMiddlenameChange = this.onMiddlenameChange.bind(this);
-        this.onVacationsChange = this.onVacationsChange.bind(this);
+
         this.onLoginChange = this.onLoginChange.bind(this);
         this.onRoleChange = this.onRoleChange.bind(this);
+
         this.onVacationYearChange = this.onVacationYearChange.bind(this);
         this.onDateOfEmploymentChange = this.onDateOfEmploymentChange.bind(this);
         this.close = this.close.bind(this);
-        this.addVacation = this.addVacation.bind(this);
         this.updateDate = this.updateDate.bind(this);
 
     }
@@ -704,11 +915,6 @@ class UserForm extends React.Component {
         this.setState({ status: false });
         $('#edit').remove();
     }
-    addVacation() {
-        let myVacs = this.state.vacations;
-        myVacs.push({ startVacation: formatDateForInput(new Date()), endVacation: formatDateForInput(new Date()) });
-        this.setState({ vacations: myVacs });
-    }
     componentDidMount() {
         let myDatePicker = "";
         let updateDate = this.updateDate.bind();
@@ -729,18 +935,6 @@ class UserForm extends React.Component {
         });
     }
 
-    onVacationsChange(index, type = true, newVac = null) {
-        let myVacs = this.state.vacations;
-        if (type) {
-            myVacs.splice(index, 1);
-            this.setState({ vacations: myVacs });
-        } else {
-            myVacs[index] = newVac;
-            this.setState({ vacations: myVacs });
-        }
-
-    }
-
     onSubmit(e) {
 
         e.preventDefault();
@@ -754,7 +948,7 @@ class UserForm extends React.Component {
         if (!name || !surname || !middlename || !dateOfEmployment || !vacationYear || !login || !role) {
             return;
         }
-        let user = { name: name, surname: surname, middlename: middlename, vacationYear: vacationYear, login: login, role: role, dateOfEmployment: dateOfEmployment, vacations: this.state.vacations };
+        let user = { name: name, surname: surname, middlename: middlename, vacationYear: vacationYear, login: login, role: role, dateOfEmployment: dateOfEmployment, vacations: [] };
         this.setState({ name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "", dateOfEmployment: "" });
         $.ajax({
             url: '../api/users' + '?token=' + getToken(),
@@ -776,8 +970,6 @@ class UserForm extends React.Component {
     }
 
     render() {
-        
-        let onVacationsChange = this.onVacationsChange.bind(this);
         return this.state.status === true ? React.createElement('div', { className: "editBlock" }, "Добавление",
             React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
             React.createElement('form', { onSubmit: this.onSubmit },
@@ -790,14 +982,6 @@ class UserForm extends React.Component {
                     React.createElement("option", { value: "user" }, "User")),
                 React.createElement('input', { placeholder: 'Дней отпуска в год', type: 'Number', autoComplete: "off", onChange: this.onVacationYearChange, value: this.state.vacationYear }),
                 React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', autoComplete: "off", onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
-                React.createElement('div', { id: "vacations", className: "vacations" }, "Все отпуска",
-                    React.createElement('div', { id: "allVacations", className: "allVacations" },
-                        this.state.vacations.map(function (vacation, index) {
-                            return React.createElement(Vacation, { key: Math.random() * Math.random(), vacation: vacation, index: index, onVacationsChange: onVacationsChange });
-                        })
-                    ),
-                    React.createElement('div', { onClick: this.addVacation, className: "addVac" }, "➕")
-                ),
                 React.createElement('button', { type: 'submit', className: 'postfix' }, 'Добавить')
             )
         ) : null;
