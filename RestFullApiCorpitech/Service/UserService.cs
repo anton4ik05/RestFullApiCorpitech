@@ -202,7 +202,8 @@ namespace RestFullApiCorpitech.Service
                     User = rec.user,
                     UserId = rec.userId,
                     OrderNumber = rec.OrderNumber,
-                    DateOrder = rec.DateOrder
+                    DateOrder = rec.DateOrder,
+                    Days = rec.Days
                 });
             }
 
@@ -223,6 +224,7 @@ namespace RestFullApiCorpitech.Service
             var record = context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
 
             if (record == null) return;
+            if (record.Vacations == null) record.Vacations = new List<Vacation>();
 
             record.Vacations.Add(new Vacation
             {
@@ -231,7 +233,8 @@ namespace RestFullApiCorpitech.Service
                 User = record,
                 UserId = record.Id,
                 OrderNumber = model.OrderNumber,
-                DateOrder = model.DateOrder
+                DateOrder = model.DateOrder,
+                Days = model.Days
             });
 
             context.SaveChanges();
@@ -247,6 +250,8 @@ namespace RestFullApiCorpitech.Service
             record.EndVacation = model.endVacation;
             record.DateOrder = model.DateOrder;
             record.OrderNumber = model.OrderNumber;
+            record.Days = model.Days;
+
             context.SaveChanges();
         }
 
@@ -267,7 +272,8 @@ namespace RestFullApiCorpitech.Service
                     User = rec.user,
                     UserId = rec.userId,
                     OrderNumber = rec.OrderNumber,
-                    DateOrder = rec.DateOrder
+                    DateOrder = rec.DateOrder,
+                    Days = rec.Days
                 });
             }
 
@@ -311,6 +317,16 @@ namespace RestFullApiCorpitech.Service
                 context.SaveChanges();
             }
         }
+        public void DeleteVacation(Guid id)
+        {
+
+            Vacation vacation = context.Vacations.FirstOrDefault(x => x.Id == id);
+            if (vacation != null)
+            {
+                context.Vacations.Remove(vacation!);
+                context.SaveChanges();
+            }
+        }
 
         public IEnumerable<User> GetUsers()
         {
@@ -326,10 +342,9 @@ namespace RestFullApiCorpitech.Service
                 var userVacations = user.Vacations;
 
                 ICollection<InfoVacation> info = new List<InfoVacation>();
-                double maxDays = user.vacationYear;
-                double count = 0;
-                if (maxDays == 0) return null;
-
+                //double maxDays = user.vacationYear;
+                int count = 0;
+             
                 DateTime StartWorkYear = user.DateOfEmployment;
                 DateTime EndWorkYear = user.DateOfEmployment.AddYears(1) - new TimeSpan(1, 0, 0, 0);
 
@@ -337,189 +352,213 @@ namespace RestFullApiCorpitech.Service
                 {
                     int daysVacation = HolyDays(userVacation.StartVacation, userVacation.EndVacation);
 
+                    int maxDays = userVacation.Days;
                     //(userVacation.EndVacation - userVacation.StartVacation).Days + 1; // Дни отпуска
 
-
-                    if (daysVacation <= maxDays)
+                    if (daysVacation+count <= maxDays)
                     {
-                        if (count + daysVacation <= maxDays)
+                        count += daysVacation;
+                        info.Add(new InfoVacation
                         {
-                            count += daysVacation;
-                            info.Add(new InfoVacation
-                            {
-                                Id = userVacation.Id,
-                                Days = daysVacation,
-                                StartWorkYear = StartWorkYear,
-                                EndWorkYear = EndWorkYear,
-                                StartVacation = userVacation.StartVacation,
-                                EndVacation = userVacation.EndVacation
-                            });
-                        }
-                        else
+                            Id = userVacation.Id,
+                            Days = daysVacation,
+                            StartWorkYear = StartWorkYear,
+                            EndWorkYear = EndWorkYear,
+                            StartVacation = userVacation.StartVacation,
+                            EndVacation = userVacation.EndVacation
+                        });
+                        if (count == maxDays)
                         {
-                            // Сколько дней можно добавить
-                            double notDay = maxDays - count;
-                            if (notDay == 0)
-                            {
-                                StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
-                                EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-                                count = 0;
-                                notDay = maxDays - count;
-
-                                if (count + daysVacation <= maxDays)
-                                {
-                                    count += daysVacation;
-                                    info.Add(new InfoVacation
-                                    {
-                                        Id = userVacation.Id,
-                                        Days = daysVacation,
-                                        StartWorkYear = StartWorkYear,
-                                        EndWorkYear = EndWorkYear,
-                                        StartVacation = userVacation.StartVacation,
-                                        EndVacation = userVacation.EndVacation
-                                    });
-
-                                }
-                                else
-                                {
-                                    // Сколько дней можно добавить
-                                    notDay = maxDays - count;
-
-                                    info.Add(new InfoVacation
-                                    {
-                                        Id = userVacation.Id,
-                                        Days = notDay,
-                                        StartWorkYear = StartWorkYear,
-                                        EndWorkYear = EndWorkYear,
-                                        StartVacation = userVacation.StartVacation,
-                                        EndVacation = userVacation.EndVacation
-                                    });
-
-                                    StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
-                                    EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-
-                                    info.Add(new InfoVacation
-                                    {
-                                        Id = userVacation.Id,
-                                        Days = daysVacation - notDay,
-                                        StartWorkYear = StartWorkYear,
-                                        EndWorkYear = EndWorkYear,
-                                        StartVacation = userVacation.StartVacation,
-                                        EndVacation = userVacation.EndVacation
-                                    });
-                                    count = daysVacation - notDay;
-                                }
-                            }
-                            else
-                            {
-                                info.Add(new InfoVacation
-                                {
-                                    Id = userVacation.Id,
-                                    Days = notDay,
-                                    StartWorkYear = StartWorkYear,
-                                    EndWorkYear = EndWorkYear,
-                                    StartVacation = userVacation.StartVacation,
-                                    EndVacation = userVacation.EndVacation
-                                });
-
-                                StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
-                                EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-                                count = 0;
-                                info.Add(new InfoVacation
-                                {
-                                    Id = userVacation.Id,
-                                    Days = daysVacation - notDay,
-                                    StartWorkYear = StartWorkYear,
-                                    EndWorkYear = EndWorkYear,
-                                    StartVacation = userVacation.StartVacation,
-                                    EndVacation = userVacation.EndVacation
-                                });
-                                count = daysVacation - notDay;
-                            }
+                            StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
+                            EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
                         }
                     }
-                    else
-                    {
-                       double notDay = maxDays - count;
-                       if (notDay == 0)
-                       {
-                          StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
-                          EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-                          count = 0;
-                          notDay = maxDays - count;
 
-                            if (count + daysVacation <= maxDays)
-                            {
-                                count += daysVacation;
-                                info.Add(new InfoVacation
-                                {
-                                    Id = userVacation.Id,
-                                    Days = daysVacation,
-                                    StartWorkYear = StartWorkYear,
-                                    EndWorkYear = EndWorkYear,
-                                    StartVacation = userVacation.StartVacation,
-                                    EndVacation = userVacation.EndVacation
-                                });
 
-                            }
-                            else
-                            {
-                                // Сколько дней можно добавить
-                                notDay = maxDays - count;
 
-                                info.Add(new InfoVacation
-                                {
-                                    Id = userVacation.Id,
-                                    Days = notDay,
-                                    StartWorkYear = StartWorkYear,
-                                    EndWorkYear = EndWorkYear,
-                                    StartVacation = userVacation.StartVacation,
-                                    EndVacation = userVacation.EndVacation
-                                });
 
-                                StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
-                                EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+                    //if (daysVacation <= maxDays)
+                    //{
+                    //    if (count + daysVacation <= maxDays)
+                    //    {
+                    //        count += daysVacation;
+                    //        info.Add(new InfoVacation
+                    //        {
+                    //            Id = userVacation.Id,
+                    //            Days = daysVacation,
+                    //            StartWorkYear = StartWorkYear,
+                    //            EndWorkYear = EndWorkYear,
+                    //            StartVacation = userVacation.StartVacation,
+                    //            EndVacation = userVacation.EndVacation
+                    //        });
+                    //    }
+                    //    else
+                    //    {
+                    //        // Сколько дней можно добавить
+                    //        double notDay = maxDays - count;
+                    //        if (notDay == 0)
+                    //        {
+                    //            StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
+                    //            EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+                    //            count = 0;
+                    //            notDay = maxDays - count;
 
-                                info.Add(new InfoVacation
-                                {
-                                    Id = userVacation.Id,
-                                    Days = daysVacation - notDay,
-                                    StartWorkYear = StartWorkYear,
-                                    EndWorkYear = EndWorkYear,
-                                    StartVacation = userVacation.StartVacation,
-                                    EndVacation = userVacation.EndVacation
-                                });
-                                count = daysVacation - notDay;
-                            }
-                       }
-                       else
-                       {
-                           info.Add(new InfoVacation
-                           {
-                               Id = userVacation.Id,
-                               Days = notDay,
-                               StartWorkYear = StartWorkYear,
-                               EndWorkYear = EndWorkYear,
-                               StartVacation = userVacation.StartVacation,
-                               EndVacation = userVacation.EndVacation
-                           });
+                    //            if (count + daysVacation <= maxDays)
+                    //            {
+                    //                count += daysVacation;
+                    //                info.Add(new InfoVacation
+                    //                {
+                    //                    Id = userVacation.Id,
+                    //                    Days = daysVacation,
+                    //                    StartWorkYear = StartWorkYear,
+                    //                    EndWorkYear = EndWorkYear,
+                    //                    StartVacation = userVacation.StartVacation,
+                    //                    EndVacation = userVacation.EndVacation
+                    //                });
 
-                           StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
-                           EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-                           count = 0;
-                           info.Add(new InfoVacation
-                           {
-                               Id = userVacation.Id,
-                               Days = daysVacation - notDay,
-                               StartWorkYear = StartWorkYear,
-                               EndWorkYear = EndWorkYear,
-                               StartVacation = userVacation.StartVacation,
-                               EndVacation = userVacation.EndVacation
-                           });
-                           count = daysVacation - notDay;
-                       }
+                    //            }
+                    //            else
+                    //            {
+                    //                // Сколько дней можно добавить
+                    //                notDay = maxDays - count;
+
+                    //                info.Add(new InfoVacation
+                    //                {
+                    //                    Id = userVacation.Id,
+                    //                    Days = notDay,
+                    //                    StartWorkYear = StartWorkYear,
+                    //                    EndWorkYear = EndWorkYear,
+                    //                    StartVacation = userVacation.StartVacation,
+                    //                    EndVacation = userVacation.EndVacation
+                    //                });
+
+                    //                StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
+                    //                EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+
+                    //                info.Add(new InfoVacation
+                    //                {
+                    //                    Id = userVacation.Id,
+                    //                    Days = daysVacation - notDay,
+                    //                    StartWorkYear = StartWorkYear,
+                    //                    EndWorkYear = EndWorkYear,
+                    //                    StartVacation = userVacation.StartVacation,
+                    //                    EndVacation = userVacation.EndVacation
+                    //                });
+                    //                count = daysVacation - notDay;
+                    //            }
+                    //        }
+                    //        else
+                    //        {
+                    //            info.Add(new InfoVacation
+                    //            {
+                    //                Id = userVacation.Id,
+                    //                Days = notDay,
+                    //                StartWorkYear = StartWorkYear,
+                    //                EndWorkYear = EndWorkYear,
+                    //                StartVacation = userVacation.StartVacation,
+                    //                EndVacation = userVacation.EndVacation
+                    //            });
+
+                    //            StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
+                    //            EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+                    //            count = 0;
+                    //            info.Add(new InfoVacation
+                    //            {
+                    //                Id = userVacation.Id,
+                    //                Days = daysVacation - notDay,
+                    //                StartWorkYear = StartWorkYear,
+                    //                EndWorkYear = EndWorkYear,
+                    //                StartVacation = userVacation.StartVacation,
+                    //                EndVacation = userVacation.EndVacation
+                    //            });
+                    //            count = daysVacation - notDay;
+                    //        }
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //   double notDay = maxDays - count;
+                    //   if (notDay == 0)
+                    //   {
+                    //      StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
+                    //      EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+                    //      count = 0;
+                    //      notDay = maxDays - count;
+
+                    //        if (count + daysVacation <= maxDays)
+                    //        {
+                    //            count += daysVacation;
+                    //            info.Add(new InfoVacation
+                    //            {
+                    //                Id = userVacation.Id,
+                    //                Days = daysVacation,
+                    //                StartWorkYear = StartWorkYear,
+                    //                EndWorkYear = EndWorkYear,
+                    //                StartVacation = userVacation.StartVacation,
+                    //                EndVacation = userVacation.EndVacation
+                    //            });
+
+                    //        }
+                    //        else
+                    //        {
+                    //            // Сколько дней можно добавить
+                    //            notDay = maxDays - count;
+
+                    //            info.Add(new InfoVacation
+                    //            {
+                    //                Id = userVacation.Id,
+                    //                Days = notDay,
+                    //                StartWorkYear = StartWorkYear,
+                    //                EndWorkYear = EndWorkYear,
+                    //                StartVacation = userVacation.StartVacation,
+                    //                EndVacation = userVacation.EndVacation
+                    //            });
+
+                    //            StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
+                    //            EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+
+                    //            info.Add(new InfoVacation
+                    //            {
+                    //                Id = userVacation.Id,
+                    //                Days = daysVacation - notDay,
+                    //                StartWorkYear = StartWorkYear,
+                    //                EndWorkYear = EndWorkYear,
+                    //                StartVacation = userVacation.StartVacation,
+                    //                EndVacation = userVacation.EndVacation
+                    //            });
+                    //            count = daysVacation - notDay;
+                    //        }
+                    //   }
+                    //   else
+                    //   {
+                    //       info.Add(new InfoVacation
+                    //       {
+                    //           Id = userVacation.Id,
+                    //           Days = notDay,
+                    //           StartWorkYear = StartWorkYear,
+                    //           EndWorkYear = EndWorkYear,
+                    //           StartVacation = userVacation.StartVacation,
+                    //           EndVacation = userVacation.EndVacation
+                    //       });
+
+                    //       StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
+                    //       EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+                    //       count = 0;
+                    //       info.Add(new InfoVacation
+                    //       {
+                    //           Id = userVacation.Id,
+                    //           Days = daysVacation - notDay,
+                    //           StartWorkYear = StartWorkYear,
+                    //           EndWorkYear = EndWorkYear,
+                    //           StartVacation = userVacation.StartVacation,
+                    //           EndVacation = userVacation.EndVacation
+                    //       });
+                    //       count = daysVacation - notDay;
+                    //   }
                        
-                    }
+                    //}
+
+
                    
                 }
                 return info;
