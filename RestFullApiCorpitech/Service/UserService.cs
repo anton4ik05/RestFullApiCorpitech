@@ -355,7 +355,7 @@ namespace RestFullApiCorpitech.Service
                     maxDays = userVacation.Days;
                     //(userVacation.EndVacation - userVacation.StartVacation).Days + 1; // Дни отпуска
                     if (lastMaxDays == 0) lastMaxDays = maxDays;
-                    
+                    if (maxDays == 0) maxDays = 28;
                     if (daysVacation <= maxDays)
                     {
                         if (daysVacation + count <= lastMaxDays)

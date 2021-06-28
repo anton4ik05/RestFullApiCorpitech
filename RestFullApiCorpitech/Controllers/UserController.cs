@@ -54,7 +54,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpGet]
         [Route("/api/users/getVacations")]
-        //[Authorize]
+        [Authorize]
         public IActionResult GetVacations(Guid id)
         {
 
@@ -118,7 +118,7 @@ namespace RestFullApiCorpitech.Controllers
         
         [HttpPost]
         [Route("/api/users/{id}/addVacation")]
-      //  [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         public IActionResult AddVacation(Guid id, VacationEditModel model)
         {
             if (ModelState.IsValid)
@@ -131,7 +131,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpPut]
         [Route("/api/users/{id}/editVacation")]
-     //   [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         public IActionResult EditVacation(Guid id, VacationEditModel model)
         {
             if (ModelState.IsValid)
