@@ -211,7 +211,9 @@ class UserEdit extends React.Component {
             dateOfEmployment: props.user.dateOfEmployment,
             vacations: props.user.vacations,
             vacationYear: props.user.vacationYear
+            
         };
+       
         this.onSubmit = this.onSubmit.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
         this.onSurnameChange = this.onSurnameChange.bind(this);
@@ -658,18 +660,18 @@ class UserForm extends React.Component {
     constructor(props) {
         super(props);
         this.myDatePicker = "";
-        this.state = { status: true, name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "28", dateOfEmployment: this.myDatePicker };
+        this.state = { status: true, name: "", surname: "", middlename: "", login: "", role: "moderator", vacations:[],vacationYear: "28", dateOfEmployment: this.myDatePicker };
         this.onSubmit = this.onSubmit.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
         this.onSurnameChange = this.onSurnameChange.bind(this);
         this.onMiddlenameChange = this.onMiddlenameChange.bind(this);
-
+        this.onVacationsChange = this.onVacationsChange.bind(this);
         this.onLoginChange = this.onLoginChange.bind(this);
         this.onRoleChange = this.onRoleChange.bind(this);
-
         this.onVacationYearChange = this.onVacationYearChange.bind(this);
         this.onDateOfEmploymentChange = this.onDateOfEmploymentChange.bind(this);
         this.close = this.close.bind(this);
+        this.addVacation = this.addVacation.bind(this);
         this.updateDate = this.updateDate.bind(this);
 
     }
@@ -702,6 +704,11 @@ class UserForm extends React.Component {
         this.setState({ status: false });
         $('#edit').remove();
     }
+    addVacation() {
+        let myVacs = this.state.vacations;
+        myVacs.push({ startVacation: formatDateForInput(new Date()), endVacation: formatDateForInput(new Date()) });
+        this.setState({ vacations: myVacs });
+    }
     componentDidMount() {
         let myDatePicker = "";
         let updateDate = this.updateDate.bind();
@@ -722,6 +729,18 @@ class UserForm extends React.Component {
         });
     }
 
+    onVacationsChange(index, type = true, newVac = null) {
+        let myVacs = this.state.vacations;
+        if (type) {
+            myVacs.splice(index, 1);
+            this.setState({ vacations: myVacs });
+        } else {
+            myVacs[index] = newVac;
+            this.setState({ vacations: myVacs });
+        }
+
+    }
+
     onSubmit(e) {
 
         e.preventDefault();
@@ -735,7 +754,7 @@ class UserForm extends React.Component {
         if (!name || !surname || !middlename || !dateOfEmployment || !vacationYear || !login || !role) {
             return;
         }
-        let user = { name: name, surname: surname, middlename: middlename, vacationYear: vacationYear, login: login, role: role, dateOfEmployment: dateOfEmployment, vacations: [] };
+        let user = { name: name, surname: surname, middlename: middlename, vacationYear: vacationYear, login: login, role: role, dateOfEmployment: dateOfEmployment, vacations: this.state.vacations };
         this.setState({ name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "", dateOfEmployment: "" });
         $.ajax({
             url: '../api/users' + '?token=' + getToken(),
@@ -757,6 +776,8 @@ class UserForm extends React.Component {
     }
 
     render() {
+        
+        let onVacationsChange = this.onVacationsChange.bind(this);
         return this.state.status === true ? React.createElement('div', { className: "editBlock" }, "Добавление",
             React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
             React.createElement('form', { onSubmit: this.onSubmit },
@@ -769,6 +790,14 @@ class UserForm extends React.Component {
                     React.createElement("option", { value: "user" }, "User")),
                 React.createElement('input', { placeholder: 'Дней отпуска в год', type: 'Number', autoComplete: "off", onChange: this.onVacationYearChange, value: this.state.vacationYear }),
                 React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', autoComplete: "off", onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
+                React.createElement('div', { id: "vacations", className: "vacations" }, "Все отпуска",
+                    React.createElement('div', { id: "allVacations", className: "allVacations" },
+                        this.state.vacations.map(function (vacation, index) {
+                            return React.createElement(Vacation, { key: Math.random() * Math.random(), vacation: vacation, index: index, onVacationsChange: onVacationsChange });
+                        })
+                    ),
+                    React.createElement('div', { onClick: this.addVacation, className: "addVac" }, "➕")
+                ),
                 React.createElement('button', { type: 'submit', className: 'postfix' }, 'Добавить')
             )
         ) : null;
