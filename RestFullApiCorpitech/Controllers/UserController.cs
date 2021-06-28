@@ -146,8 +146,14 @@ namespace RestFullApiCorpitech.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult VacationDelete(Guid id)
         {
-           userService.DeleteVacation(id);
-           return new OkResult();
+            if (userService.GetVacation(id) != null)
+            {
+                userService.DeleteVacation(id);
+                return new OkResult();
+
+            }
+            return new BadRequestObjectResult("Vacation not found");
+
         }
 
     }
