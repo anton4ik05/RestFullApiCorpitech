@@ -260,6 +260,16 @@
     font-weight: bold;
     color: #000;
 }
+.infoBlock .postfix{
+    position: relative;
+    cursor: pointer;
+    width: 300px;
+    height: 30px;
+    left: calc(50% - 150px);
+    margin: 10px auto;
+    font-weight: bolder;
+    background: #fff0b6;
+}
 .infoVacations {
     width: 750px;
     margin: 25px auto;
@@ -294,4 +304,11 @@
     }
 .infoVacationsBody date {
     background: #fff;
+}
+.postfix:hover {
+    background: #f6d67c;
+}
+
+.postfix:active {
+    transform: scale(0.9);
 }
