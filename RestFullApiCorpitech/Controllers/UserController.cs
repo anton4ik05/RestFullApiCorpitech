@@ -115,6 +115,32 @@ namespace RestFullApiCorpitech.Controllers
             }
             return new BadRequestObjectResult("User not found");
         }
+        
+        [HttpPost]
+        [Route("/api/users/{id}/addVacation")]
+        //[Authorize(Roles = "admin")]
+        public IActionResult AddVacation(Guid id, VacationEditModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                userService.AddVacation(id,model);
+            }
+
+            return new OkObjectResult(model);
+        }
+
+        [HttpPut]
+        [Route("/api/users/{id}/editVacation")]
+        //[Authorize(Roles = "admin")]
+        public IActionResult EditVacation(Guid id, VacationEditModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                userService.EditVacation(id, model);
+            }
+
+            return new OkObjectResult(model);
+        }
 
     }
 }

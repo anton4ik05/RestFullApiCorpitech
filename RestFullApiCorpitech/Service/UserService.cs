@@ -218,6 +218,38 @@ namespace RestFullApiCorpitech.Service
             context.SaveChanges();
         }
 
+        public void AddVacation(Guid id,VacationEditModel model)
+        {
+            var record = context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
+
+            if (record == null) return;
+
+            record.Vacations.Add(new Vacation
+            {
+                StartVacation = model.startVacation,
+                EndVacation = model.endVacation,
+                User = record,
+                UserId = record.Id,
+                OrderNumber = model.OrderNumber,
+                DateOrder = model.DateOrder
+            });
+
+            context.SaveChanges();
+        }
+
+        public void EditVacation(Guid id, VacationEditModel model)
+        {
+            var record = context.Vacations.SingleOrDefault(x => x.Id == id);
+
+            if (record == null) return;
+
+            record.StartVacation = model.startVacation;
+            record.EndVacation = model.endVacation;
+            record.DateOrder = model.DateOrder;
+            record.OrderNumber = model.OrderNumber;
+            context.SaveChanges();
+        }
+
         public void UpdateUser(Guid id, UserEditViewModel model)
         {
             var record = context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
@@ -254,6 +286,7 @@ namespace RestFullApiCorpitech.Service
             var record = context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
 
             if (record == null) return;
+
 
             record.Login = model.login;
             if (model.password != "")
@@ -293,7 +326,6 @@ namespace RestFullApiCorpitech.Service
                 var userVacations = user.Vacations;
 
                 ICollection<InfoVacation> info = new List<InfoVacation>();
-                double days = 0;
                 double maxDays = user.vacationYear;
                 double count = 0;
                 if (maxDays == 0) return null;
@@ -307,10 +339,8 @@ namespace RestFullApiCorpitech.Service
 
                     //(userVacation.EndVacation - userVacation.StartVacation).Days + 1; // Дни отпуска
 
-                    days +=daysVacation;
 
-
-                   if (daysVacation <= maxDays)
+                    if (daysVacation <= maxDays)
                     {
                         if (count + daysVacation <= maxDays)
                         {
@@ -514,7 +544,19 @@ namespace RestFullApiCorpitech.Service
                 {
                     if (date.Month == holiday.Month && date.Day == holiday.Day)
                     {
-                        holidays++;
+                        if (date.Month == 1 && date.Day == 2 && date.Year >= 2020)
+                        {
+                            holidays++;
+                        }
+                        else if (date.Month == 1 && date.Day == 2 && date.Year < 2020)
+                        {
+                            holidays += 0;
+                        }
+                        else
+                        {
+                            holidays++;
+                        }
+                        
                     }
                 }
             }
