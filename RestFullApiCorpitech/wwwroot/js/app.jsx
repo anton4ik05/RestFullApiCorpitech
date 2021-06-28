@@ -415,7 +415,20 @@ class VacationInDetail extends React.Component {
         );
     }
     removeVac() {
-        console.log("asd");
+        $.ajax({
+            url: '/api/users/delVacation?id=' + this.state.vacation.id+ '&token=' + getToken(),
+            type: 'DELETE',
+            contentType: 'application/json',
+            success: function (result) {
+                console.log("vac is deleted.");
+                ReactDOM.unmountComponentAtNode(document.getElementById('info'));
+                ReactDOM.render(
+                    React.createElement(UserVacationDetails, { user: user, userId: id }),
+                    document.getElementById('info'),
+                );
+            },
+            error: function (result) { console.log(result); }
+        });
     }
     render() {
         return this.state.status === true ? React.createElement('div', { className: "infoVacationsBody" },
