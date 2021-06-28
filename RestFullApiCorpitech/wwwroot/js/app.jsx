@@ -81,7 +81,13 @@ class VacationEdit extends React.Component {
         myDates.forEach((date) => {
             dates.forEach((holiday) => {
                 if (date.getMonth() == holiday.getMonth() && date.getDate() == holiday.getDate()) {
-                    holidays++;
+                    if (date.getMonth() == 0 && date.getDate() == 2 && date.getFullYear() >= 2020) {
+                        holidays++;
+                    } else if (date.getMonth() == 0 && date.getDate() == 2 && date.getFullYear() < 2020) {
+                        holidays += 0;
+                    } else {
+                        holidays++;
+                    }
                 }
             });
         });
@@ -281,7 +287,13 @@ class VacationAdding extends React.Component {
         myDates.forEach((date) => {
             dates.forEach((holiday) => {
                 if (date.getMonth() == holiday.getMonth() && date.getDate() == holiday.getDate()) {
-                    holidays++;
+                    if (date.getMonth() == 0 && date.getDate() == 2 && date.getFullYear() >= 2020) {
+                        holidays++;
+                    } else if (date.getMonth() == 0 && date.getDate() == 2 && date.getFullYear() < 2020) {
+                        holidays += 0;
+                    } else {
+                        holidays++;
+                    }
                 }
             });
         });
