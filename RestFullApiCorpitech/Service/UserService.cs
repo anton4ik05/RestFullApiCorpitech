@@ -328,6 +328,11 @@ namespace RestFullApiCorpitech.Service
             }
         }
 
+        public Vacation GetVacation(Guid id)
+        {
+            return context.Vacations.SingleOrDefault(x => x.Id == id);
+        }
+
         public IEnumerable<User> GetUsers()
         {
             return context.Users.Include(x => x.Vacations.OrderBy(x => x.StartVacation)).OrderBy(x => x.Surname).ThenBy(x => x.Name).Where(x=> x.Role != "admin").ToList();
@@ -354,8 +359,9 @@ namespace RestFullApiCorpitech.Service
                     int lastMaxDays = maxDays;
                     maxDays = userVacation.Days;
                     //(userVacation.EndVacation - userVacation.StartVacation).Days + 1; // Дни отпуска
+                    
+                    if (maxDays == 0) maxDays = Convert.ToInt32(user.vacationYear);
                     if (lastMaxDays == 0) lastMaxDays = maxDays;
-                    if (maxDays == 0) maxDays = 28;
                     if (daysVacation <= maxDays)
                     {
                         if (daysVacation + count <= lastMaxDays)
