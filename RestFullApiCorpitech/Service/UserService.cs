@@ -15,19 +15,6 @@ namespace RestFullApiCorpitech.Service
 
         private readonly ApplicationContext context;
 
-        ICollection<DateTime> holidayList = new List<DateTime>() {
-            new DateTime(2021, 1, 1),
-            new DateTime(2021, 1, 2),
-            new DateTime(2021, 1, 7),
-            new DateTime(2021, 3, 8),
-            new DateTime(2021, 5, 1),
-            new DateTime(2021, 5, 9),
-            new DateTime(2021, 5, 11),
-            new DateTime(2021, 7, 3),
-            new DateTime(2021, 11, 7),
-            new DateTime(2021, 12, 25),
-        };
-
         public UserService(ApplicationContext context)
         {
             this.context = context;
@@ -155,8 +142,8 @@ namespace RestFullApiCorpitech.Service
                             intersect++;
                         };
 
-                        foreach (var holiday in holidayList){
-                            if (date.Month == holiday.Month && date.Day == holiday.Day)
+                        foreach (var holiday in context.Holidays.ToArray()){
+                            if (date.Month == holiday.date.Month && date.Day == holiday.date.Day && holiday.isActive)
                             {
                                 if (date.Month == 1 && date.Day == 2 && date.Year >= 2020)
                                 {
@@ -524,9 +511,9 @@ namespace RestFullApiCorpitech.Service
                     intersect++;
                 };
 
-                foreach (var holiday in holidayList)
+                foreach (var holiday in context.Holidays.ToArray())
                 {
-                    if (date.Month == holiday.Month && date.Day == holiday.Day)
+                    if (date.Month == holiday.date.Month && date.Day == holiday.date.Day && holiday.isActive)
                     {
                         if (date.Month == 1 && date.Day == 2 && date.Year >= 2020)
                         {
@@ -548,6 +535,40 @@ namespace RestFullApiCorpitech.Service
             return intersect - holidays;
         }
 
+        public ICollection<Holiday> GetHolidays()
+        {
+            return context.Holidays.ToArray();
+        }
+
+        public void AddHoliday(Holiday holiday)
+        {
+            context.Holidays.Add(holiday);
+            context.SaveChanges();
+        }
+
+        public void UpdateHoliday(Holiday holiday)
+        {
+            var record = context.Holidays.SingleOrDefault(x => x.Id == holiday.Id);
+
+            if (record == null) return;
+
+            record.date = holiday.date;
+            record.name = holiday.name;
+            record.isActive = holiday.isActive;
+
+            context.SaveChanges();
+        }
+
+        public void DeleteHoliday(Guid id)
+        {
+
+            Holiday holiday = context.Holidays.FirstOrDefault(x => x.Id == id);
+            if (holiday != null)
+            {
+                context.Holidays.Remove(holiday!);
+                context.SaveChanges();
+            }
+        }
 
         public User GetUser(Guid id)
         {
