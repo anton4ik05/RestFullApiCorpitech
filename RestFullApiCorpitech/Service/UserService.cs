@@ -1,5 +1,6 @@
 ﻿using RestFullApiCorpitech.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -360,7 +361,7 @@ namespace RestFullApiCorpitech.Service
 
         public IEnumerable<User> GetUsers()
         {
-            return context.Users.Include(x => x.Vacations.OrderBy(x => x.StartVacation)).OrderBy(x => x.Surname).ThenBy(x => x.Name).Where(x=> x.Role != "admin").ToList();
+            return context.Users.Include(x => x.Vacations.OrderBy(x => x.StartVacation)).Include(x=>x.VacationDays).OrderBy(x => x.Surname).ThenBy(x => x.Name).Where(x=> x.Role != "admin").ToList();
         }
 
         public ICollection<InfoVacation> GetVacations(Guid id)
@@ -372,20 +373,22 @@ namespace RestFullApiCorpitech.Service
                 var userVacations = user.Vacations;
 
                 ICollection<InfoVacation> info = new List<InfoVacation>();
+
+                ICollection<VacationDay> vacationDays = new List<VacationDay>();
+
+                vacationDays = user.VacationDays;
+                
                 //double maxDays = user.vacationYear;
                 int count = 0;
-                int maxDays = 0;
+
                 DateTime StartWorkYear = user.DateOfEmployment;
                 DateTime EndWorkYear = user.DateOfEmployment.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-
+                int maxDays = vacationDays.SingleOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date)!.Days;
                 foreach (var userVacation in userVacations)
                 {
                     int daysVacation = HolyDays(userVacation.StartVacation, userVacation.EndVacation);
                     int lastMaxDays = maxDays;
-                    maxDays = 28;
-                    //(userVacation.EndVacation - userVacation.StartVacation).Days + 1; // Дни отпуска
-                    
-                    if (maxDays == 0) maxDays = Convert.ToInt32(28);
+                    if (maxDays == 0) maxDays = 28;
                     if (lastMaxDays == 0) lastMaxDays = maxDays;
                     if (daysVacation <= maxDays)
                     {
@@ -405,6 +408,8 @@ namespace RestFullApiCorpitech.Service
                             {
                                 StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
                                 EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+                                maxDays = vacationDays.SingleOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date)!
+                                    .Days;
                                 count = 0;
                             }
                         }
@@ -424,6 +429,8 @@ namespace RestFullApiCorpitech.Service
 
                             StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
                             EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+                            maxDays = vacationDays.SingleOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date)!
+                                .Days;
                             count = 0;
 
                             if (daysVacation - notDay > maxDays)
@@ -442,7 +449,10 @@ namespace RestFullApiCorpitech.Service
                                     });
                                     StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
                                     EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+
                                     temp -= maxDays;
+                                    maxDays = vacationDays.SingleOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date)!
+                                        .Days;
                                 }
                                 info.Add(new InfoVacation
                                 {
@@ -485,7 +495,8 @@ namespace RestFullApiCorpitech.Service
                         StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
                         EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
                         count = 0;
-                      
+                        maxDays = vacationDays.SingleOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date)!
+                            .Days;
                         int temp = daysVacation - notDay;
 
                         while (temp > maxDays)
@@ -502,6 +513,8 @@ namespace RestFullApiCorpitech.Service
                             StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
                             EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
                             temp -= maxDays;
+                            maxDays = vacationDays.SingleOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date)!
+                                .Days;
                         }
 
                         info.Add(new InfoVacation
@@ -600,7 +613,7 @@ namespace RestFullApiCorpitech.Service
 
         public User GetUser(Guid id)
         {
-            return context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
+            return context.Users.Include(x => x.Vacations).Include(x => x.VacationDays).SingleOrDefault(x => x.Id == id);
         }
 
         public User GetUserByUsername(string username)

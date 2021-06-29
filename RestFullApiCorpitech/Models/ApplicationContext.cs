@@ -37,6 +37,7 @@ namespace RestFullApiCorpitech.Models
             //modelBuilder.Entity<Vacation>().HasQueryFilter(m => EF.Property<bool>(m, "isDeleted") == false);
 
             modelBuilder.Entity<User>().HasMany(x => x.Vacations).WithOne(x => x.User);
+            modelBuilder.Entity<User>().HasMany(x => x.VacationDays).WithOne(x => x.User);
 
             modelBuilder.Entity<User>().HasData(new User
             {
