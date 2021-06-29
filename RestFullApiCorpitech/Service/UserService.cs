@@ -197,17 +197,13 @@ namespace RestFullApiCorpitech.Service
         {
             var record = new User
             {
-                Vacations = new List<Vacation>()
+                Vacations = new List<Vacation>(),
+                VacationDays = new List<VacationDay>()
             };
 
             if (model.Vacations == null)
             {
                 model.Vacations = new List<VacationEditModel>();
-            }
-
-            if (model.VacationDays == null)
-            {
-                model.VacationDays = new List<VacationDay>();
             }
 
             foreach (var rec in model.Vacations)
@@ -222,17 +218,38 @@ namespace RestFullApiCorpitech.Service
                     DateOrder = rec.DateOrder
                 });
             }
-            foreach (var rec in model.VacationDays)
+
+            int day = 28;
+            if (model.DateOfEmployment.Date.Year < 2018)
             {
-                record.VacationDays.Add(new VacationDay()
-                {
-                   StartWorkYear = rec.StartWorkYear,
-                   EndWorkYear = rec.EndWorkYear,
-                   Days = rec.Days,
-                   User = rec.User,
-                   UserId = rec.UserId
-                });
+                day = 24;
             }
+            
+            DateTime startWorkYear = model.DateOfEmployment;
+            DateTime endWorkYear = startWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+           
+            while (startWorkYear.Year < DateTime.Now.Year)
+            {
+                if (startWorkYear.Year >= 2018) day = 28;
+                record.VacationDays.Add(new VacationDay
+                {
+                    StartWorkYear = startWorkYear,
+                    EndWorkYear = endWorkYear,
+                    User = record,
+                    UserId = record.Id,
+                    Days = day
+                });
+                startWorkYear = endWorkYear + new TimeSpan(1, 0, 0, 0);
+                endWorkYear = startWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+            }
+            record.VacationDays.Add(new VacationDay
+            {
+                StartWorkYear = startWorkYear,
+                EndWorkYear = endWorkYear,
+                User = record,
+                UserId = record.Id,
+                Days = day
+            });
 
             record.Middlename = model.Middlename;
             record.Name = model.Name;
@@ -286,7 +303,6 @@ namespace RestFullApiCorpitech.Service
             if (record == null) return;
 
             record.Vacations = new List<Vacation>();
-            record.VacationDays = new List<VacationDay>();
 
             foreach (var rec in model.Vacations)
             {
@@ -300,18 +316,7 @@ namespace RestFullApiCorpitech.Service
                     DateOrder = rec.DateOrder,
                 });
             }
-            foreach (var rec in model.VacationDays)
-            {
-                record.VacationDays.Add(new VacationDay()
-                {
-                    StartWorkYear = rec.StartWorkYear,
-                    EndWorkYear = rec.EndWorkYear,
-                    Days = rec.Days,
-                    User = rec.User,
-                    UserId = rec.UserId
-                });
-            }
-
+            
             record.Middlename = model.Middlename;
             record.Name = model.Name;
             record.Surname = model.Surname;
@@ -477,8 +482,6 @@ namespace RestFullApiCorpitech.Service
                                 });
                                 count = daysVacation - notDay;
                             }
-
-
                         }
                     }
                     else
