@@ -1,4 +1,156 @@
-﻿
+﻿class HolidaysList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            role: getRole(),
+            data: props,
+            status: true,
+            holidays:[]
+        };
+        this.addHoliday = this.addHoliday.bind(this);
+    }
+    componentDidMount() {
+        let setState = this.setState.bind(this);
+        /*$.ajax({
+            url: '/api/users/' + this.state.data.vacation.id + '/editVacation' + '?token=' + getToken(),
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(vacation),
+            success: function (result) {
+                console.log(result);
+                setState({ holidays: result });
+            },
+            error: function (result) { console.log(result); }
+        });*/
+    }
+
+    addHoliday() {
+        $('body').append("<div id='info2' class='info'></div>");
+        ReactDOM.render(
+            React.createElement(HolidaysAdding, { user: this.state.data, userId: this.state.id }),
+            document.getElementById('info2'),
+        );
+    }
+
+    render() {
+        let holidays = this.state.holidays;
+        return this.state.status === true ? React.createElement(
+            'div', { className: "infoBlock" }, "Праздники",
+            React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
+            React.createElement('div', { className: 'infoHolidays' },
+                React.createElement('div', { className: "infoHolidaysHead" },
+                    React.createElement('div', {}, 'Дата'),
+                    React.createElement('div', {}, 'Название'),
+                ),
+                holidays.map(function (holiday, index) {
+                    return React.createElement('div', { className: "infoHolidaysBody" },
+                        React.createElement('div', {}, holiday.date),
+                        React.createElement('div', {}, holiday.name));
+                })
+            ),
+            this.state.role == "admin" ? React.createElement('button', { onClick: this.addHoliday, type: 'button', className: 'postfix' }, 'Добавить'):null,
+        ) : null;
+    }
+
+}
+
+class HolidaysAdding extends React.Component {
+    constructor(props) {
+        super(props);
+        this.myDatePicker = "";
+        this.myDatePickerFirst = "";
+        this.datePickerForDocTime = "";
+        this.state = {
+            role: getRole(),
+            data: props.user,
+            date: "",
+            name: "",
+            yearInclude: false
+        };
+        this.addHoliday = this.addHoliday.bind(this);
+        this.nameUpdate = this.nameUpdate.bind(this);
+        this.dateUpdate = this.dateUpdate.bind(this);
+        this.close = this.close.bind(this);
+        this.idForInp = Math.round(Math.random() * 10000);
+    }
+    nameUpdate() {
+        this.setState({ name: e.target.value});
+    }
+    /*DateUpdate(e) {
+        this.setState({ endVacation: this.state.endVacation });
+    }*/
+
+    componentDidMount() {
+        let myDatePicker = this.state.endVacation;
+        $('#endVacation' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
+            pick: function (date, view) {
+                newDate = date.date;
+            },
+            hide: function () {
+                if (newDate == "") {
+                    newDate = new Date(parseNewDate(myDatePicker));
+                }
+                myDatePicker = formatDateForInput(newDate);
+                updateDate(myDatePicker, "end");
+            },
+            format: 'dd.mm.YYYY',
+            days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+            daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+            monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+        });
+    }
+    close() {
+        this.setState({ status: false });
+        $('#info2').remove();
+    }
+    addVac() {
+        let startVacation = this.state.startVacation.trim();
+        let endVacation = this.state.endVacation.trim();
+        let orderNumber = this.state.numOfDoc.trim();
+        let dateOrder = this.state.dateOfDoc.trim();
+        let days = (this.state.maxDays + "").trim();
+        if (!startVacation || !endVacation || !orderNumber || !dateOrder || !days) {
+            return;
+        }
+        let vacation = { startVacation: startVacation, endVacation: endVacation, orderNumber: orderNumber, dateOrder: dateOrder, days: days };
+        this.setState({ name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "", dateOfEmployment: "" });
+        let user = { id: this.state.userId };
+        $.ajax({
+            url: '/api/users/' + this.state.data.id + '/vacations' + '?token=' + getToken(),
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(vacation),
+            success: function (result) {
+                console.log("vac is added.");
+                ReactDOM.unmountComponentAtNode(document.getElementById('info'));
+                ReactDOM.render(
+                    React.createElement(UserVacationDetails, { user: user }),
+                    document.getElementById('info'),
+                );
+            },
+            error: function (result) { console.log(result); }
+        });
+        this.close();
+
+    }
+    render() {
+        return this.state.status === true ? React.createElement(
+            'div', { className: "infoBlock" }, "Добавить праздник",
+            React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
+            React.createElement('div', { className: "addingHoliday" },
+                React.createElement('input', { id: "startVacation" + this.idForInp, placeholder: "Дата", className: "fromVac", "data-toggle": "datepicker", onChange: this.fromDateUpdate, value: this.state.startVacation }),
+                React.createElement('input', { placeholder:"Название", onChange: this.quantityDaysUpdate, value: this.state.quantityDays }),
+                React.createElement('button', { onClick: this.addVac, type: 'button', className: 'postfix' }, 'Добавить')),
+        ) : null;
+    }
+}
+
+class HolidaysEdit extends React.Component {
+
+}
+
 class VacationEdit extends React.Component {
     constructor(props) {
         super(props);
@@ -171,7 +323,7 @@ class VacationEdit extends React.Component {
         let vacation = { startVacation: startVacation, endVacation: endVacation, orderNumber: orderNumber, dateOrder: dateOrder, days: days };
         this.setState({ name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "", dateOfEmployment: "" });
         $.ajax({
-            url: '/api/users/' + this.state.data.vacation.id + '/editVacation' + '?token=' + getToken(),
+            url: '/api/users/' + this.state.data.vacation.id + '/vacations' + '?token=' + getToken(),
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(vacation),
@@ -377,7 +529,7 @@ class VacationAdding extends React.Component {
         this.setState({ name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "", dateOfEmployment: "" });
         let user = { id: this.state.userId };
         $.ajax({
-            url: '/api/users/' + this.state.data.id + '/addVacation' + '?token=' + getToken(),
+            url: '/api/users/' + this.state.data.id + '/vacations' + '?token=' + getToken(),
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(vacation),
@@ -438,7 +590,7 @@ class VacationInDetail extends React.Component {
     removeVac() {
         let user = { id: this.state.userId };
         $.ajax({
-            url: '/api/users/delVacation?id=' + this.state.vacation.id+ '&token=' + getToken(),
+            url: '/api/users/' + this.state.vacation.id + '/vacations?token=' + getToken(),
             type: 'DELETE',
             contentType: 'application/json',
             success: function (result) {
@@ -483,13 +635,11 @@ class UserEdit extends React.Component {
             role: props.user.role,
             dateOfEmployment: props.user.dateOfEmployment,
             vacations: props.user.vacations,
-            vacationYear: props.user.vacationYear
         };
         this.onSubmit = this.onSubmit.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
         this.onSurnameChange = this.onSurnameChange.bind(this);
         this.onMiddlenameChange = this.onMiddlenameChange.bind(this);
-        this.onVacationYearChange = this.onVacationYearChange.bind(this);
         this.onDateOfEmploymentChange = this.onDateOfEmploymentChange.bind(this);
         this.onLoginChange = this.onLoginChange.bind(this);
         this.onRoleChange = this.onRoleChange.bind(this);
@@ -509,10 +659,6 @@ class UserEdit extends React.Component {
         this.setState({ middlename: e.target.value });
 
     }
-    onVacationYearChange(e) {
-        this.setState({ vacationYear: e.target.value });
-    }
-
 
     onLoginChange(e) {
         this.setState({ login: e.target.value });
@@ -584,13 +730,12 @@ class UserEdit extends React.Component {
         let surname = this.state.surname.trim();
         let middlename = this.state.middlename.trim();
         let dateOfEmployment = this.state.dateOfEmployment.trim();
-        let vacationYear = (this.state.vacationYear + "").trim();
         let login = this.state.login.trim();
         let role = this.state.role.trim();
-        if (!name || !surname || !middlename || !dateOfEmployment || !vacationYear || !login || !role) {
+        if (!name || !surname || !middlename || !dateOfEmployment || !login || !role) {
             return;
         }
-        this.putTheEdit(this.state.data.id, { name: name, surname: surname, middlename: middlename, vacationYear: vacationYear, login: login, role: role, dateOfEmployment: dateOfEmployment, vacations: this.state.vacations });
+        this.putTheEdit(this.state.data.id, { name: name, surname: surname, middlename: middlename, login: login, role: role, dateOfEmployment: dateOfEmployment, vacations: this.state.vacations });
     }
 
     render() {
@@ -605,7 +750,6 @@ class UserEdit extends React.Component {
                 React.createElement('select', { className: "form-inp", placeholder: 'Role', type: 'text', autoComplete: "off", onChange: this.onRoleChange, value: this.state.role },
                     React.createElement("option", { value: "moderator" }, "Moder"),
                     React.createElement("option", { value: "user" }, "User")),
-                React.createElement('input', { placeholder: 'Дней отпуска в год', type: 'Number', autoComplete: "off", onChange: this.onVacationYearChange, value: this.state.vacationYear }),
                 React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', autoComplete: "off", onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
                 React.createElement('button', { type: 'submit', className: 'postfix' }, 'Изменить')
             ),
@@ -627,7 +771,8 @@ class UserVacationDetails extends React.Component {
             vacations:[],
         };
         this.close = this.close.bind(this);
-        this.addVac = this.addVac.bind(this);
+        this.addVac = this.addVac.bind(this); 
+        this.holidays = this.holidays.bind(this);
     }
     componentDidMount() {
         let state = this.setState.bind(this);
@@ -636,7 +781,7 @@ class UserVacationDetails extends React.Component {
             url: '../api/users?id=' + id + '&token=' + getToken(),
             success: function (result) {
                 $.ajax({
-                    url: '../api/users/getVacations?id=' + id + '&token=' + getToken(),
+                    url: '../api/users/' + id +'/vacations' + '?token=' + getToken(),
                     success: function (result2) {
                         state({ vacations: result.vacations, vacationsForView: result2 });
                     },
@@ -655,6 +800,13 @@ class UserVacationDetails extends React.Component {
         $('body').append("<div id='info1'></div>");
         ReactDOM.render(
             React.createElement(VacationAdding, { user: this.state.data, userId: this.state.id }),
+            document.getElementById('info1'),
+        );
+    }
+    holidays() {
+        $('body').append("<div id='info1'></div>");
+        ReactDOM.render(
+            React.createElement(HolidaysList, null),
             document.getElementById('info1'),
         );
     }
@@ -679,6 +831,7 @@ class UserVacationDetails extends React.Component {
                 })
             ),
             React.createElement('button', { onClick: this.addVac, type: 'button', className: 'postfix' }, 'Добавить'),
+            React.createElement('button', { onClick: this.holidays, type: 'button', className: 'postfix' }, 'Праздники'),
         ) : null;
     }
 }
@@ -757,12 +910,12 @@ class User extends React.Component {
             error: function (result) { console.log(result); }
         });
 
-    }
+    }   
     deleteEmploye() {
         let onElementRemove = this.onElementRemove.bind();
         if (confirm("Вы точно хотите удалить пользователя?")) {
             $.ajax({
-                url: '../api/users/del?id=' + this.state.data.id + '&token=' + getToken(),
+                url: '../api/users/' + this.state.data.id + '?token=' + getToken(),
                 type: 'DELETE',
                 success: function (result) {
                     console.log(result);
@@ -905,7 +1058,7 @@ class UserForm extends React.Component {
     constructor(props) {
         super(props);
         this.myDatePicker = "";
-        this.state = { status: true, name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "28", dateOfEmployment: this.myDatePicker };
+        this.state = { status: true, name: "", surname: "", middlename: "", login: "", role: "moderator", dateOfEmployment: this.myDatePicker };
         this.onSubmit = this.onSubmit.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
         this.onSurnameChange = this.onSurnameChange.bind(this);
@@ -913,8 +1066,6 @@ class UserForm extends React.Component {
 
         this.onLoginChange = this.onLoginChange.bind(this);
         this.onRoleChange = this.onRoleChange.bind(this);
-
-        this.onVacationYearChange = this.onVacationYearChange.bind(this);
         this.onDateOfEmploymentChange = this.onDateOfEmploymentChange.bind(this);
         this.close = this.close.bind(this);
         this.updateDate = this.updateDate.bind(this);
@@ -928,9 +1079,6 @@ class UserForm extends React.Component {
     }
     onMiddlenameChange(e) {
         this.setState({ middlename: e.target.value });
-    }
-    onVacationYearChange(e) {
-        this.setState({ vacationYear: e.target.value });
     }
     onLoginChange(e) {
         this.setState({ login: e.target.value });
@@ -976,14 +1124,13 @@ class UserForm extends React.Component {
         let surname = this.state.surname.trim();
         let middlename = this.state.middlename.trim();
         let dateOfEmployment = this.state.dateOfEmployment.trim();
-        let vacationYear = this.state.vacationYear.trim();
         let login = this.state.login.trim();
         let role = this.state.role.trim();
-        if (!name || !surname || !middlename || !dateOfEmployment || !vacationYear || !login || !role) {
+        if (!name || !surname || !middlename || !dateOfEmployment || !login || !role) {
             return;
         }
-        let user = { name: name, surname: surname, middlename: middlename, vacationYear: vacationYear, login: login, role: role, dateOfEmployment: dateOfEmployment, vacations: [] };
-        this.setState({ name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "", dateOfEmployment: "" });
+        let user = { name: name, surname: surname, middlename: middlename, login: login, role: role, dateOfEmployment: dateOfEmployment, vacations: [] };
+        this.setState({ name: "", surname: "", middlename: "", login: "", role: "moderator", dateOfEmployment: "" });
         $.ajax({
             url: '../api/users' + '?token=' + getToken(),
             type: 'POST',
@@ -1014,7 +1161,6 @@ class UserForm extends React.Component {
                 React.createElement('select', { className: "form-inp", placeholder: 'Role', type: 'text', autoComplete: "off", onChange: this.onRoleChange, value: this.state.role },
                     React.createElement("option", { value: "moderator" }, "Moder"),
                     React.createElement("option", { value: "user" }, "User")),
-                React.createElement('input', { placeholder: 'Дней отпуска в год', type: 'Number', autoComplete: "off", onChange: this.onVacationYearChange, value: this.state.vacationYear }),
                 React.createElement('input', { id: "dateOfEmlp", placeholder: 'DateOfEmployment', "data-toggle": "datepicker", type: 'text', autoComplete: "off", onChange: this.onDateOfEmploymentChange, value: this.state.dateOfEmployment }),
                 React.createElement('button', { type: 'submit', className: 'postfix' }, 'Добавить')
             )
