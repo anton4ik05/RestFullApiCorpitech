@@ -119,40 +119,48 @@ namespace RestFullApiCorpitech.Service
 
                     ICollection<DateTime> allVacationDates = new List<DateTime>();
                     var vacations = user.Vacations.ToArray();
-
+                    ICollection<VacationDay> vacationDays = new List<VacationDay>();
+                    vacationDays = user.VacationDays;
                     foreach (var vacation in vacations)
                     {
                         allVacationDates = AllDates(vacation.StartVacation, vacation.EndVacation, allVacationDates);
                     }
 
-                    foreach (var date in allVacationDates)
+                    foreach (var vacationDay in vacationDays)
                     {
-                        if (Between(date, startDate, endDate))
+                        foreach (var date in allVacationDates)
                         {
-                            intersect++;
-                        };
-
-                        foreach (var holiday in context.Holidays.ToArray()){
-                            if (date.Month == holiday.date.Month && date.Day == holiday.date.Day && holiday.isActive)
+                            if (date >= vacationDay.StartWorkYear.Date && date <= vacationDay.EndWorkYear.Date)
                             {
-                                if (date.Month == 1 && date.Day == 2 && date.Year >= 2020)
+                                intersect++;
+                            }
+
+                            foreach (var holiday in context.Holidays.ToArray())
+                            {
+                                if (date.Month == holiday.date.Month && date.Day == holiday.date.Day && holiday.isActive)
                                 {
-                                    holidays++;
-                                }
-                                else if (date.Month == 1 && date.Day == 2 && date.Year < 2020)
-                                {
-                                    holidays += 0;
-                                }
-                                else
-                                {
-                                    holidays++;
+                                    if (date.Month == 1 && date.Day == 2 && date.Year >= 2020)
+                                    {
+                                        holidays++;
+                                    }
+                                    else if (date.Month == 1 && date.Day == 2 && date.Year < 2020)
+                                    {
+                                        holidays += 0;
+                                    }
+                                    else
+                                    {
+                                        holidays++;
+                                    }
                                 }
                             }
                         }
+
+                        double a = (vacationDay.EndWorkYear.Date - vacationDay.StartWorkYear.Date).Days - intersect;
+                        outVacations += Math.Round(Math.Round(a / 29.7) * (vacationDay.Days / 12)) + holidays;
                     }
                 }
                 days = (endDate - startDate).Days + 1 - intersect;
-                outVacations = Math.Round(Math.Round(days / 29.7) * (28 / 12)) + holidays;
+                double asd = Math.Round(Math.Round(days / 29.7) * (28 / 12)) + holidays;
             }
             return outVacations;
         }
