@@ -424,6 +424,7 @@ class VacationEdit extends React.Component {
                 myDatePicker = formatDateForInput(newDate);
                 updateDate(myDatePicker, "end");
             },
+            autohide:true,
             format: 'dd.mm.YYYY',
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
             daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
@@ -442,7 +443,9 @@ class VacationEdit extends React.Component {
                 myDatePickerFirst = formatDateForInput(newDate);
                 updateDate(myDatePickerFirst, "start");
             },
+            autohide: true,
             format: 'dd.mm.YYYY',
+
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
             daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
             daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
@@ -621,6 +624,7 @@ class VacationAdding extends React.Component {
                 myDatePicker = formatDateForInput(newDate);
                 updateDate(myDatePicker, "end");
             },
+            autoHide: true,
             format: 'dd.mm.YYYY',
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
             daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
@@ -639,6 +643,7 @@ class VacationAdding extends React.Component {
                 myDatePickerFirst = formatDateForInput(newDate);
                 updateDate(myDatePickerFirst, "start");
             },
+            autoHide: true,
             format: 'dd.mm.YYYY',
             days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
             daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
