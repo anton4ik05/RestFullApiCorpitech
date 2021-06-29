@@ -167,7 +167,6 @@ namespace RestFullApiCorpitech.Service
             }
             return outVacations;
         }
-
         private static ICollection<DateTime> AllDates(DateTime startDate, DateTime endDate, ICollection<DateTime> allDates)
         {
             for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
@@ -538,6 +537,11 @@ namespace RestFullApiCorpitech.Service
         public ICollection<Holiday> GetHolidays()
         {
             return context.Holidays.ToArray();
+        }
+
+        public Holiday GetHoliday(Guid id)
+        {
+            return context.Holidays.SingleOrDefault(x => x.Id == id);
         }
 
         public void AddHoliday(Holiday holiday)
