@@ -48,14 +48,103 @@
                         React.createElement('div', {}, holiday.name));
                 })
             ),
-            this.state.role=="admin"? React.createElement('button', { onClick: this.addVac, type: 'button', className: 'postfix' }, 'Добавить'):null,
+            this.state.role == "admin" ? React.createElement('button', { onClick: this.addHoliday, type: 'button', className: 'postfix' }, 'Добавить'):null,
         ) : null;
     }
 
 }
 
 class HolidaysAdding extends React.Component {
+    constructor(props) {
+        super(props);
+        this.myDatePicker = "";
+        this.myDatePickerFirst = "";
+        this.datePickerForDocTime = "";
+        this.state = {
+            role: getRole(),
+            data: props.user,
+            date: "",
+            name: "",
+            yearInclude: false
+        };
+        this.addHoliday = this.addHoliday.bind(this);
+        this.nameUpdate = this.nameUpdate.bind(this);
+        this.dateUpdate = this.dateUpdate.bind(this);
+        this.close = this.close.bind(this);
+        this.idForInp = Math.round(Math.random() * 10000);
+    }
+    nameUpdate() {
+        this.setState({ name: e.target.value});
+    }
+    /*DateUpdate(e) {
+        this.setState({ endVacation: this.state.endVacation });
+    }*/
 
+    componentDidMount() {
+        let myDatePicker = this.state.endVacation;
+        $('#endVacation' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
+            pick: function (date, view) {
+                newDate = date.date;
+            },
+            hide: function () {
+                if (newDate == "") {
+                    newDate = new Date(parseNewDate(myDatePicker));
+                }
+                myDatePicker = formatDateForInput(newDate);
+                updateDate(myDatePicker, "end");
+            },
+            format: 'dd.mm.YYYY',
+            days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+            daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+            monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+        });
+    }
+    close() {
+        this.setState({ status: false });
+        $('#info2').remove();
+    }
+    addVac() {
+        let startVacation = this.state.startVacation.trim();
+        let endVacation = this.state.endVacation.trim();
+        let orderNumber = this.state.numOfDoc.trim();
+        let dateOrder = this.state.dateOfDoc.trim();
+        let days = (this.state.maxDays + "").trim();
+        if (!startVacation || !endVacation || !orderNumber || !dateOrder || !days) {
+            return;
+        }
+        let vacation = { startVacation: startVacation, endVacation: endVacation, orderNumber: orderNumber, dateOrder: dateOrder, days: days };
+        this.setState({ name: "", surname: "", middlename: "", login: "", role: "moderator", vacationYear: "", dateOfEmployment: "" });
+        let user = { id: this.state.userId };
+        $.ajax({
+            url: '/api/users/' + this.state.data.id + '/vacations' + '?token=' + getToken(),
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(vacation),
+            success: function (result) {
+                console.log("vac is added.");
+                ReactDOM.unmountComponentAtNode(document.getElementById('info'));
+                ReactDOM.render(
+                    React.createElement(UserVacationDetails, { user: user }),
+                    document.getElementById('info'),
+                );
+            },
+            error: function (result) { console.log(result); }
+        });
+        this.close();
+
+    }
+    render() {
+        return this.state.status === true ? React.createElement(
+            'div', { className: "infoBlock" }, "Добавить праздник",
+            React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
+            React.createElement('div', { className: "addingHoliday" },
+                React.createElement('input', { id: "startVacation" + this.idForInp, placeholder: "Дата", className: "fromVac", "data-toggle": "datepicker", onChange: this.fromDateUpdate, value: this.state.startVacation }),
+                React.createElement('input', { placeholder:"Название", onChange: this.quantityDaysUpdate, value: this.state.quantityDays }),
+                React.createElement('button', { onClick: this.addVac, type: 'button', className: 'postfix' }, 'Добавить')),
+        ) : null;
+    }
 }
 
 class HolidaysEdit extends React.Component {
