@@ -20,6 +20,7 @@ namespace RestFullApiCorpitech.Models
 
         public DbSet<Vacation> Vacations { get; set; }
 
+
         public DbSet<VacationDay> VacationDays { get; set; }
 
         public DbSet<Holiday> Holidays { get; set; }

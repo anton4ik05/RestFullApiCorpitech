@@ -76,6 +76,9 @@ class HolidaysAdding extends React.Component {
     nameUpdate() {
         this.setState({ name: e.target.value});
     }
+    dateUpdate() {
+        this.setState({ date: this.state.date });
+    } 
     /*DateUpdate(e) {
         this.setState({ endVacation: this.state.endVacation });
     }*/
@@ -84,7 +87,6 @@ class HolidaysAdding extends React.Component {
         let myDatePicker = this.state.endVacation;
         $('#endVacation' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
-                newDate = date.date;
             },
             hide: function () {
                 if (newDate == "") {
@@ -103,7 +105,7 @@ class HolidaysAdding extends React.Component {
     }
     close() {
         this.setState({ status: false });
-        $('#info2').remove();
+        $('#info1').remove();
     }
     addVac() {
         let startVacation = this.state.startVacation.trim();
@@ -140,9 +142,9 @@ class HolidaysAdding extends React.Component {
             'div', { className: "infoBlock" }, "Добавить праздник",
             React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
             React.createElement('div', { className: "addingHoliday" },
-                React.createElement('input', { id: "startVacation" + this.idForInp, placeholder: "Дата", className: "fromVac", "data-toggle": "datepicker", onChange: this.fromDateUpdate, value: this.state.startVacation }),
-                React.createElement('input', { placeholder:"Название", onChange: this.quantityDaysUpdate, value: this.state.quantityDays }),
-                React.createElement('button', { onClick: this.addVac, type: 'button', className: 'postfix' }, 'Добавить')),
+                React.createElement('input', { id: "date" + this.idForInp, placeholder: "Дата", "data-toggle": "datepicker", onChange: this.dateUpdate, value: this.state.date }),
+                React.createElement('input', { placeholder: "Название", onChange: this.nameUpdate, value: this.state.name }),
+                React.createElement('button', { onClick: this.addHoliday,type: 'button', className: 'postfix' }, 'Добавить')),
         ) : null;
     }
 }
@@ -899,7 +901,7 @@ class User extends React.Component {
         let state = this.setState.bind(this);
         let vac = this.state.vacationDays;
         $.ajax({
-            url: '../api/users/getVacations?id=' + this.state.data.id + '&token=' + getToken(),
+            url: '../api/users/' + this.state.data.id + '/vacations?token=' + getToken(),
             success: function (result) {
                 let vacDays = 0;
                 result.forEach((elem) => {
