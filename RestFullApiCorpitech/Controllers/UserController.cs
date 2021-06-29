@@ -160,7 +160,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpGet]
         [Route("/api/holidays")]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public IActionResult getHolidays()
         {
             return new ObjectResult(userService.GetHolidays());
@@ -168,7 +168,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpPost]
         [Route("/api/holidays")]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public IActionResult AddHoliday(Holiday model)
         {
             if (ModelState.IsValid)
@@ -181,7 +181,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpPut]
         [Route("/api/holidays")]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public IActionResult UpdateHoliday(Holiday model)
         {
             if (ModelState.IsValid)
@@ -194,7 +194,7 @@ namespace RestFullApiCorpitech.Controllers
 
         [HttpDelete]
         [Route("/api/holidays")]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public IActionResult DeleteHoliday(Guid id)
         {
             if (userService.GetHoliday(id) != null)
