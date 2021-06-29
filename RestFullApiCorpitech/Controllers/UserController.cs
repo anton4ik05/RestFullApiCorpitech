@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RestFullApiCorpitech.Models;
 using RestFullApiCorpitech.Models.DAO;
 using RestFullApiCorpitech.Service;
 using RestFullApiCorpitech.ViewModels;
@@ -53,7 +54,7 @@ namespace RestFullApiCorpitech.Controllers
 
 
         [HttpGet]
-        [Route("/api/users/getVacations")]
+        [Route("/api/users/{id}/vacations")]
         [Authorize]
         public IActionResult GetVacations(Guid id)
         {
@@ -104,7 +105,7 @@ namespace RestFullApiCorpitech.Controllers
         }
 
         [HttpDelete]
-        [Route("/api/users/del")]
+        [Route("/api/users/{id}")]
         [Authorize(Roles = "admin")]
         public IActionResult UserDelete(Guid id)
         {
@@ -117,7 +118,7 @@ namespace RestFullApiCorpitech.Controllers
         }
         
         [HttpPost]
-        [Route("/api/users/{id}/addVacation")]
+        [Route("/api/users/{id}/vacations")]
         [Authorize(Roles = "admin")]
         public IActionResult AddVacation(Guid id, VacationEditModel model)
         {
@@ -130,7 +131,7 @@ namespace RestFullApiCorpitech.Controllers
         }
 
         [HttpPut]
-        [Route("/api/users/{id}/editVacation")]
+        [Route("/api/users/{id}/vacations")]
         [Authorize(Roles = "admin")]
         public IActionResult EditVacation(Guid id, VacationEditModel model)
         {
@@ -141,8 +142,9 @@ namespace RestFullApiCorpitech.Controllers
 
             return new OkObjectResult(model);
         }
+
         [HttpDelete]
-        [Route("/api/users/delVacation")]
+        [Route("/api/users/{id}/vacations")]
         [Authorize(Roles = "admin")]
         public IActionResult VacationDelete(Guid id)
         {
@@ -156,5 +158,53 @@ namespace RestFullApiCorpitech.Controllers
 
         }
 
+        [HttpGet]
+        [Route("/api/holidays")]
+        [Authorize(Roles = "admin")]
+        public IActionResult getHolidays()
+        {
+            return new ObjectResult(userService.GetHolidays());
+        }
+
+        [HttpPost]
+        [Route("/api/holidays")]
+        [Authorize(Roles = "admin")]
+        public IActionResult AddHoliday(Holiday model)
+        {
+            if (ModelState.IsValid)
+            {
+                userService.AddHoliday(model);
+            }
+
+            return new OkObjectResult(model);
+        }
+
+        [HttpPut]
+        [Route("/api/holidays")]
+        [Authorize(Roles = "admin")]
+        public IActionResult UpdateHoliday(Holiday model)
+        {
+            if (ModelState.IsValid)
+            {
+                userService.UpdateHoliday(model);
+            }
+
+            return new OkObjectResult(model);
+        }
+
+        [HttpDelete]
+        [Route("/api/holidays")]
+        [Authorize(Roles = "admin")]
+        public IActionResult DeleteHoliday(Guid id)
+        {
+            if (userService.GetHoliday(id) != null)
+            {
+                userService.DeleteHoliday(id);
+                return new OkResult();
+
+            }
+            return new BadRequestObjectResult("Holiday not found");
+
+        }
     }
 }
