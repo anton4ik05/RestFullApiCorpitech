@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using RestFullApiCorpitech.Models;
 
 namespace RestFullApiCorpitech.ViewModels
 {
@@ -28,12 +29,11 @@ namespace RestFullApiCorpitech.ViewModels
         public DateTime DateOfEmployment { get; set; } = DateTime.MinValue;
 
         public ICollection<VacationEditModel> Vacations { get; set; } = new List<VacationEditModel>();
-
-        public Double vacationYear { get; set; } = 28;
-
+        
         public string Login { get; set; }
 
         public string Role { get; set; }
+        public ICollection<VacationDay> VacationDays { get; set; }
 
     }
 }

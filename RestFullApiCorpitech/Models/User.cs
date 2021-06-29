@@ -36,17 +36,15 @@ namespace RestFullApiCorpitech.Models
         public DateTime DateOfEmployment { get; set; } = DateTime.MinValue;
 
         public ICollection<Vacation> Vacations { get; set; } = new List<Vacation>();
-
-        public double vacationYear { get; set; } = 28; 
-
-
+        
         public string Login { get; set; }
 
         [JsonIgnore]
-        public string password { get; set; }
+        public string Password { get; set; }
 
         public string Role { get; set; }
-
+        
+        public ICollection<VacationDay> VacationDays { get; set; }
 
 
 

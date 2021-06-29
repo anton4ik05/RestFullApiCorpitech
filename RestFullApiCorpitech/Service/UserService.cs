@@ -85,7 +85,7 @@ namespace RestFullApiCorpitech.Service
                 }
 
                 Double days = (endDate - startDate).Days + 1 - intersect;
-                value = Math.Round(Math.Round(days / 29.7) * (user.vacationYear/12));
+                value = Math.Round(Math.Round(days / 29.7) * (28/12));
             }
             return value;
         }
@@ -176,7 +176,7 @@ namespace RestFullApiCorpitech.Service
                     }
                 }
                 days = (endDate - startDate).Days + 1 - intersect;
-                outVacations = Math.Round(Math.Round(days / 29.7) * (user.vacationYear / 12)) + holidays;
+                outVacations = Math.Round(Math.Round(days / 29.7) * (28 / 12)) + holidays;
             }
             return outVacations;
         }
@@ -205,6 +205,11 @@ namespace RestFullApiCorpitech.Service
                 model.Vacations = new List<VacationEditModel>();
             }
 
+            if (model.VacationDays == null)
+            {
+                model.VacationDays = new List<VacationDay>();
+            }
+
             foreach (var rec in model.Vacations)
             {
                 record.Vacations.Add(new Vacation()
@@ -214,8 +219,18 @@ namespace RestFullApiCorpitech.Service
                     User = rec.user,
                     UserId = rec.userId,
                     OrderNumber = rec.OrderNumber,
-                    DateOrder = rec.DateOrder,
-                    Days = rec.Days
+                    DateOrder = rec.DateOrder
+                });
+            }
+            foreach (var rec in model.VacationDays)
+            {
+                record.VacationDays.Add(new VacationDay()
+                {
+                   StartWorkYear = rec.StartWorkYear,
+                   EndWorkYear = rec.EndWorkYear,
+                   Days = rec.Days,
+                   User = rec.User,
+                   UserId = rec.UserId
                 });
             }
 
@@ -223,7 +238,6 @@ namespace RestFullApiCorpitech.Service
             record.Name = model.Name;
             record.Surname = model.Surname;
             record.DateOfEmployment = model.DateOfEmployment;
-            record.vacationYear = model.vacationYear;
             record.Login = model.Login;
             record.Role = model.Role;
 
@@ -246,7 +260,6 @@ namespace RestFullApiCorpitech.Service
                 UserId = record.Id,
                 OrderNumber = model.OrderNumber,
                 DateOrder = model.DateOrder,
-                Days = model.Days
             });
 
             context.SaveChanges();
@@ -262,7 +275,6 @@ namespace RestFullApiCorpitech.Service
             record.EndVacation = model.endVacation;
             record.DateOrder = model.DateOrder;
             record.OrderNumber = model.OrderNumber;
-            record.Days = model.Days;
 
             context.SaveChanges();
         }
@@ -274,6 +286,7 @@ namespace RestFullApiCorpitech.Service
             if (record == null) return;
 
             record.Vacations = new List<Vacation>();
+            record.VacationDays = new List<VacationDay>();
 
             foreach (var rec in model.Vacations)
             {
@@ -285,7 +298,17 @@ namespace RestFullApiCorpitech.Service
                     UserId = rec.userId,
                     OrderNumber = rec.OrderNumber,
                     DateOrder = rec.DateOrder,
-                    Days = rec.Days
+                });
+            }
+            foreach (var rec in model.VacationDays)
+            {
+                record.VacationDays.Add(new VacationDay()
+                {
+                    StartWorkYear = rec.StartWorkYear,
+                    EndWorkYear = rec.EndWorkYear,
+                    Days = rec.Days,
+                    User = rec.User,
+                    UserId = rec.UserId
                 });
             }
 
@@ -295,7 +318,6 @@ namespace RestFullApiCorpitech.Service
             record.DateOfEmployment = model.DateOfEmployment;
             record.Login = model.Login;
             record.Role = model.Role;
-            record.vacationYear = model.vacationYear;
             context.SaveChanges();
         }
 
@@ -309,11 +331,11 @@ namespace RestFullApiCorpitech.Service
             record.Login = model.login;
             if (model.password != "")
             {
-                record.password = model.password;
+                record.Password = model.password;
             }
             else
             {
-                record.password = null;
+                record.Password = null;
             }
             
             context.SaveChanges();
@@ -369,10 +391,10 @@ namespace RestFullApiCorpitech.Service
                 {
                     int daysVacation = HolyDays(userVacation.StartVacation, userVacation.EndVacation);
                     int lastMaxDays = maxDays;
-                    maxDays = userVacation.Days;
+                    maxDays = 28;
                     //(userVacation.EndVacation - userVacation.StartVacation).Days + 1; // Дни отпуска
                     
-                    if (maxDays == 0) maxDays = Convert.ToInt32(user.vacationYear);
+                    if (maxDays == 0) maxDays = Convert.ToInt32(28);
                     if (lastMaxDays == 0) lastMaxDays = maxDays;
                     if (daysVacation <= maxDays)
                     {
@@ -540,14 +562,12 @@ namespace RestFullApiCorpitech.Service
                         {
                             holidays++;
                         }
-                        
                     }
                 }
             }
 
             return intersect - holidays;
         }
-
 
         public User GetUser(Guid id)
         {
@@ -561,7 +581,7 @@ namespace RestFullApiCorpitech.Service
 
         public User GetUserByLogin(string login, string password)
         {
-            return context.Users.FirstOrDefault(x => x.Login == login && x.password == password);
+            return context.Users.FirstOrDefault(x => x.Login == login && x.Password == password);
         }
 
         public class InfoVacation
@@ -576,8 +596,7 @@ namespace RestFullApiCorpitech.Service
             public DateTime StartVacation { get; set; }
 
             public DateTime EndVacation { get; set; }
-
-
+            
         }
 
         public DateTime ParseDate(string date)
