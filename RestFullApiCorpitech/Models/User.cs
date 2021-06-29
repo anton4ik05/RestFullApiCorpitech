@@ -46,7 +46,5 @@ namespace RestFullApiCorpitech.Models
         
         public ICollection<VacationDay> VacationDays { get; set; }
 
-
-
     }
 }
