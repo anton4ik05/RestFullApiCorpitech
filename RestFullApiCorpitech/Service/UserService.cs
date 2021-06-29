@@ -366,6 +366,8 @@ namespace RestFullApiCorpitech.Service
                 DateTime StartWorkYear = user.DateOfEmployment;
                 DateTime EndWorkYear = user.DateOfEmployment.AddYears(1) - new TimeSpan(1, 0, 0, 0);
                 int maxDays = vacationDays.SingleOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date)!.Days;
+                int i = vacationDays.Count;
+                int cost = 1;
                 foreach (var userVacation in userVacations)
                 {
                     int daysVacation = HolyDays(userVacation.StartVacation, userVacation.EndVacation);
@@ -390,8 +392,31 @@ namespace RestFullApiCorpitech.Service
                             {
                                 StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
                                 EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-                                maxDays = vacationDays.SingleOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date)!
-                                    .Days;
+                                if (cost < i)
+                                {
+                                    maxDays = vacationDays.SingleOrDefault(x =>
+                                            x.StartWorkYear.Date == StartWorkYear.Date)!
+                                        .Days;
+                                    cost++;
+                                }
+                                else
+                                {
+                                    context.VacationDays.Add(new VacationDay
+                                    {
+                                        Days = maxDays,
+                                        StartWorkYear = StartWorkYear,
+                                        EndWorkYear = EndWorkYear,
+                                        User = user,
+                                        UserId = user.Id
+                                    });
+
+                                    maxDays = vacationDays.SingleOrDefault(x =>
+                                            x.StartWorkYear.Date == StartWorkYear.Date)!
+                                        .Days;
+                                    cost++;
+                                    i++;
+                                }
+
                                 count = 0;
                             }
                         }
@@ -411,8 +436,30 @@ namespace RestFullApiCorpitech.Service
 
                             StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
                             EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-                            maxDays = vacationDays.SingleOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date)!
-                                .Days;
+                            if (cost < i)
+                            {
+                                maxDays = vacationDays.SingleOrDefault(x =>
+                                        x.StartWorkYear.Date == StartWorkYear.Date)!
+                                    .Days;
+                                cost++;
+                            }
+                            else
+                            {
+                                context.VacationDays.Add(new VacationDay
+                                {
+                                    Days = maxDays,
+                                    StartWorkYear = StartWorkYear,
+                                    EndWorkYear = EndWorkYear,
+                                    User = user,
+                                    UserId = user.Id
+                                });
+
+                                maxDays = vacationDays.SingleOrDefault(x =>
+                                        x.StartWorkYear.Date == StartWorkYear.Date)!
+                                    .Days;
+                                cost++;
+                                i++;
+                            }
                             count = 0;
 
                             if (daysVacation - notDay > maxDays)
@@ -433,8 +480,33 @@ namespace RestFullApiCorpitech.Service
                                     EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
 
                                     temp -= maxDays;
-                                    maxDays = vacationDays.SingleOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date)!
-                                        .Days;
+
+                                    if (cost < i)
+                                    {
+                                        maxDays = vacationDays.SingleOrDefault(x =>
+                                                x.StartWorkYear.Date == StartWorkYear.Date)!
+                                            .Days;
+                                        cost++;
+                                    }
+                                    else
+                                    {
+                                        context.VacationDays.Add(new VacationDay
+                                        {
+                                            Days = maxDays,
+                                            StartWorkYear = StartWorkYear,
+                                            EndWorkYear = EndWorkYear,
+                                            User = user,
+                                            UserId = user.Id
+                                        });
+
+                                        maxDays = vacationDays.SingleOrDefault(x =>
+                                                x.StartWorkYear.Date == StartWorkYear.Date)!
+                                            .Days;
+                                        cost++;
+                                        i++;
+                                    }
+
+
                                 }
                                 info.Add(new InfoVacation
                                 {
@@ -477,8 +549,30 @@ namespace RestFullApiCorpitech.Service
                         StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
                         EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
                         count = 0;
-                        maxDays = vacationDays.SingleOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date)!
-                            .Days;
+                        if (cost < i)
+                        {
+                            maxDays = vacationDays.SingleOrDefault(x =>
+                                    x.StartWorkYear.Date == StartWorkYear.Date)!
+                                .Days;
+                            cost++;
+                        }
+                        else
+                        {
+                            context.VacationDays.Add(new VacationDay
+                            {
+                                Days = maxDays,
+                                StartWorkYear = StartWorkYear,
+                                EndWorkYear = EndWorkYear,
+                                User = user,
+                                UserId = user.Id
+                            });
+
+                            maxDays = vacationDays.SingleOrDefault(x =>
+                                    x.StartWorkYear.Date == StartWorkYear.Date)!
+                                .Days;
+                            cost++;
+                            i++;
+                        }
                         int temp = daysVacation - notDay;
 
                         while (temp > maxDays)
@@ -495,8 +589,30 @@ namespace RestFullApiCorpitech.Service
                             StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
                             EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
                             temp -= maxDays;
-                            maxDays = vacationDays.SingleOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date)!
-                                .Days;
+                            if (cost < i)
+                            {
+                                maxDays = vacationDays.SingleOrDefault(x =>
+                                        x.StartWorkYear.Date == StartWorkYear.Date)!
+                                    .Days;
+                                cost++;
+                            }
+                            else
+                            {
+                                context.VacationDays.Add(new VacationDay
+                                {
+                                    Days = maxDays,
+                                    StartWorkYear = StartWorkYear,
+                                    EndWorkYear = EndWorkYear,
+                                    User = user,
+                                    UserId = user.Id
+                                });
+
+                                maxDays = vacationDays.SingleOrDefault(x =>
+                                        x.StartWorkYear.Date == StartWorkYear.Date)!
+                                    .Days;
+                                cost++;
+                                i++;
+                            }
                         }
 
                         info.Add(new InfoVacation
