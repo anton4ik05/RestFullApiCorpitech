@@ -142,6 +142,7 @@ namespace RestFullApiCorpitech.Controllers
 
             return new OkObjectResult(model);
         }
+
         [HttpDelete]
         [Route("/api/users/{id}/vacations")]
         [Authorize(Roles = "admin")]
@@ -168,14 +169,42 @@ namespace RestFullApiCorpitech.Controllers
         [HttpPost]
         [Route("/api/holidays")]
         [Authorize(Roles = "admin")]
-        public IActionResult AddHoliday(Holiday holiday)
+        public IActionResult AddHoliday(Holiday model)
         {
             if (ModelState.IsValid)
             {
-                userService.AddHoliday(holiday);
+                userService.AddHoliday(model);
             }
 
             return new OkObjectResult(model);
+        }
+
+        [HttpPut]
+        [Route("/api/holidays")]
+        [Authorize(Roles = "admin")]
+        public IActionResult UpdateHoliday(Holiday model)
+        {
+            if (ModelState.IsValid)
+            {
+                userService.UpdateHoliday(model);
+            }
+
+            return new OkObjectResult(model);
+        }
+
+        [HttpDelete]
+        [Route("/api/holidays")]
+        [Authorize(Roles = "admin")]
+        public IActionResult DeleteHoliday(Guid id)
+        {
+            if (userService.GetHoliday(id) != null)
+            {
+                userService.DeleteHoliday(id);
+                return new OkResult();
+
+            }
+            return new BadRequestObjectResult("Holiday not found");
+
         }
     }
 }
