@@ -1,4 +1,374 @@
-﻿class HolidaysList extends React.Component {
+﻿class UserIntervalList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            userId:props.user.id,
+            role: getRole(),
+            data: props,
+            status: true,
+            interval: []
+        };
+        this.close = this.close.bind(this);
+        this.addInterval = this.addInterval.bind(this);
+    }
+    componentDidMount() {
+        let setState = this.setState.bind(this);
+        $.ajax({
+            url: '../api/' + this.state.userId + '/workYears' + '?token=' + getToken(),
+            success: function (result) {
+                setState({ interval: result });
+            },
+            error: function (result) { console.log(result); }
+        });
+    }
+
+    addInterval() {
+        $('body').append("<div id='info2' class='info'></div>");
+        ReactDOM.render(
+            React.createElement(UserIntervalAdding, { user: this.state.data.user }),
+            document.getElementById('info2'),
+        );
+    }
+    close() {
+        this.setState({ status: false });
+        $('#info1').remove();
+    }
+
+    render() {
+        let intervals = this.state.interval;
+        let userId = this.state.userId;
+        return this.state.status === true ? React.createElement(
+            'div', { className: "infoBlock" }, "Рабочие промежутки",
+            React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
+            React.createElement('div', { className: 'infoHolidays' },
+                React.createElement('div', { className: "infoHolidaysHead" },
+                    React.createElement('div', {}, 'Промежуток'),
+                    React.createElement('div', {}, 'Количество дней отпуска'),
+                ),
+                intervals.map(function (interval) {
+                    return React.createElement(UserIntervalInfo, { key: Math.random() * Math.random(), interval: interval, userId: userId });
+                })
+            ),
+            this.state.role == "admin" ? React.createElement('button', { onClick: this.addInterval, type: 'button', className: 'postfix' }, 'Добавить') : null,
+        ) : null;
+    }
+}
+class UserIntervalInfo extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            userId: props.userId,
+            data: props.interval,
+            id: props.interval.id,
+            startWorkYear: props.interval.startWorkYear,
+            endWorkYear: props.interval.endWorkYear,
+            days: props.interval.days,
+            role: getRole(),
+            status: true
+        };
+        this.idForInp = Math.round(Math.random() * 10000);
+        this.editInterval = this.editInterval.bind(this);
+        this.removeInterval = this.removeInterval.bind(this);
+    }
+
+    componentDidMount() {
+
+    }
+    editInterval() {
+        let user = { id: this.state.userId };
+        $('body').append("<div id='info2' class='info'></div>");
+        ReactDOM.render(
+            React.createElement(UserIntervalEdit, { interval: this.state.data, user: user }),
+            document.getElementById('info2'),
+        );
+    }
+    removeInterval() {
+        let user = { id: this.state.userId };
+        $.ajax({
+            url: '../api/users/' + this.state.id + '/workYears' + '?token=' + getToken(),
+            type: 'DELETE',
+            contentType: 'application/json',
+            success: function (result) {
+                console.log("interval is deleted.");
+                
+                ReactDOM.unmountComponentAtNode(document.getElementById('info1'));
+                ReactDOM.render(
+                    React.createElement(UserIntervalList, {user:user}),
+                    document.getElementById('info1'),
+                );
+            },
+            error: function (result) { console.log(result); }
+        });
+    }
+    render() {
+        return this.state.status === true ? React.createElement('div', { className: "infoHolidaysBody" },
+            React.createElement('div', {}, this.state.startWorkYear + " - " + this.state.endWorkYear),
+            React.createElement('div', {}, this.state.days),
+            this.state.role === "admin" ? React.createElement('div', { className: "operations" },
+                React.createElement('span', { className: "operation", onClick: this.editInterval }, '✎'),
+                React.createElement('span', { className: "operation", onClick: this.removeInterval }, '✘'),
+            ) : null,
+        ) : null;
+        return null;
+    }
+}
+
+class UserIntervalAdding extends React.Component {
+    constructor(props) {
+        super(props);
+        this.myDatePicker = "";
+        this.myDatePickerFirst = "";
+        this.state = {
+            role: getRole(),
+            data: props.user,
+            userId: props.user.id,
+            status: true,
+            startWorkYear: formatDateForInput(new Date()),
+            endWorkYear: formatDateForInput(new Date()),
+            days: 28,
+        };
+        this.addInterval = this.addInterval.bind(this);
+        this.updateDate = this.updateDate.bind(this);
+        this.daysUpdate = this.daysUpdate.bind(this);
+        this.onDateUpdate = this.onDateUpdate.bind(this);
+        this.close = this.close.bind(this);
+        this.fromDateUpdate = this.fromDateUpdate.bind(this);
+        this.idForInp = Math.round(Math.random() * 10000);
+    }
+    dateOfDocChange() {
+        this.setState({ dateOfDoc: this.state.dateOfDoc });
+    }
+    numOfDocChange(e) {
+        this.setState({ numOfDoc: e.target.value });
+    }
+    onDateUpdate(e) {
+        this.setState({ endVacation: this.state.endVacation });
+    }
+    fromDateUpdate(e) {
+        this.setState({ startVacation: this.state.startVacation });
+    }
+    updateDate(myDatePicker, on) { 
+        switch (on) {
+            case "end": {
+                this.setState({ endWorkYear: myDatePicker });
+                this.myDatePicker = myDatePicker;
+            } break;
+            case "start": {
+                this.setState({ startWorkYear: myDatePicker });
+                this.myDatePickerFirst = myDatePicker;
+            } break;
+        }
+    }
+    daysUpdate(e) {
+        this.setState({ days: e.target.value });
+    }
+
+    componentDidMount() {
+        let myDatePicker = this.state.endVacation, myDatePickerFirst = this.state.startVacation;
+        let updateDate = this.updateDate.bind();
+        $('#endWorkYear' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
+            pick: function (date, view) {
+                myDatePicker = formatDateForInput(date.date);
+                updateDate(myDatePicker, "end");
+            },
+            autoHide: true,
+            format: 'dd.mm.YYYY',
+            days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+            daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+            monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+        });
+        $('#startWorkYear' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
+            pick: function (date, view) {
+                myDatePickerFirst = formatDateForInput(date.date);
+                updateDate(myDatePickerFirst, "start");
+            },
+            autoHide: true,
+            format: 'dd.mm.YYYY',
+            days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+            daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+            monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+        });
+    }
+    close() {
+        this.setState({ status: false });
+        $('#info2').remove();
+    }
+    addInterval() {
+        let startWorkYear = this.state.startWorkYear.trim();
+        let endWorkYear = this.state.endWorkYear.trim();
+        let days = (this.state.days+"").trim();
+        if (!startWorkYear || !endWorkYear || !days) {
+            return;
+        }
+        let interval = { startWorkYear: startWorkYear, endWorkYear: endWorkYear, days: days };
+        this.setState({ startWorkYear: "", endWorkYear: "", days: ""});
+        let user = { id: this.state.userId };
+        $.ajax({
+            url: '../api/' + this.state.userId + '/workYears?token=' + getToken(),
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(interval),
+            success: function (result) {
+                console.log("interval is added.");
+                ReactDOM.unmountComponentAtNode(document.getElementById('info1'));
+                ReactDOM.render(
+                    React.createElement(UserIntervalList, { user: user }),
+                    document.getElementById('info1'),
+                );
+            },
+            error: function (result) { console.log(result); }
+        });
+        this.close();
+
+    }
+    render() {
+        return this.state.status === true ? React.createElement(
+            'div', { className: "infoBlock" }, "Отпуск",
+            React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
+            React.createElement('div', { className: "vacationDays" },
+                React.createElement('input', { id: "startWorkYear" + this.idForInp, className: "fromVac", "data-toggle": "datepicker", onChange: this.fromDateUpdate, value: this.state.startWorkYear }),
+                React.createElement('input', { id: "endWorkYear" + this.idForInp, className: "toVac", "data-toggle": "datepicker", onChange: this.onDateUpdate, value: this.state.endWorkYear }),
+                React.createElement('input', { id: "quantityDays" + this.idForInp, className: "quanDays", type: "Number", onChange: this.daysUpdate, value: this.state.days }),
+                React.createElement('button', { onClick: this.addInterval, type: 'button', className: 'postfix' }, 'Добавить')),
+        ) : null;
+    }
+}
+
+class UserIntervalEdit extends React.Component {
+    constructor(props) {
+        super(props);
+        this.myDatePicker = "";
+        this.myDatePickerFirst = "";
+        this.state = {
+            role: getRole(),
+            data: props.user,
+            userId: props.user.id,
+            status: true,
+            id: props.interval.id,
+            startWorkYear: props.interval.startWorkYear,
+            endWorkYear: props.interval.endWorkYear,
+            days: props.interval.days,
+        };
+        this.editInterval = this.editInterval.bind(this);
+        this.updateDate = this.updateDate.bind(this);
+        this.daysUpdate = this.daysUpdate.bind(this);
+        this.onDateUpdate = this.onDateUpdate.bind(this);
+        this.close = this.close.bind(this);
+        this.fromDateUpdate = this.fromDateUpdate.bind(this);
+        this.idForInp = Math.round(Math.random() * 10000);
+    }
+    dateOfDocChange() {
+        this.setState({ dateOfDoc: this.state.dateOfDoc });
+    }
+    numOfDocChange(e) {
+        this.setState({ numOfDoc: e.target.value });
+    }
+    onDateUpdate(e) {
+        this.setState({ endVacation: this.state.endVacation });
+    }
+    fromDateUpdate(e) {
+        this.setState({ startVacation: this.state.startVacation });
+    }
+    updateDate(myDatePicker, on) {
+        switch (on) {
+            case "end": {
+                this.setState({ endWorkYear: myDatePicker });
+                this.myDatePicker = myDatePicker;
+            } break;
+            case "start": {
+                this.setState({ startWorkYear: myDatePicker });
+                this.myDatePickerFirst = myDatePicker;
+            } break;
+        }
+    }
+    daysUpdate(e) {
+        this.setState({ days: e.target.value });
+    }
+
+    componentDidMount() {
+        let myDatePicker = this.state.endVacation, myDatePickerFirst = this.state.startVacation;
+        let updateDate = this.updateDate.bind();
+        $('#endWorkYear' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
+            pick: function (date, view) {
+                myDatePicker = formatDateForInput(date.date);
+                updateDate(myDatePicker, "end");
+            },
+            autoHide: true,
+            format: 'dd.mm.YYYY',
+            days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+            daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+            monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+        });
+        $('#startWorkYear' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
+            pick: function (date, view) {
+                myDatePickerFirst = formatDateForInput(date.date);
+                updateDate(myDatePickerFirst, "start");
+            },
+            autoHide: true,
+            format: 'dd.mm.YYYY',
+            days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+            daysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            daysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+            monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+        });
+    }
+    close() {
+        this.setState({ status: false });
+        $('#info2').remove();
+    }
+    editInterval() {
+        let startWorkYear = this.state.startWorkYear.trim();
+        let endWorkYear = this.state.endWorkYear.trim();
+        let days = (this.state.days + "").trim();
+        if (!startWorkYear || !endWorkYear || !days) {
+            return;
+        }
+        let interval = { startWorkYear: startWorkYear, endWorkYear: endWorkYear, days: days };
+        this.setState({ startWorkYear: "", endWorkYear: "", days: "" });
+        let user = { id: this.state.userId };
+        $.ajax({
+            url: '../api/users/' + this.state.id + '/workYears' + '?token=' + getToken(),
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(interval),
+            success: function (result) {
+                console.log("interval is edited.");
+                ReactDOM.unmountComponentAtNode(document.getElementById('info1'));
+                ReactDOM.render(
+                    React.createElement(UserIntervalList, { user: user }),
+                    document.getElementById('info1'),
+                );
+            },
+            error: function (result) { console.log(result); }
+        });
+        this.close();
+
+    }
+    render() {
+        return this.state.status === true ? React.createElement(
+            'div', { className: "infoBlock" }, "Рабочий интервал",
+            React.createElement('div', { onClick: this.close, className: "close" }, '✖'),
+            React.createElement('div', { className: "vacationDays" },
+                React.createElement('input', { id: "startWorkYear" + this.idForInp, className: "fromVac", "data-toggle": "datepicker", onChange: this.fromDateUpdate, value: this.state.startWorkYear }),
+                React.createElement('input', { id: "endWorkYear" + this.idForInp, className: "toVac", "data-toggle": "datepicker", onChange: this.onDateUpdate, value: this.state.endWorkYear }),
+                React.createElement('input', { id: "quantityDays" + this.idForInp, className: "quanDays", type: "Number", onChange: this.daysUpdate, value: this.state.days }),
+                React.createElement('button', { onClick: this.editInterval, type: 'button', className: 'postfix' }, 'Сохранить')),
+        ) : null;
+    }
+}
+
+
+
+
+
+class HolidaysList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -615,13 +985,7 @@ class VacationAdding extends React.Component {
         });
         $('#endVacation' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
-                newDate = date.date;
-            },
-            hide: function () {
-                if (newDate == "") {
-                    newDate = new Date(parseNewDate(myDatePicker));
-                }
-                myDatePicker = formatDateForInput(newDate);
+                myDatePicker = formatDateForInput(date.date);
                 updateDate(myDatePicker, "end");
             },
             autoHide: true,
@@ -634,13 +998,7 @@ class VacationAdding extends React.Component {
         });
         $('#startVacation' + this.idForInp + '[data-toggle="datepicker"]').datepicker({
             pick: function (date, view) {
-                newDate = date.date;
-            },
-            hide: function () {
-                if (newDate == "") {
-                    newDate = new Date(parseNewDate(myDatePickerFirst));
-                }
-                myDatePickerFirst = formatDateForInput(newDate);
+                myDatePickerFirst = formatDateForInput(date.date);
                 updateDate(myDatePickerFirst, "start");
             },
             autoHide: true,
@@ -912,6 +1270,7 @@ class UserVacationDetails extends React.Component {
         this.close = this.close.bind(this);
         this.addVac = this.addVac.bind(this);
         this.holidays = this.holidays.bind(this);
+        this.intervals = this.intervals.bind(this);
     }
     componentDidMount() {
         let state = this.setState.bind(this);
@@ -949,6 +1308,14 @@ class UserVacationDetails extends React.Component {
             document.getElementById('info1'),
         );
     }
+    intervals() {
+        let user = { id: this.state.id };
+        $('body').append("<div id='info1'></div>");
+        ReactDOM.render(
+            React.createElement(UserIntervalList, { user: user }),
+            document.getElementById('info1'),
+        );
+    }
     render() {
         let vacationsForView = this.state.vacationsForView;
         let vacationsArr = this.state.vacations;
@@ -972,6 +1339,7 @@ class UserVacationDetails extends React.Component {
             React.createElement('div', { className: 'buttons' },
                 getRole() == "admin" ? React.createElement('button', { onClick: this.addVac, type: 'button', className: 'postfix' }, 'Добавить') : null,
                 React.createElement('button', { onClick: this.holidays, type: 'button', className: 'postfix' }, 'Праздники'),
+                React.createElement('button', { onClick: this.intervals, type: 'button', className: 'postfix' }, 'Интервалы'),
             ),
         ) : null;
     }
