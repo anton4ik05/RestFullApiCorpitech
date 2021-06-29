@@ -22,6 +22,8 @@ namespace RestFullApiCorpitech.Models
 
         public DbSet<Holiday> Holidays { get; set; }
 
+        public DbSet<VacationDay> VacationDays { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -42,10 +44,9 @@ namespace RestFullApiCorpitech.Models
                 Name = "admin",
                 Middlename = "admin",
                 DateOfEmployment = new DateTime(2015, 1, 1),
-                vacationYear = 28,
                 Vacations = new List<Vacation>(),
                 Login = "admin",
-                password = "admin",
+                Password = "admin",
                 Role = "admin",
             });
             modelBuilder

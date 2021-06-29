@@ -31,6 +31,5 @@ namespace RestFullApiCorpitech.ViewModels
         [JsonConverter(typeof(DateConverter))]
         public DateTime DateOrder { get; set; }
 
-        public int Days { get; set; }
     }
 }
