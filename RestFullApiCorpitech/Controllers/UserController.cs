@@ -204,7 +204,55 @@ namespace RestFullApiCorpitech.Controllers
 
             }
             return new BadRequestObjectResult("Holiday not found");
-
         }
+
+        [HttpGet]
+        [Route("/api/{id}/workYears")]
+        //[Authorize(Roles = "admin")]
+        public IActionResult getWorkYears(Guid id)
+        {
+            return new ObjectResult(userService.getWorkYears(id));
+        }
+
+        [HttpPost]
+        [Route("/api/{id}/workYears")]
+        //[Authorize(Roles = "admin")]
+        public IActionResult AddWorkYear(Guid id,VacationDay model)
+        {
+            if (ModelState.IsValid)
+            {
+                userService.AddWorkYear(id, model);
+            }
+
+            return new OkObjectResult(model);
+        }
+
+        [HttpDelete]
+        [Route("/api/users/{id}/workYears")]
+        //[Authorize(Roles = "admin")]
+        public IActionResult WorkYearDelete(Guid id)    
+        {
+            if (userService.GetWorkYear(id) != null)
+            {
+                userService.DeleteWorkYear(id);
+                return new OkResult();
+
+            }
+            return new BadRequestObjectResult("Vacation not found");
+        }
+
+        [HttpPut]
+        [Route("/api/users/{id}/workYears")]
+        //[Authorize(Roles = "admin")]
+        public IActionResult EditWorkYear(Guid id, VacationDay model)
+        {
+            if (ModelState.IsValid)
+            {
+                userService.EditWorkYear(id, model);
+            }
+
+            return new OkObjectResult(model);
+        }
+
     }
 }

@@ -249,6 +249,8 @@ namespace RestFullApiCorpitech.Service
             context.SaveChanges();
         }
 
+        
+
         public void AddVacation(Guid id,VacationEditModel model)
         {
             var record = context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
@@ -357,6 +359,11 @@ namespace RestFullApiCorpitech.Service
         public Vacation GetVacation(Guid id)
         {
             return context.Vacations.SingleOrDefault(x => x.Id == id);
+        }
+
+        public VacationDay GetWorkYear(Guid id)
+        {
+            return context.VacationDays.SingleOrDefault(x => x.Id == id);
         }
 
         public IEnumerable<User> GetUsers()
@@ -571,6 +578,52 @@ namespace RestFullApiCorpitech.Service
             return intersect - holidays;
         }
 
+        public ICollection<VacationDay> getWorkYears(Guid Id)
+        {
+            return context.VacationDays.Where(x => x.UserId == Id).ToList();
+        }
+        public void AddWorkYear(Guid id, VacationDay model)
+        {
+            var record = context.Users.Include(x => x.VacationDays).SingleOrDefault(x => x.Id == id);
+
+            if (record == null) return;
+            if (record.VacationDays == null) record.VacationDays = new List<VacationDay>();
+
+            record.VacationDays.Add(new VacationDay()
+            {
+                StartWorkYear = model.StartWorkYear,
+                EndWorkYear = model.EndWorkYear,
+                User = record,
+                UserId = record.Id,
+                Days = model.Days
+            });
+
+            context.SaveChanges();
+        }
+
+        public void DeleteWorkYear(Guid id)
+        {
+            VacationDay vacationDay = context.VacationDays.FirstOrDefault(x => x.Id == id);
+            if (vacationDay != null)
+            {
+                context.VacationDays.Remove(vacationDay!);
+                context.SaveChanges();
+            }
+        }
+        public void EditWorkYear(Guid id, VacationDay model)
+        {
+            var record = context.VacationDays.SingleOrDefault(x => x.Id == id);
+
+            if (record == null) return;
+
+            record.StartWorkYear = model.StartWorkYear;
+            record.EndWorkYear = model.EndWorkYear;
+            record.Days = model.Days;
+
+            context.SaveChanges();
+        }
+
+
         public ICollection<Holiday> GetHolidays()
         {
             return context.Holidays.ToArray();
@@ -580,6 +633,8 @@ namespace RestFullApiCorpitech.Service
         {
             return context.Holidays.SingleOrDefault(x => x.Id == id);
         }
+       
+
 
         public void AddHoliday(Holiday holiday)
         {
@@ -645,5 +700,7 @@ namespace RestFullApiCorpitech.Service
         {
             return DateTime.ParseExact(date, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
         }
+
+        
     }
 }
