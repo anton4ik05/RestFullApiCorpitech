@@ -1,5 +1,6 @@
 ﻿using RestFullApiCorpitech.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -22,7 +23,6 @@ namespace RestFullApiCorpitech.Service
 
         public void EvalUsers(DateTime startDate, DateTime endDate)
         {
-
             foreach (User user in context.Users.Include(x => x.Vacations).ToList())
             {
                 Eval(user, startDate, endDate);
@@ -32,13 +32,11 @@ namespace RestFullApiCorpitech.Service
         public Double EvalUser(Guid id, DateTime startDate, DateTime endDate)
         {
             return EvalVacationsHolidays(GetUser(id), startDate, endDate);
-
         }
 
         public Double EvalUserDays(Guid id, DateTime startDate, DateTime endDate)
         {
             return EvalDays(GetUser(id), startDate, endDate);
-
         }
 
         public Double Eval(User user, DateTime startDate, DateTime endDate)
@@ -52,7 +50,6 @@ namespace RestFullApiCorpitech.Service
 
                 if (user.Vacations != null || user.Vacations.Any())
                 {
-
                     ICollection<DateTime> allVacationDates = new List<DateTime>();
                     var vacations = user.Vacations.ToArray();
 
@@ -68,9 +65,7 @@ namespace RestFullApiCorpitech.Service
                             intersect++;
                         };
                     }
-
                 }
-
                 Double days = (endDate - startDate).Days + 1 - intersect;
                 value = Math.Round(Math.Round(days / 29.7) * (28/12));
             }
@@ -81,7 +76,6 @@ namespace RestFullApiCorpitech.Service
 
         {
             Double days = 0;
-
             if (!(startDate < user.DateOfEmployment || endDate < user.DateOfEmployment || startDate > endDate || startDate == endDate))
             {
                 Double intersect = 0;
@@ -96,8 +90,7 @@ namespace RestFullApiCorpitech.Service
                     {
                         allVacationDates = AllDates(vacation.StartVacation, vacation.EndVacation, allVacationDates);
                     }
-
-
+                    
                     foreach (var date in allVacationDates)
                     {
                         if (Between(date, startDate, endDate))
@@ -106,14 +99,12 @@ namespace RestFullApiCorpitech.Service
                         };
                     }
                 }
-
                 days = (endDate - startDate).Days + 1 - intersect;
             }
             return days;
         }
 
         public Double EvalVacationsHolidays(User user, DateTime startDate, DateTime endDate)
-
         {
             Double outVacations = 0;
 
@@ -127,43 +118,59 @@ namespace RestFullApiCorpitech.Service
                 {
 
                     ICollection<DateTime> allVacationDates = new List<DateTime>();
-                    var vacations = user.Vacations.ToArray();
+                    ICollection<DateTime> AllWorkDays = new List<DateTime>();
 
+                    var vacations = user.Vacations.ToArray();
+                    ICollection<VacationDay> vacationDays = new List<VacationDay>();
+                    vacationDays = user.VacationDays;
                     foreach (var vacation in vacations)
                     {
                         allVacationDates = AllDates(vacation.StartVacation, vacation.EndVacation, allVacationDates);
                     }
 
+                    AllWorkDays = AllDates(startDate, endDate, AllWorkDays);
 
-                    foreach (var date in allVacationDates)
+                    foreach (var vacationDay in vacationDays)
                     {
-                        if (Between(date, startDate, endDate))
+                        foreach (var date in allVacationDates)
                         {
-                            intersect++;
-                        };
-
-                        foreach (var holiday in context.Holidays.ToArray()){
-                            if (date.Month == holiday.date.Month && date.Day == holiday.date.Day && holiday.isActive)
+                            if (date >= vacationDay.StartWorkYear.Date && date <= vacationDay.EndWorkYear.Date)
                             {
-                                if (date.Month == 1 && date.Day == 2 && date.Year >= 2020)
-                                {
-                                    holidays++;
-                                }
-                                else if (date.Month == 1 && date.Day == 2 && date.Year < 2020)
-                                {
-                                    holidays += 0;
-                                }
-                                else
-                                {
-                                    holidays++;
-                                }
+                                intersect++;
+                            }
 
+                            foreach (var holiday in context.Holidays.ToArray())
+                            {
+                                if (date.Month == holiday.date.Month && date.Day == holiday.date.Day && holiday.isActive)
+                                {
+                                    if (date.Month == 1 && date.Day == 2 && date.Year >= 2020)
+                                    {
+                                        holidays++;
+                                    }
+                                    else if (date.Month == 1 && date.Day == 2 && date.Year < 2020)
+                                    {
+                                        holidays += 0;
+                                    }
+                                    else
+                                    {
+                                        holidays++;
+                                    }
+                                }
                             }
                         }
+
+                        foreach (var allWorkDay in AllWorkDays)
+                        {
+                            if (allWorkDay >= vacationDay.StartWorkYear.Date &&
+                                allWorkDay <= vacationDay.EndWorkYear.Date)
+                            {
+                                days++;
+                            }
+                        }
+                        
+                        outVacations += Math.Round(Math.Round(days / 29.7) * (vacationDay.Days / 12)) + holidays;
                     }
                 }
-                days = (endDate - startDate).Days + 1 - intersect;
-                outVacations = Math.Round(Math.Round(days / 29.7) * (28 / 12)) + holidays;
             }
             return outVacations;
         }
@@ -236,22 +243,19 @@ namespace RestFullApiCorpitech.Service
                 UserId = record.Id,
                 Days = day
             });
-
             record.Middlename = model.Middlename;
             record.Name = model.Name;
             record.Surname = model.Surname;
             record.DateOfEmployment = model.DateOfEmployment;
             record.Login = model.Login;
             record.Role = model.Role;
-
             context.Users.Add(record);
             context.SaveChanges();
         }
-
+        
         public void AddVacation(Guid id,VacationEditModel model)
         {
             var record = context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
-
             if (record == null) return;
             if (record.Vacations == null) record.Vacations = new List<Vacation>();
             
@@ -264,7 +268,6 @@ namespace RestFullApiCorpitech.Service
                 OrderNumber = model.OrderNumber,
                 DateOrder = model.DateOrder,
             });
-
             context.SaveChanges();
         }
 
@@ -273,21 +276,17 @@ namespace RestFullApiCorpitech.Service
             var record = context.Vacations.SingleOrDefault(x => x.Id == id);
 
             if (record == null) return;
-
             record.StartVacation = model.startVacation;
             record.EndVacation = model.endVacation;
             record.DateOrder = model.DateOrder;
             record.OrderNumber = model.OrderNumber;
-
             context.SaveChanges();
         }
 
         public void UpdateUser(Guid id, UserEditViewModel model)
         {
             var record = context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
-
             if (record == null) return;
-
             record.Vacations = new List<Vacation>();
 
             foreach (var rec in model.Vacations)
@@ -300,6 +299,45 @@ namespace RestFullApiCorpitech.Service
                     UserId = rec.userId,
                     OrderNumber = rec.OrderNumber,
                     DateOrder = rec.DateOrder,
+                });
+            }
+
+            if (model.DateOfEmployment != record.DateOfEmployment)
+            {
+                int day = 28;
+                if (model.DateOfEmployment.Date.Year < 2018)
+                {
+                    day = 24;
+                }
+
+                var vacationsdelete = context.VacationDays.Where(x => x.User == record);
+                context.VacationDays.RemoveRange(vacationsdelete);
+
+                record.VacationDays = new List<VacationDay>();
+                DateTime startWorkYear = model.DateOfEmployment;
+                DateTime endWorkYear = startWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+
+                while (startWorkYear.Year < DateTime.Now.Year)
+                {
+                    if (startWorkYear.Year >= 2018) day = 28;
+                    record.VacationDays.Add(new VacationDay
+                    {
+                        StartWorkYear = startWorkYear,
+                        EndWorkYear = endWorkYear,
+                        User = record,
+                        UserId = record.Id,
+                        Days = day
+                    });
+                    startWorkYear = endWorkYear + new TimeSpan(1, 0, 0, 0);
+                    endWorkYear = startWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+                }
+                record.VacationDays.Add(new VacationDay
+                {
+                    StartWorkYear = startWorkYear,
+                    EndWorkYear = endWorkYear,
+                    User = record,
+                    UserId = record.Id,
+                    Days = day
                 });
             }
             
@@ -315,9 +353,7 @@ namespace RestFullApiCorpitech.Service
         public void UpdateUserCredentials(Guid id, AuthDTO model)
         {
             var record = context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
-
             if (record == null) return;
-
 
             record.Login = model.login;
             if (model.password != "")
@@ -344,7 +380,6 @@ namespace RestFullApiCorpitech.Service
         }
         public void DeleteVacation(Guid id)
         {
-
             Vacation vacation = context.Vacations.FirstOrDefault(x => x.Id == id);
             if (vacation != null)
             {
@@ -358,12 +393,17 @@ namespace RestFullApiCorpitech.Service
             return context.Vacations.SingleOrDefault(x => x.Id == id);
         }
 
-        public IEnumerable<User> GetUsers()
+        public VacationDay GetWorkYear(Guid id)
         {
-            return context.Users.Include(x => x.Vacations.OrderBy(x => x.StartVacation)).OrderBy(x => x.Surname).ThenBy(x => x.Name).Where(x=> x.Role != "admin").ToList();
+            return context.VacationDays.SingleOrDefault(x => x.Id == id);
         }
 
-        public ICollection<InfoVacation> GetVacations(Guid id)
+        public IEnumerable<User> GetUsers()
+        {
+            return context.Users.Include(x => x.Vacations.OrderBy(x => x.StartVacation)).Include(x=>x.VacationDays).OrderBy(x => x.Surname).ThenBy(x => x.Name).Where(x=> x.Role != "admin").ToList();
+        }
+
+        public ICollection<UserService.InfoVacation> GetVacations(Guid id)
         {
             var user = GetUser(id);
 
@@ -372,20 +412,25 @@ namespace RestFullApiCorpitech.Service
                 var userVacations = user.Vacations;
 
                 ICollection<InfoVacation> info = new List<InfoVacation>();
+
+                ICollection<VacationDay> vacationDays = new List<VacationDay>();
+
+                vacationDays = user.VacationDays;
+                
                 //double maxDays = user.vacationYear;
                 int count = 0;
-                int maxDays = 0;
+
                 DateTime StartWorkYear = user.DateOfEmployment;
                 DateTime EndWorkYear = user.DateOfEmployment.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-
+                var фыв = vacationDays.FirstOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date);
+                int maxDays = 0;
+                int i = vacationDays.Count;
+                int cost = 1;
                 foreach (var userVacation in userVacations)
                 {
                     int daysVacation = HolyDays(userVacation.StartVacation, userVacation.EndVacation);
                     int lastMaxDays = maxDays;
-                    maxDays = 28;
-                    //(userVacation.EndVacation - userVacation.StartVacation).Days + 1; // Дни отпуска
-                    
-                    if (maxDays == 0) maxDays = Convert.ToInt32(28);
+                    if (maxDays == 0) maxDays = 28;
                     if (lastMaxDays == 0) lastMaxDays = maxDays;
                     if (daysVacation <= maxDays)
                     {
@@ -405,6 +450,31 @@ namespace RestFullApiCorpitech.Service
                             {
                                 StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
                                 EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+                                if (cost < i)
+                                {
+                                    maxDays = vacationDays.SingleOrDefault(x =>
+                                            x.StartWorkYear.Date == StartWorkYear.Date)!
+                                        .Days;
+                                    cost++;
+                                }
+                                else
+                                {
+                                    context.VacationDays.Add(new VacationDay
+                                    {
+                                        Days = maxDays,
+                                        StartWorkYear = StartWorkYear,
+                                        EndWorkYear = EndWorkYear,
+                                        User = user,
+                                        UserId = user.Id
+                                    });
+
+                                    maxDays = vacationDays.SingleOrDefault(x =>
+                                            x.StartWorkYear.Date == StartWorkYear.Date)!
+                                        .Days;
+                                    cost++;
+                                    i++;
+                                }
+
                                 count = 0;
                             }
                         }
@@ -424,6 +494,30 @@ namespace RestFullApiCorpitech.Service
 
                             StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
                             EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+                            if (cost < i)
+                            {
+                                maxDays = vacationDays.SingleOrDefault(x =>
+                                        x.StartWorkYear.Date == StartWorkYear.Date)!
+                                    .Days;
+                                cost++;
+                            }
+                            else
+                            {
+                                context.VacationDays.Add(new VacationDay
+                                {
+                                    Days = maxDays,
+                                    StartWorkYear = StartWorkYear,
+                                    EndWorkYear = EndWorkYear,
+                                    User = user,
+                                    UserId = user.Id
+                                });
+
+                                maxDays = vacationDays.SingleOrDefault(x =>
+                                        x.StartWorkYear.Date == StartWorkYear.Date)!
+                                    .Days;
+                                cost++;
+                                i++;
+                            }
                             count = 0;
 
                             if (daysVacation - notDay > maxDays)
@@ -442,7 +536,35 @@ namespace RestFullApiCorpitech.Service
                                     });
                                     StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
                                     EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+
                                     temp -= maxDays;
+
+                                    if (cost < i)
+                                    {
+                                        maxDays = vacationDays.SingleOrDefault(x =>
+                                                x.StartWorkYear.Date == StartWorkYear.Date)!
+                                            .Days;
+                                        cost++;
+                                    }
+                                    else
+                                    {
+                                        context.VacationDays.Add(new VacationDay
+                                        {
+                                            Days = maxDays,
+                                            StartWorkYear = StartWorkYear,
+                                            EndWorkYear = EndWorkYear,
+                                            User = user,
+                                            UserId = user.Id
+                                        });
+
+                                        maxDays = vacationDays.SingleOrDefault(x =>
+                                                x.StartWorkYear.Date == StartWorkYear.Date)!
+                                            .Days;
+                                        cost++;
+                                        i++;
+                                    }
+
+
                                 }
                                 info.Add(new InfoVacation
                                 {
@@ -485,7 +607,30 @@ namespace RestFullApiCorpitech.Service
                         StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
                         EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
                         count = 0;
-                      
+                        if (cost < i)
+                        {
+                            maxDays = vacationDays.SingleOrDefault(x =>
+                                    x.StartWorkYear.Date == StartWorkYear.Date)!
+                                .Days;
+                            cost++;
+                        }
+                        else
+                        {
+                            context.VacationDays.Add(new VacationDay
+                            {
+                                Days = maxDays,
+                                StartWorkYear = StartWorkYear,
+                                EndWorkYear = EndWorkYear,
+                                User = user,
+                                UserId = user.Id
+                            });
+
+                            maxDays = vacationDays.SingleOrDefault(x =>
+                                    x.StartWorkYear.Date == StartWorkYear.Date)!
+                                .Days;
+                            cost++;
+                            i++;
+                        }
                         int temp = daysVacation - notDay;
 
                         while (temp > maxDays)
@@ -502,6 +647,30 @@ namespace RestFullApiCorpitech.Service
                             StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
                             EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
                             temp -= maxDays;
+                            if (cost < i)
+                            {
+                                maxDays = vacationDays.SingleOrDefault(x =>
+                                        x.StartWorkYear.Date == StartWorkYear.Date)!
+                                    .Days;
+                                cost++;
+                            }
+                            else
+                            {
+                                context.VacationDays.Add(new VacationDay
+                                {
+                                    Days = maxDays,
+                                    StartWorkYear = StartWorkYear,
+                                    EndWorkYear = EndWorkYear,
+                                    User = user,
+                                    UserId = user.Id
+                                });
+
+                                maxDays = vacationDays.SingleOrDefault(x =>
+                                        x.StartWorkYear.Date == StartWorkYear.Date)!
+                                    .Days;
+                                cost++;
+                                i++;
+                            }
                         }
 
                         info.Add(new InfoVacation
@@ -554,10 +723,54 @@ namespace RestFullApiCorpitech.Service
                     }
                 }
             }
-
             return intersect - holidays;
         }
 
+        public ICollection<VacationDay> getWorkYears(Guid Id)
+        {
+            return context.VacationDays.Where(x => x.UserId == Id).ToList();
+        }
+        public void AddWorkYear(Guid id, VacationDay model)
+        {
+            var record = context.Users.Include(x => x.VacationDays).SingleOrDefault(x => x.Id == id);
+
+            if (record == null) return;
+            if (record.VacationDays == null) record.VacationDays = new List<VacationDay>();
+
+            record.VacationDays.Add(new VacationDay()
+            {
+                StartWorkYear = model.StartWorkYear,
+                EndWorkYear = model.EndWorkYear,
+                User = record,
+                UserId = record.Id,
+                Days = model.Days
+            });
+
+            context.SaveChanges();
+        }
+
+        public void DeleteWorkYear(Guid id)
+        {
+            VacationDay vacationDay = context.VacationDays.FirstOrDefault(x => x.Id == id);
+            if (vacationDay != null)
+            {
+                context.VacationDays.Remove(vacationDay!);
+                context.SaveChanges();
+            }
+        }
+        public void EditWorkYear(Guid id, VacationDay model)
+        {
+            var record = context.VacationDays.SingleOrDefault(x => x.Id == id);
+
+            if (record == null) return;
+
+            record.StartWorkYear = model.StartWorkYear;
+            record.EndWorkYear = model.EndWorkYear;
+            record.Days = model.Days;
+
+            context.SaveChanges();
+        }
+        
         public ICollection<Holiday> GetHolidays()
         {
             return context.Holidays.ToArray();
@@ -567,7 +780,8 @@ namespace RestFullApiCorpitech.Service
         {
             return context.Holidays.SingleOrDefault(x => x.Id == id);
         }
-
+       
+        
         public void AddHoliday(Holiday holiday)
         {
             context.Holidays.Add(holiday);
@@ -600,7 +814,7 @@ namespace RestFullApiCorpitech.Service
 
         public User GetUser(Guid id)
         {
-            return context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
+            return context.Users.Include(x => x.Vacations).Include(x => x.VacationDays).SingleOrDefault(x => x.Id == id);
         }
 
         public User GetUserByUsername(string username)
@@ -625,9 +839,8 @@ namespace RestFullApiCorpitech.Service
             public DateTime StartVacation { get; set; }
 
             public DateTime EndVacation { get; set; }
-            
         }
-
+       
         public DateTime ParseDate(string date)
         {
             return DateTime.ParseExact(date, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
