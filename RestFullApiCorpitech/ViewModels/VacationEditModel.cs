@@ -30,5 +30,6 @@ namespace RestFullApiCorpitech.ViewModels
 
         [JsonConverter(typeof(DateConverter))]
         public DateTime DateOrder { get; set; }
+
     }
 }

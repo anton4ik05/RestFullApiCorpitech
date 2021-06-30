@@ -1,5 +1,6 @@
 ﻿using RestFullApiCorpitech.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -15,19 +16,6 @@ namespace RestFullApiCorpitech.Service
 
         private readonly ApplicationContext context;
 
-        ICollection<DateTime> holidayList = new List<DateTime>() {
-            new DateTime(2021, 1, 1),
-            new DateTime(2021, 1, 2),
-            new DateTime(2021, 1, 7),
-            new DateTime(2021, 3, 8),
-            new DateTime(2021, 5, 1),
-            new DateTime(2021, 5, 9),
-            new DateTime(2021, 5, 11),
-            new DateTime(2021, 7, 3),
-            new DateTime(2021, 11, 7),
-            new DateTime(2021, 12, 26),
-        };
-
         public UserService(ApplicationContext context)
         {
             this.context = context;
@@ -35,7 +23,6 @@ namespace RestFullApiCorpitech.Service
 
         public void EvalUsers(DateTime startDate, DateTime endDate)
         {
-
             foreach (User user in context.Users.Include(x => x.Vacations).ToList())
             {
                 Eval(user, startDate, endDate);
@@ -45,13 +32,11 @@ namespace RestFullApiCorpitech.Service
         public Double EvalUser(Guid id, DateTime startDate, DateTime endDate)
         {
             return EvalVacationsHolidays(GetUser(id), startDate, endDate);
-
         }
 
         public Double EvalUserDays(Guid id, DateTime startDate, DateTime endDate)
         {
             return EvalDays(GetUser(id), startDate, endDate);
-
         }
 
         public Double Eval(User user, DateTime startDate, DateTime endDate)
@@ -65,7 +50,6 @@ namespace RestFullApiCorpitech.Service
 
                 if (user.Vacations != null || user.Vacations.Any())
                 {
-
                     ICollection<DateTime> allVacationDates = new List<DateTime>();
                     var vacations = user.Vacations.ToArray();
 
@@ -81,11 +65,9 @@ namespace RestFullApiCorpitech.Service
                             intersect++;
                         };
                     }
-
                 }
-
                 Double days = (endDate - startDate).Days + 1 - intersect;
-                value = Math.Round(Math.Round(days / 29.7) * (user.vacationYear/12));
+                value = Math.Round(Math.Round(days / 29.7) * (28/12));
             }
             return value;
         }
@@ -94,7 +76,6 @@ namespace RestFullApiCorpitech.Service
 
         {
             Double days = 0;
-
             if (!(startDate < user.DateOfEmployment || endDate < user.DateOfEmployment || startDate > endDate || startDate == endDate))
             {
                 Double intersect = 0;
@@ -109,8 +90,7 @@ namespace RestFullApiCorpitech.Service
                     {
                         allVacationDates = AllDates(vacation.StartVacation, vacation.EndVacation, allVacationDates);
                     }
-
-
+                    
                     foreach (var date in allVacationDates)
                     {
                         if (Between(date, startDate, endDate))
@@ -119,14 +99,12 @@ namespace RestFullApiCorpitech.Service
                         };
                     }
                 }
-
                 days = (endDate - startDate).Days + 1 - intersect;
             }
             return days;
         }
 
         public Double EvalVacationsHolidays(User user, DateTime startDate, DateTime endDate)
-
         {
             Double outVacations = 0;
 
@@ -140,35 +118,62 @@ namespace RestFullApiCorpitech.Service
                 {
 
                     ICollection<DateTime> allVacationDates = new List<DateTime>();
-                    var vacations = user.Vacations.ToArray();
+                    ICollection<DateTime> AllWorkDays = new List<DateTime>();
 
+                    var vacations = user.Vacations.ToArray();
+                    ICollection<VacationDay> vacationDays = new List<VacationDay>();
+                    vacationDays = user.VacationDays;
                     foreach (var vacation in vacations)
                     {
                         allVacationDates = AllDates(vacation.StartVacation, vacation.EndVacation, allVacationDates);
                     }
 
+                    AllWorkDays = AllDates(startDate, endDate, AllWorkDays);
 
-                    foreach (var date in allVacationDates)
+                    foreach (var vacationDay in vacationDays)
                     {
-                        if (Between(date, startDate, endDate))
+                        foreach (var date in allVacationDates)
                         {
-                            intersect++;
-                        };
-
-                        foreach (var holiday in holidayList){
-                            if (date.Month == holiday.Month && date.Day == holiday.Day)
+                            if (date >= vacationDay.StartWorkYear.Date && date <= vacationDay.EndWorkYear.Date)
                             {
-                                holidays++;
+                                intersect++;
+                            }
+
+                            foreach (var holiday in context.Holidays.ToArray())
+                            {
+                                if (date.Month == holiday.date.Month && date.Day == holiday.date.Day && holiday.isActive)
+                                {
+                                    if (date.Month == 1 && date.Day == 2 && date.Year >= 2020)
+                                    {
+                                       intersect--;
+                                    }
+                                    else if (date.Month == 1 && date.Day == 2 && date.Year < 2020)
+                                    {
+                                        intersect += 0;
+                                    }
+                                    else
+                                    {
+                                        intersect++;
+                                    }
+                                }
                             }
                         }
+
+                        foreach (var allWorkDay in AllWorkDays)
+                        {
+                            if (allWorkDay >= vacationDay.StartWorkYear.Date &&
+                                allWorkDay <= vacationDay.EndWorkYear.Date)
+                            {
+                                days++;
+                            }
+                        }
+
+                        outVacations += Math.Round(Math.Round((days-intersect) / 29.7) * (Convert.ToDouble(vacationDay.Days) / 12));
                     }
                 }
-                days = (endDate - startDate).Days + 1 - intersect;
-                outVacations = Math.Round(Math.Round(days / 29.7) * (user.vacationYear / 12)) + holidays;
             }
             return outVacations;
         }
-
         private static ICollection<DateTime> AllDates(DateTime startDate, DateTime endDate, ICollection<DateTime> allDates)
         {
             for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
@@ -185,7 +190,8 @@ namespace RestFullApiCorpitech.Service
         {
             var record = new User
             {
-                Vacations = new List<Vacation>()
+                Vacations = new List<Vacation>(),
+                VacationDays = new List<VacationDay>()
             };
 
             if (model.Vacations == null)
@@ -206,24 +212,89 @@ namespace RestFullApiCorpitech.Service
                 });
             }
 
+            int day = 28;
+            if (model.DateOfEmployment.Date.Year < 2018)
+            {
+                day = 24;
+            }
+            
+            DateTime startWorkYear = model.DateOfEmployment;
+            DateTime endWorkYear = startWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+           
+            while (startWorkYear.Year < DateTime.Now.Year)
+            {
+                if (startWorkYear.Year >= 2018) day = 28;
+                record.VacationDays.Add(new VacationDay
+                {
+                    StartWorkYear = startWorkYear,
+                    EndWorkYear = endWorkYear,
+                    User = record,
+                    UserId = record.Id,
+                    Days = day
+                });
+                startWorkYear = endWorkYear + new TimeSpan(1, 0, 0, 0);
+                endWorkYear = startWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+            }
+            record.VacationDays.Add(new VacationDay
+            {
+                StartWorkYear = startWorkYear,
+                EndWorkYear = endWorkYear,
+                User = record,
+                UserId = record.Id,
+                Days = day
+            });
             record.Middlename = model.Middlename;
             record.Name = model.Name;
             record.Surname = model.Surname;
             record.DateOfEmployment = model.DateOfEmployment;
-            record.vacationYear = model.vacationYear;
-            record.Login = model.Login;
+            if (context.Users.FirstOrDefault(x => x.Login == model.Login) != null)
+            {
+                record.Login = model.Surname;
+            }
+            else
+            {
+                record.Login = model.Login;
+            }
+         
             record.Role = model.Role;
-
             context.Users.Add(record);
+            context.SaveChanges();
+        }
+        
+        public void AddVacation(Guid id,VacationEditModel model)
+        {
+            var record = context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
+            if (record == null) return;
+            if (record.Vacations == null) record.Vacations = new List<Vacation>();
+            
+            record.Vacations.Add(new Vacation
+            {
+                StartVacation = model.startVacation,
+                EndVacation = model.endVacation,
+                User = record,
+                UserId = record.Id,
+                OrderNumber = model.OrderNumber,
+                DateOrder = model.DateOrder,
+            });
+            context.SaveChanges();
+        }
+
+        public void EditVacation(Guid id, VacationEditModel model)
+        {
+            var record = context.Vacations.SingleOrDefault(x => x.Id == id);
+
+            if (record == null) return;
+            record.StartVacation = model.startVacation;
+            record.EndVacation = model.endVacation;
+            record.DateOrder = model.DateOrder;
+            record.OrderNumber = model.OrderNumber;
             context.SaveChanges();
         }
 
         public void UpdateUser(Guid id, UserEditViewModel model)
         {
             var record = context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
-
             if (record == null) return;
-
             record.Vacations = new List<Vacation>();
 
             foreach (var rec in model.Vacations)
@@ -235,34 +306,71 @@ namespace RestFullApiCorpitech.Service
                     User = rec.user,
                     UserId = rec.userId,
                     OrderNumber = rec.OrderNumber,
-                    DateOrder = rec.DateOrder
+                    DateOrder = rec.DateOrder,
                 });
             }
 
+            if (model.DateOfEmployment != record.DateOfEmployment)
+            {
+                int day = 28;
+                if (model.DateOfEmployment.Date.Year < 2018)
+                {
+                    day = 24;
+                }
+
+                var vacationsdelete = context.VacationDays.Where(x => x.User == record);
+                context.VacationDays.RemoveRange(vacationsdelete);
+
+                record.VacationDays = new List<VacationDay>();
+                DateTime startWorkYear = model.DateOfEmployment;
+                DateTime endWorkYear = startWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+
+                while (startWorkYear.Year < DateTime.Now.Year)
+                {
+                    if (startWorkYear.Year >= 2018) day = 28;
+                    record.VacationDays.Add(new VacationDay
+                    {
+                        StartWorkYear = startWorkYear,
+                        EndWorkYear = endWorkYear,
+                        User = record,
+                        UserId = record.Id,
+                        Days = day
+                    });
+                    startWorkYear = endWorkYear + new TimeSpan(1, 0, 0, 0);
+                    endWorkYear = startWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+                }
+                record.VacationDays.Add(new VacationDay
+                {
+                    StartWorkYear = startWorkYear,
+                    EndWorkYear = endWorkYear,
+                    User = record,
+                    UserId = record.Id,
+                    Days = day
+                });
+            }
+            
             record.Middlename = model.Middlename;
             record.Name = model.Name;
             record.Surname = model.Surname;
             record.DateOfEmployment = model.DateOfEmployment;
             record.Login = model.Login;
             record.Role = model.Role;
-            record.vacationYear = model.vacationYear;
             context.SaveChanges();
         }
 
         public void UpdateUserCredentials(Guid id, AuthDTO model)
         {
             var record = context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
-
             if (record == null) return;
 
             record.Login = model.login;
             if (model.password != "")
             {
-                record.password = model.password;
+                record.Password = model.password;
             }
             else
             {
-                record.password = null;
+                record.Password = null;
             }
             
             context.SaveChanges();
@@ -278,13 +386,32 @@ namespace RestFullApiCorpitech.Service
                 context.SaveChanges();
             }
         }
+        public void DeleteVacation(Guid id)
+        {
+            Vacation vacation = context.Vacations.FirstOrDefault(x => x.Id == id);
+            if (vacation != null)
+            {
+                context.Vacations.Remove(vacation!);
+                context.SaveChanges();
+            }
+        }
+
+        public Vacation GetVacation(Guid id)
+        {
+            return context.Vacations.SingleOrDefault(x => x.Id == id);
+        }
+
+        public VacationDay GetWorkYear(Guid id)
+        {
+            return context.VacationDays.SingleOrDefault(x => x.Id == id);
+        }
 
         public IEnumerable<User> GetUsers()
         {
-            return context.Users.Include(x => x.Vacations.OrderBy(x => x.StartVacation)).OrderBy(x => x.Surname).ThenBy(x => x.Name).Where(x=> x.Role != "admin").ToList();
+            return context.Users.Include(x => x.Vacations.OrderBy(x => x.StartVacation)).Include(x=>x.VacationDays).OrderBy(x => x.Surname).ThenBy(x => x.Name).Where(x=> x.Role != "admin").ToList();
         }
 
-        public ICollection<InfoVacation> GetVacations(Guid id)
+        public ICollection<UserService.InfoVacation> GetVacations(Guid id)
         {
             var user = GetUser(id);
 
@@ -293,26 +420,37 @@ namespace RestFullApiCorpitech.Service
                 var userVacations = user.Vacations;
 
                 ICollection<InfoVacation> info = new List<InfoVacation>();
-                double days = 0;
-                double maxDays = user.vacationYear;
-                double count = 0;
-                if (maxDays == 0) return null;
 
+                ICollection<VacationDay> vacationDays = new List<VacationDay>();
+
+                vacationDays = user.VacationDays;
+                
+                //double maxDays = user.vacationYear;
+                int count = 0;
+                int maxDays = 0;
                 DateTime StartWorkYear = user.DateOfEmployment;
                 DateTime EndWorkYear = user.DateOfEmployment.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-
+                
+                if (vacationDays.FirstOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date) != null)
+                {
+                    maxDays = vacationDays.FirstOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date)!.Days;
+                }
+                else
+                {
+                    maxDays = 28;
+                }
+               
+                int i = vacationDays.Count;
+                int cost = 1;
                 foreach (var userVacation in userVacations)
                 {
                     int daysVacation = HolyDays(userVacation.StartVacation, userVacation.EndVacation);
-
-                    //(userVacation.EndVacation - userVacation.StartVacation).Days + 1; // Дни отпуска
-
-                    days +=daysVacation;
-
-
-                   if (daysVacation <= maxDays)
+                    int lastMaxDays = maxDays;
+                    if (maxDays == 0) maxDays = 28;
+                    if (lastMaxDays == 0) lastMaxDays = maxDays;
+                    if (daysVacation <= maxDays)
                     {
-                        if (count + daysVacation <= maxDays)
+                        if (daysVacation + count <= lastMaxDays)
                         {
                             count += daysVacation;
                             info.Add(new InfoVacation
@@ -324,77 +462,137 @@ namespace RestFullApiCorpitech.Service
                                 StartVacation = userVacation.StartVacation,
                                 EndVacation = userVacation.EndVacation
                             });
-                        }
-                        else
-                        {
-                            // Сколько дней можно добавить
-                            double notDay = maxDays - count;
-                            if (notDay == 0)
+                            if (count == lastMaxDays)
                             {
                                 StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
                                 EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-                                count = 0;
-                                notDay = maxDays - count;
-
-                                if (count + daysVacation <= maxDays)
+                                if (cost < i)
                                 {
-                                    count += daysVacation;
-                                    info.Add(new InfoVacation
-                                    {
-                                        Id = userVacation.Id,
-                                        Days = daysVacation,
-                                        StartWorkYear = StartWorkYear,
-                                        EndWorkYear = EndWorkYear,
-                                        StartVacation = userVacation.StartVacation,
-                                        EndVacation = userVacation.EndVacation
-                                    });
-
+                                    maxDays = vacationDays.SingleOrDefault(x =>
+                                            x.StartWorkYear.Date == StartWorkYear.Date)!
+                                        .Days;
+                                    cost++;
                                 }
                                 else
                                 {
-                                    // Сколько дней можно добавить
-                                    notDay = maxDays - count;
-
-                                    info.Add(new InfoVacation
+                                    context.VacationDays.Add(new VacationDay
                                     {
-                                        Id = userVacation.Id,
-                                        Days = notDay,
+                                        Days = maxDays,
                                         StartWorkYear = StartWorkYear,
                                         EndWorkYear = EndWorkYear,
-                                        StartVacation = userVacation.StartVacation,
-                                        EndVacation = userVacation.EndVacation
+                                        User = user,
+                                        UserId = user.Id
                                     });
-
-                                    StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
-                                    EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-
-                                    info.Add(new InfoVacation
-                                    {
-                                        Id = userVacation.Id,
-                                        Days = daysVacation - notDay,
-                                        StartWorkYear = StartWorkYear,
-                                        EndWorkYear = EndWorkYear,
-                                        StartVacation = userVacation.StartVacation,
-                                        EndVacation = userVacation.EndVacation
-                                    });
-                                    count = daysVacation - notDay;
+                                    context.SaveChanges();
+                                    maxDays = vacationDays.SingleOrDefault(x =>
+                                            x.StartWorkYear.Date == StartWorkYear.Date)!
+                                        .Days;
+                                    cost++;
+                                    i++;
                                 }
+
+                                count = 0;
+                            }
+                        }
+                        else
+                        {
+                            int notDay = lastMaxDays - count;
+
+                            info.Add(new InfoVacation
+                            {
+                                Id = userVacation.Id,
+                                Days = notDay,
+                                StartWorkYear = StartWorkYear,
+                                EndWorkYear = EndWorkYear,
+                                StartVacation = userVacation.StartVacation,
+                                EndVacation = userVacation.EndVacation
+                            });
+
+                            StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
+                            EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+                            if (cost < i)
+                            {
+                                maxDays = vacationDays.SingleOrDefault(x =>
+                                        x.StartWorkYear.Date == StartWorkYear.Date)!
+                                    .Days;
+                                cost++;
                             }
                             else
                             {
+                                context.VacationDays.Add(new VacationDay
+                                {
+                                    Days = maxDays,
+                                    StartWorkYear = StartWorkYear,
+                                    EndWorkYear = EndWorkYear,
+                                    User = user,
+                                    UserId = user.Id
+                                });
+                                context.SaveChanges();
+                                maxDays = vacationDays.SingleOrDefault(x =>
+                                        x.StartWorkYear.Date == StartWorkYear.Date)!
+                                    .Days;
+                                cost++;
+                                i++;
+                            }
+                            count = 0;
+
+                            if (daysVacation - notDay > maxDays)
+                            {
+                                int temp = daysVacation - notDay;
+                                while (temp > maxDays)
+                                {
+                                    info.Add(new InfoVacation
+                                    {
+                                        Id = userVacation.Id,
+                                        Days = maxDays,
+                                        StartWorkYear = StartWorkYear,
+                                        EndWorkYear = EndWorkYear,
+                                        StartVacation = userVacation.StartVacation,
+                                        EndVacation = userVacation.EndVacation
+                                    });
+                                    StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
+                                    EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+
+                                    temp -= maxDays;
+
+                                    if (cost < i)
+                                    {
+                                        maxDays = vacationDays.SingleOrDefault(x =>
+                                                x.StartWorkYear.Date == StartWorkYear.Date)!
+                                            .Days;
+                                        cost++;
+                                    }
+                                    else
+                                    {
+                                        context.VacationDays.Add(new VacationDay
+                                        {
+                                            Days = maxDays,
+                                            StartWorkYear = StartWorkYear,
+                                            EndWorkYear = EndWorkYear,
+                                            User = user,
+                                            UserId = user.Id
+                                        });
+                                        context.SaveChanges();
+                                        maxDays = vacationDays.SingleOrDefault(x =>
+                                                x.StartWorkYear.Date == StartWorkYear.Date)!
+                                            .Days;
+                                        cost++;
+                                        i++;
+                                    }
+                                }
                                 info.Add(new InfoVacation
                                 {
                                     Id = userVacation.Id,
-                                    Days = notDay,
+                                    Days = temp,
                                     StartWorkYear = StartWorkYear,
                                     EndWorkYear = EndWorkYear,
                                     StartVacation = userVacation.StartVacation,
                                     EndVacation = userVacation.EndVacation
                                 });
-
-                                StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
-                                EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-                                count = 0;
+                                count = temp;
+                            }
+                            else
+                            {
                                 info.Add(new InfoVacation
                                 {
                                     Id = userVacation.Id,
@@ -410,87 +608,96 @@ namespace RestFullApiCorpitech.Service
                     }
                     else
                     {
-                       double notDay = maxDays - count;
-                       if (notDay == 0)
-                       {
-                          StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
-                          EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-                          count = 0;
-                          notDay = maxDays - count;
-
-                            if (count + daysVacation <= maxDays)
+                        int notDay = lastMaxDays - count;
+                        info.Add(new InfoVacation
+                        {
+                            Id = userVacation.Id,
+                            Days = notDay,
+                            StartWorkYear = StartWorkYear,
+                            EndWorkYear = EndWorkYear,
+                            StartVacation = userVacation.StartVacation,
+                            EndVacation = userVacation.EndVacation
+                        });
+                        StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
+                        EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+                        count = 0;
+                        if (cost < i)
+                        {
+                            maxDays = vacationDays.SingleOrDefault(x =>
+                                    x.StartWorkYear.Date == StartWorkYear.Date)!
+                                .Days;
+                            cost++;
+                        }
+                        else
+                        {
+                            context.VacationDays.Add(new VacationDay
                             {
-                                count += daysVacation;
-                                info.Add(new InfoVacation
-                                {
-                                    Id = userVacation.Id,
-                                    Days = daysVacation,
-                                    StartWorkYear = StartWorkYear,
-                                    EndWorkYear = EndWorkYear,
-                                    StartVacation = userVacation.StartVacation,
-                                    EndVacation = userVacation.EndVacation
-                                });
+                                Days = maxDays,
+                                StartWorkYear = StartWorkYear,
+                                EndWorkYear = EndWorkYear,
+                                User = user,
+                                UserId = user.Id
+                            });
+                            context.SaveChanges();
+                            maxDays = vacationDays.SingleOrDefault(x =>
+                                    x.StartWorkYear.Date == StartWorkYear.Date)!
+                                .Days;
+                            cost++;
+                            i++;
+                        }
+                        int temp = daysVacation - notDay;
 
+                        while (temp > maxDays)
+                        {
+                            info.Add(new InfoVacation
+                            {
+                                Id = userVacation.Id,
+                                Days = maxDays,
+                                StartWorkYear = StartWorkYear,
+                                EndWorkYear = EndWorkYear,
+                                StartVacation = userVacation.StartVacation,
+                                EndVacation = userVacation.EndVacation
+                            });
+                            StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
+                            EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+                            temp -= maxDays;
+                            if (cost < i)
+                            {
+                                maxDays = vacationDays.SingleOrDefault(x =>
+                                        x.StartWorkYear.Date == StartWorkYear.Date)!
+                                    .Days;
+                                cost++;
                             }
                             else
                             {
-                                // Сколько дней можно добавить
-                                notDay = maxDays - count;
-
-                                info.Add(new InfoVacation
+                                context.VacationDays.Add(new VacationDay
                                 {
-                                    Id = userVacation.Id,
-                                    Days = notDay,
+                                    Days = maxDays,
                                     StartWorkYear = StartWorkYear,
                                     EndWorkYear = EndWorkYear,
-                                    StartVacation = userVacation.StartVacation,
-                                    EndVacation = userVacation.EndVacation
+                                    User = user,
+                                    UserId = user.Id
                                 });
-
-                                StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
-                                EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-
-                                info.Add(new InfoVacation
-                                {
-                                    Id = userVacation.Id,
-                                    Days = daysVacation - notDay,
-                                    StartWorkYear = StartWorkYear,
-                                    EndWorkYear = EndWorkYear,
-                                    StartVacation = userVacation.StartVacation,
-                                    EndVacation = userVacation.EndVacation
-                                });
-                                count = daysVacation - notDay;
+                                context.SaveChanges();
+                                maxDays = vacationDays.SingleOrDefault(x =>
+                                        x.StartWorkYear.Date == StartWorkYear.Date)!
+                                    .Days;
+                                cost++;
+                                i++;
                             }
-                       }
-                       else
-                       {
-                           info.Add(new InfoVacation
-                           {
-                               Id = userVacation.Id,
-                               Days = notDay,
-                               StartWorkYear = StartWorkYear,
-                               EndWorkYear = EndWorkYear,
-                               StartVacation = userVacation.StartVacation,
-                               EndVacation = userVacation.EndVacation
-                           });
+                        }
 
-                           StartWorkYear = EndWorkYear + new TimeSpan(1, 0, 0, 0);
-                           EndWorkYear = StartWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-                           count = 0;
-                           info.Add(new InfoVacation
-                           {
-                               Id = userVacation.Id,
-                               Days = daysVacation - notDay,
-                               StartWorkYear = StartWorkYear,
-                               EndWorkYear = EndWorkYear,
-                               StartVacation = userVacation.StartVacation,
-                               EndVacation = userVacation.EndVacation
-                           });
-                           count = daysVacation - notDay;
-                       }
-                       
+                        info.Add(new InfoVacation
+                        {
+                            Id = userVacation.Id,
+                            Days = temp,
+                            StartWorkYear = StartWorkYear,
+                            EndWorkYear = EndWorkYear,
+                            StartVacation = userVacation.StartVacation,
+                            EndVacation = userVacation.EndVacation
+                        });
+                        count = temp;
                     }
-                   
                 }
                 return info;
             }
@@ -510,22 +717,121 @@ namespace RestFullApiCorpitech.Service
                     intersect++;
                 };
 
-                foreach (var holiday in holidayList)
+                foreach (var holiday in context.Holidays.ToArray())
                 {
-                    if (date.Month == holiday.Month && date.Day == holiday.Day)
+                    if (date.Month == holiday.date.Month && date.Day == holiday.date.Day && holiday.isActive)
+                    {
+                        if (date.Month == 1 && date.Day == 2 && date.Year >= 2020)
+                        {
+                            holidays++;
+                        }
+                        else if (date.Month == 1 && date.Day == 2 && date.Year < 2020)
+                        {
+                            holidays += 0;
+                        }
+                        else
+                        {
+                            holidays++;
+                        }
+                    }
+                    else if (date.Month == holiday.date.Month && date.Day == holiday.date.Day && date.Year == holiday.date.Year)
                     {
                         holidays++;
                     }
                 }
             }
-
             return intersect - holidays;
         }
 
+        public ICollection<VacationDay> getWorkYears(Guid Id)
+        {
+            return context.VacationDays.Where(x => x.UserId == Id).ToList();
+        }
+        public void AddWorkYear(Guid id, VacationDay model)
+        {
+            var record = context.Users.Include(x => x.VacationDays).SingleOrDefault(x => x.Id == id);
+
+            if (record == null) return;
+            if (record.VacationDays == null) record.VacationDays = new List<VacationDay>();
+
+            record.VacationDays.Add(new VacationDay()
+            {
+                StartWorkYear = model.StartWorkYear,
+                EndWorkYear = model.EndWorkYear,
+                User = record,
+                UserId = record.Id,
+                Days = model.Days
+            });
+
+            context.SaveChanges();
+        }
+
+        public void DeleteWorkYear(Guid id)
+        {
+            VacationDay vacationDay = context.VacationDays.FirstOrDefault(x => x.Id == id);
+            if (vacationDay != null)
+            {
+                context.VacationDays.Remove(vacationDay!);
+                context.SaveChanges();
+            }
+        }
+        public void EditWorkYear(Guid id, VacationDay model)
+        {
+            var record = context.VacationDays.SingleOrDefault(x => x.Id == id);
+
+            if (record == null) return;
+
+            record.StartWorkYear = model.StartWorkYear;
+            record.EndWorkYear = model.EndWorkYear;
+            record.Days = model.Days;
+
+            context.SaveChanges();
+        }
+        
+        public ICollection<Holiday> GetHolidays()
+        {
+            return context.Holidays.OrderBy(x=>x.date).ToArray();
+        }
+
+        public Holiday GetHoliday(Guid id)
+        {
+            return context.Holidays.SingleOrDefault(x => x.Id == id);
+        }
+       
+        
+        public void AddHoliday(Holiday holiday)
+        {
+            context.Holidays.Add(holiday);
+            context.SaveChanges();
+        }
+
+        public void UpdateHoliday(Holiday holiday)
+        {
+            var record = context.Holidays.SingleOrDefault(x => x.Id == holiday.Id);
+
+            if (record == null) return;
+
+            record.date = holiday.date;
+            record.name = holiday.name;
+            record.isActive = holiday.isActive;
+
+            context.SaveChanges();
+        }
+
+        public void DeleteHoliday(Guid id)
+        {
+
+            Holiday holiday = context.Holidays.FirstOrDefault(x => x.Id == id);
+            if (holiday != null)
+            {
+                context.Holidays.Remove(holiday!);
+                context.SaveChanges();
+            }
+        }
 
         public User GetUser(Guid id)
         {
-            return context.Users.Include(x => x.Vacations).SingleOrDefault(x => x.Id == id);
+            return context.Users.Include(x => x.Vacations).Include(x => x.VacationDays).SingleOrDefault(x => x.Id == id);
         }
 
         public User GetUserByUsername(string username)
@@ -535,7 +841,7 @@ namespace RestFullApiCorpitech.Service
 
         public User GetUserByLogin(string login, string password)
         {
-            return context.Users.FirstOrDefault(x => x.Login == login && x.password == password);
+            return context.Users.FirstOrDefault(x => x.Login == login && x.Password == password);
         }
 
         public class InfoVacation
@@ -550,10 +856,8 @@ namespace RestFullApiCorpitech.Service
             public DateTime StartVacation { get; set; }
 
             public DateTime EndVacation { get; set; }
-
-
         }
-
+       
         public DateTime ParseDate(string date)
         {
             return DateTime.ParseExact(date, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
