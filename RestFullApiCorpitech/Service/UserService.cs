@@ -169,6 +169,8 @@ namespace RestFullApiCorpitech.Service
                         }
 
                         outVacations += Math.Round(Math.Round((days-intersect) / 29.7) * (Convert.ToDouble(vacationDay.Days) / 12));
+                        days = 0;
+                        intersect = 0;
                     }
                 }
             }
