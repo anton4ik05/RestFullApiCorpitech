@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -66,14 +67,7 @@ namespace RestFullApiCorpitech
                         
                     };
                 });
-
-
-
-                services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "RestFullApiCorpitech", Version = "v1" });
-            });
-
+            
             services.AddTransient<UserService>();
 
             string connection = Configuration.GetConnectionString("DefaultConnection");
@@ -93,17 +87,19 @@ namespace RestFullApiCorpitech
         {
             if (env.IsDevelopment())
             {
-                
+
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "RestFullApiCorpitech v1"));
             }
 
             app.UseAuthentication();
 
             app.UseHttpsRedirection();
-            
-            app.UseDefaultFiles();
+
+            app.UseDefaultFiles(new DefaultFilesOptions
+            {
+                DefaultFileNames = new
+                    List<string> { "index.html" }
+            });
             app.UseStaticFiles();
             app.UseReact(config => { });
             app.UseRouting();

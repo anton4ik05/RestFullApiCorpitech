@@ -247,7 +247,15 @@ namespace RestFullApiCorpitech.Service
             record.Name = model.Name;
             record.Surname = model.Surname;
             record.DateOfEmployment = model.DateOfEmployment;
-            record.Login = model.Login;
+            if (context.Users.FirstOrDefault(x => x.Login == model.Login) != null)
+            {
+                record.Login = model.Surname;
+            }
+            else
+            {
+                record.Login = model.Login;
+            }
+         
             record.Role = model.Role;
             context.Users.Add(record);
             context.SaveChanges();
