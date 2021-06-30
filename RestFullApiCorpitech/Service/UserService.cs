@@ -167,8 +167,8 @@ namespace RestFullApiCorpitech.Service
                                 days++;
                             }
                         }
-                        
-                        outVacations += Math.Round(Math.Round(days / 29.7) * (vacationDay.Days / 12)) + holidays;
+
+                        outVacations += Math.Round(Math.Round(days / 29.7) * (Convert.ToDouble(vacationDay.Days) / 12)) + holidays;
                     }
                 }
             }
