@@ -782,7 +782,7 @@ namespace RestFullApiCorpitech.Service
         
         public ICollection<Holiday> GetHolidays()
         {
-            return context.Holidays.ToArray();
+            return context.Holidays.OrderBy(x=>x.date).ToArray();
         }
 
         public Holiday GetHoliday(Guid id)
