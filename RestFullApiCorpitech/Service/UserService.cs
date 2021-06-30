@@ -475,7 +475,7 @@ namespace RestFullApiCorpitech.Service
                                         User = user,
                                         UserId = user.Id
                                     });
-
+                                    context.SaveChanges();
                                     maxDays = vacationDays.SingleOrDefault(x =>
                                             x.StartWorkYear.Date == StartWorkYear.Date)!
                                         .Days;
@@ -519,7 +519,7 @@ namespace RestFullApiCorpitech.Service
                                     User = user,
                                     UserId = user.Id
                                 });
-
+                                context.SaveChanges();
                                 maxDays = vacationDays.SingleOrDefault(x =>
                                         x.StartWorkYear.Date == StartWorkYear.Date)!
                                     .Days;
@@ -564,15 +564,13 @@ namespace RestFullApiCorpitech.Service
                                             User = user,
                                             UserId = user.Id
                                         });
-
+                                        context.SaveChanges();
                                         maxDays = vacationDays.SingleOrDefault(x =>
                                                 x.StartWorkYear.Date == StartWorkYear.Date)!
                                             .Days;
                                         cost++;
                                         i++;
                                     }
-
-
                                 }
                                 info.Add(new InfoVacation
                                 {
@@ -632,7 +630,7 @@ namespace RestFullApiCorpitech.Service
                                 User = user,
                                 UserId = user.Id
                             });
-
+                            context.SaveChanges();
                             maxDays = vacationDays.SingleOrDefault(x =>
                                     x.StartWorkYear.Date == StartWorkYear.Date)!
                                 .Days;
@@ -672,7 +670,7 @@ namespace RestFullApiCorpitech.Service
                                     User = user,
                                     UserId = user.Id
                                 });
-
+                                context.SaveChanges();
                                 maxDays = vacationDays.SingleOrDefault(x =>
                                         x.StartWorkYear.Date == StartWorkYear.Date)!
                                     .Days;
@@ -692,7 +690,6 @@ namespace RestFullApiCorpitech.Service
                         });
                         count = temp;
                     }
-                       
                 }
                 return info;
             }
