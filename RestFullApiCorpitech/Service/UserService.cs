@@ -118,6 +118,8 @@ namespace RestFullApiCorpitech.Service
                 {
 
                     ICollection<DateTime> allVacationDates = new List<DateTime>();
+                    ICollection<DateTime> AllWorkDays = new List<DateTime>();
+
                     var vacations = user.Vacations.ToArray();
                     ICollection<VacationDay> vacationDays = new List<VacationDay>();
                     vacationDays = user.VacationDays;
@@ -125,6 +127,8 @@ namespace RestFullApiCorpitech.Service
                     {
                         allVacationDates = AllDates(vacation.StartVacation, vacation.EndVacation, allVacationDates);
                     }
+
+                    AllWorkDays = AllDates(startDate, endDate, AllWorkDays);
 
                     foreach (var vacationDay in vacationDays)
                     {
@@ -155,12 +159,18 @@ namespace RestFullApiCorpitech.Service
                             }
                         }
 
-                        double a = (vacationDay.EndWorkYear.Date - vacationDay.StartWorkYear.Date).Days - intersect;
-                        outVacations += Math.Round(Math.Round(a / 29.7) * (vacationDay.Days / 12)) + holidays;
+                        foreach (var allWorkDay in AllWorkDays)
+                        {
+                            if (allWorkDay >= vacationDay.StartWorkYear.Date &&
+                                allWorkDay <= vacationDay.EndWorkYear.Date)
+                            {
+                                days++;
+                            }
+                        }
+                        
+                        outVacations += Math.Round(Math.Round(days / 29.7) * (vacationDay.Days / 12)) + holidays;
                     }
                 }
-                days = (endDate - startDate).Days + 1 - intersect;
-                double asd = Math.Round(Math.Round(days / 29.7) * (28 / 12)) + holidays;
             }
             return outVacations;
         }
@@ -291,6 +301,45 @@ namespace RestFullApiCorpitech.Service
                     DateOrder = rec.DateOrder,
                 });
             }
+
+            if (model.DateOfEmployment != record.DateOfEmployment)
+            {
+                int day = 28;
+                if (model.DateOfEmployment.Date.Year < 2018)
+                {
+                    day = 24;
+                }
+
+                var vacationsdelete = context.VacationDays.Where(x => x.User == record);
+                context.VacationDays.RemoveRange(vacationsdelete);
+
+                record.VacationDays = new List<VacationDay>();
+                DateTime startWorkYear = model.DateOfEmployment;
+                DateTime endWorkYear = startWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+
+                while (startWorkYear.Year < DateTime.Now.Year)
+                {
+                    if (startWorkYear.Year >= 2018) day = 28;
+                    record.VacationDays.Add(new VacationDay
+                    {
+                        StartWorkYear = startWorkYear,
+                        EndWorkYear = endWorkYear,
+                        User = record,
+                        UserId = record.Id,
+                        Days = day
+                    });
+                    startWorkYear = endWorkYear + new TimeSpan(1, 0, 0, 0);
+                    endWorkYear = startWorkYear.AddYears(1) - new TimeSpan(1, 0, 0, 0);
+                }
+                record.VacationDays.Add(new VacationDay
+                {
+                    StartWorkYear = startWorkYear,
+                    EndWorkYear = endWorkYear,
+                    User = record,
+                    UserId = record.Id,
+                    Days = day
+                });
+            }
             
             record.Middlename = model.Middlename;
             record.Name = model.Name;
@@ -354,7 +403,7 @@ namespace RestFullApiCorpitech.Service
             return context.Users.Include(x => x.Vacations.OrderBy(x => x.StartVacation)).Include(x=>x.VacationDays).OrderBy(x => x.Surname).ThenBy(x => x.Name).Where(x=> x.Role != "admin").ToList();
         }
 
-        public ICollection<InfoVacation> GetVacations(Guid id)
+        public ICollection<UserService.InfoVacation> GetVacations(Guid id)
         {
             var user = GetUser(id);
 
@@ -373,7 +422,8 @@ namespace RestFullApiCorpitech.Service
 
                 DateTime StartWorkYear = user.DateOfEmployment;
                 DateTime EndWorkYear = user.DateOfEmployment.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-                int maxDays = vacationDays.SingleOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date)!.Days;
+                var фыв = vacationDays.FirstOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date);
+                int maxDays = 0;
                 int i = vacationDays.Count;
                 int cost = 1;
                 foreach (var userVacation in userVacations)
