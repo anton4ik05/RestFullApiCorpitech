@@ -729,6 +729,10 @@ namespace RestFullApiCorpitech.Service
                             holidays++;
                         }
                     }
+                    else if (date.Month == holiday.date.Month && date.Day == holiday.date.Day && date.Year == holiday.date.Year)
+                    {
+                        holidays++;
+                    }
                 }
             }
             return intersect - holidays;
