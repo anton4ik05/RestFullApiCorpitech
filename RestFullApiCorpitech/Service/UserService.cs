@@ -145,15 +145,15 @@ namespace RestFullApiCorpitech.Service
                                 {
                                     if (date.Month == 1 && date.Day == 2 && date.Year >= 2020)
                                     {
-                                        holidays++;
+                                       intersect--;
                                     }
                                     else if (date.Month == 1 && date.Day == 2 && date.Year < 2020)
                                     {
-                                        holidays += 0;
+                                        intersect += 0;
                                     }
                                     else
                                     {
-                                        holidays++;
+                                        intersect++;
                                     }
                                 }
                             }
@@ -168,7 +168,7 @@ namespace RestFullApiCorpitech.Service
                             }
                         }
 
-                        outVacations += Math.Round(Math.Round(days / 29.7) * (Convert.ToDouble(vacationDay.Days) / 12)) + holidays;
+                        outVacations += Math.Round(Math.Round((days-intersect) / 29.7) * (Convert.ToDouble(vacationDay.Days) / 12));
                     }
                 }
             }
@@ -419,11 +419,19 @@ namespace RestFullApiCorpitech.Service
                 
                 //double maxDays = user.vacationYear;
                 int count = 0;
-
+                int maxDays = 0;
                 DateTime StartWorkYear = user.DateOfEmployment;
                 DateTime EndWorkYear = user.DateOfEmployment.AddYears(1) - new TimeSpan(1, 0, 0, 0);
-                var фыв = vacationDays.FirstOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date);
-                int maxDays = 0;
+                
+                if (vacationDays.FirstOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date) != null)
+                {
+                    maxDays = vacationDays.FirstOrDefault(x => x.StartWorkYear.Date == StartWorkYear.Date)!.Days;
+                }
+                else
+                {
+                    maxDays = 28;
+                }
+               
                 int i = vacationDays.Count;
                 int cost = 1;
                 foreach (var userVacation in userVacations)
